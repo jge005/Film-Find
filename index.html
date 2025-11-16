@@ -22,7 +22,7 @@
 
     .app-shell {
       max-width: 720px;
-      margin: 0 auto 64px; /* 아래 네비 공간 */
+      margin: 0 auto 64px; /* 아래 여백 (네비 안 보이지만 여유로 둠) */
     }
 
     /* 상단 헤더 */
@@ -508,6 +508,17 @@
       align-items: flex-start;
     }
 
+    /* 모바일에서 갤러리뷰 1열로 */
+    @media (max-width: 480px) {
+      .list.gallery-mode .card {
+        width: 100%;
+      }
+      .list.gallery-mode .card img {
+        width: 100%;
+        height: 180px;
+      }
+    }
+
     @media (min-width: 768px) {
       body {
         padding-top: 24px;
@@ -517,8 +528,9 @@
       }
     }
 
-    /* 하단 네비게이션 */
+    /* 하단 네비게이션 (지금은 숨김) */
     .bottom-nav-wrap {
+      display: none; /* 요청대로 화면에서 제거 */
       position: fixed;
       left: 0;
       right: 0;
@@ -749,7 +761,7 @@
     </div>
   </div>
 
-  <!-- 하단 네비게이션 -->
+  <!-- 하단 네비게이션 (지금은 숨김 상태) -->
   <div class="bottom-nav-wrap">
     <div class="bottom-nav">
       <button class="nav-btn nav-btn-active" data-tab="home">홈</button>
@@ -1557,7 +1569,7 @@
       });
     }
 
-    /* ---------- 하단 네비 ---------- */
+    /* ---------- 하단 네비 (지금은 화면에 안 보임) ---------- */
     function initBottomNav() {
       const navBtns = document.querySelectorAll(".nav-btn");
       navBtns.forEach((btn) => {
@@ -1582,6 +1594,43 @@
       });
     }
 
+    /* ---------- 상단 버튼 토글 로직 ---------- */
+    function toggleFormNew() {
+      const card = document.getElementById("formCard");
+      const isOpen = card.style.display === "block";
+      closeSettings();
+      closeHistoryCard();
+      if (isOpen) {
+        closeForm();
+      } else {
+        openFormNew();
+      }
+    }
+
+    function toggleSettings() {
+      const card = document.getElementById("settingsCard");
+      const isOpen = card.style.display === "block";
+      closeForm();
+      closeHistoryCard();
+      if (isOpen) {
+        closeSettings();
+      } else {
+        openSettings();
+      }
+    }
+
+    function toggleHistory() {
+      const card = document.getElementById("historyCard");
+      const isOpen = card.style.display === "block";
+      closeForm();
+      closeSettings();
+      if (isOpen) {
+        closeHistoryCard();
+      } else {
+        openHistoryCard();
+      }
+    }
+
     /* ---------- 초기화 ---------- */
     window.addEventListener("load", () => {
       initLockScreen();
@@ -1589,15 +1638,15 @@
       updateViewToggleLabel();
       initBottomNav();
 
-      document.getElementById("newFilmBtn").addEventListener("click", openFormNew);
+      document.getElementById("newFilmBtn").addEventListener("click", toggleFormNew);
       document.getElementById("cancelBtn").addEventListener("click", closeForm);
       document.getElementById("filmForm").addEventListener("submit", saveFilmFromForm);
 
-      document.getElementById("settingsBtn").addEventListener("click", openSettings);
+      document.getElementById("settingsBtn").addEventListener("click", toggleSettings);
       document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
       document.getElementById("saveSettingsBtn").addEventListener("click", saveSettings);
 
-      document.getElementById("historyBtn").addEventListener("click", openHistoryCard);
+      document.getElementById("historyBtn").addEventListener("click", toggleHistory);
       document.getElementById("closeHistoryBtn").addEventListener("click", closeHistoryCard);
 
       document.getElementById("exportBtn").addEventListener("click", exportData);
@@ -1632,4 +1681,4 @@
     });
   </script>
 </body>
-        </html>
+  </html>
