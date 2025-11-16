@@ -323,9 +323,10 @@
       width: 100%;
       height: 140px;
     }
-@media (max-width: 480px) {
+/* 📱 모바일에서 갤러리뷰 → 1열 */
+@media (max-width: 600px) {
   .list.gallery {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -1332,5 +1333,4 @@
           " " +
           (f.location || "") +
           " " +
-          (f.plateInfo || "");
-        return combined.toLowerCase().includes(text)
+          (f.plateInfo 
