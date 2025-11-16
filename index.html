@@ -18,6 +18,7 @@
       min-height: 100vh;
       background: linear-gradient(145deg, #f9fafb, #f4f0ff, #fdf2f8);
       padding: 12px;
+      padding-bottom: 72px; /* 네비에 안 가리도록 여백 */
     }
 
     .app-shell {
@@ -272,7 +273,7 @@
     }
     .lock-card {
       width: 100%;
-      max-width: 360px;
+      max-width: 320px;
       margin: 0 auto;
       background: rgba(255,255,255,0.98);
       border-radius: 20px;
@@ -301,7 +302,6 @@
     }
     .lock-input-wrap input {
       flex: 1;
-      min-width: 0;
       padding: 8px 10px;
       border-radius: 999px;
       border: 1px solid #d6d9ff;
@@ -469,6 +469,47 @@
     }
     .history-film {
       color: #111827;
+    }
+
+    /* 하단 네비게이션바 */
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 12px;
+      max-width: 720px;
+      width: calc(100% - 24px);
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 8px 18px rgba(148, 163, 255, 0.45);
+      display: flex;
+      gap: 4px;
+      justify-content: space-between;
+      z-index: 900;
+    }
+    .nav-btn {
+      flex: 1;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 0;
+      font-size: 12px;
+      background: transparent;
+      color: #4b4f72;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.05s ease;
+    }
+    .nav-btn:active {
+      transform: translateY(1px);
+    }
+    .nav-btn span {
+      font-size: 14px;
+      margin-right: 2px;
+    }
+    .nav-btn.nav-active {
+      background: linear-gradient(135deg, #7f9dff, #b38cff);
+      color: #ffffff;
     }
 
     @media (min-width: 768px) {
@@ -654,6 +695,22 @@
       <div id="emptyText" class="empty-text" style="display:none;">
         등록된 필름이 없습니다.<br/>오른쪽 위 <b>+ 새 필름</b> 버튼으로 추가하세요.
       </div>
+
+      <!-- 하단 네비게이션 -->
+      <div class="bottom-nav">
+        <button type="button" class="nav-btn nav-active" id="navHome">
+          <span>🏠</span>홈
+        </button>
+        <button type="button" class="nav-btn" id="navAdd">
+          <span>➕</span>추가
+        </button>
+        <button type="button" class="nav-btn" id="navHistoryNav">
+          <span>📜</span>히스토리
+        </button>
+        <button type="button" class="nav-btn" id="navSettingsNav">
+          <span>⚙</span>설정
+        </button>
+      </div>
     </div>
   </div>
 
@@ -691,7 +748,6 @@
 
     let historyEntries = [];
     let historyLoaded = false;
-    let appInitialized = false;
 
     /* ---------- 유틸 (설정) ---------- */
     function getCurrentPassword() {
@@ -1325,208 +1381,239 @@
       const viewer = document.getElementById("imageViewer");
       viewer.style.display = "none";
     }
-
-    function getTouchDistance(t1, t2) {
-      const dx = t1.clientX - t2.clientX;
-      const dy = t1.clientY - t2.clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-
     function initImageViewerTouch() {
       const img = document.getElementById("viewerImage");
       const backdrop = document.getElementById("viewerBackdrop");
       const closeBtn = document.getElementById("closeViewerBtn");
 
-      backdrop.addEventListener("click", closeImageViewer);
-      closeBtn.addEventListener("click", closeImageViewer);
+      backdrop.addEventListener("click", () => closeImageViewer());
+      closeBtn.addEventListener("click", () => closeImageViewer());
 
       img.addEventListener("touchstart", (e) => {
-        if (e.touches.length === 2) {
-          e.preventDefault();
-          viewerStartDist = getTouchDistance(e.touches[0], e.touches[1]);
-          viewerLastScale = viewerScale;
-        } else if (e.touches.length === 1) {
-          e.preventDefault();
+        if (e.touches.length === 1) {
           isPanning = true;
           panStartX = e.touches[0].clientX - viewerTransX;
           panStartY = e.touches[0].clientY - viewerTransY;
-        }
-      }, { passive: false });
-
-      img.addEventListener("touchmove", (e) => {
-        if (e.touches.length === 2 && viewerStartDist > 0) {
-          e.preventDefault();
-          const dist = getTouchDistance(e.touches[0], e.touches[1]);
-          const scale = (dist / viewerStartDist) * viewerLastScale;
-          viewerScale = Math.min(Math.max(scale, 1), 4);
-          updateViewerTransform();
-        } else if (e.touches.length === 1 && isPanning) {
-          e.preventDefault();
-          viewerTransX = e.touches[0].clientX - panStartX;
-          viewerTransY = e.touches[0].clientY - panStartY;
-          updateViewerTransform();
-        }
-      }, { passive: false });
-
-      img.addEventListener("touchend", (e) => {
-        if (e.touches.length === 0) {
+        } else if (e.touches.length === 2) {
           isPanning = false;
-          viewerStartDist = 0;
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          viewerStartDist = Math.sqrt(dx * dx + dy * dy);
           viewerLastScale = viewerScale;
         }
       });
+
+      img.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        if (e.touches.length === 1 && isPanning) {
+          viewerTransX = e.touches[0].clientX - panStartX;
+          viewerTransY = e.touches[0].clientY - panStartY;
+          updateViewerTransform();
+        } else if (e.touches.length === 2 && viewerStartDist > 0) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const scale = dist / viewerStartDist;
+          viewerScale = Math.min(Math.max(viewerLastScale * scale, 1), 5);
+          updateViewerTransform();
+        }
+      }, { passive: false });
+
+      img.addEventListener("touchend", () => {
+        if (event.touches && event.touches.length === 0) {
+          isPanning = false;
+        }
+      });
+
+      // 마우스 휠로 확대/축소
+      img.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 1.1 : 0.9;
+        viewerScale = Math.min(Math.max(viewerScale * delta, 1), 5);
+        updateViewerTransform();
+      });
+
+      // 마우스로 드래그 이동
+      img.addEventListener("mousedown", (e) => {
+        isPanning = true;
+        panStartX = e.clientX - viewerTransX;
+        panStartY = e.clientY - viewerTransY;
+      });
+      window.addEventListener("mousemove", (e) => {
+        if (!isPanning) return;
+        viewerTransX = e.clientX - panStartX;
+        viewerTransY = e.clientY - panStartY;
+        updateViewerTransform();
+      });
+      window.addEventListener("mouseup", () => {
+        isPanning = false;
+      });
+
+      // ESC로 닫기
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeImageViewer();
+      });
     }
 
-    /* ---------- 잠금 & 초기화 ---------- */
-    function showAppAfterUnlock() {
+    /* ---------- 잠금/기기 이름 ---------- */
+    function unlockApp() {
       document.getElementById("lockScreen").style.display = "none";
       document.getElementById("appContainer").style.display = "block";
+      sessionStorage.setItem(UNLOCK_KEY, "1");
+      startFilmsListener();
+      setDeviceLabel(getDeviceLabel()); // 뱃지 갱신
 
-      if (!appInitialized) {
-        appInitialized = true;
-        initApp();
-      }
-    }
-
-    function initLockScreen() {
-      const lockScreen = document.getElementById("lockScreen");
-      const appContainer = document.getElementById("appContainer");
-      const passwordInput = document.getElementById("passwordInput");
-      const passwordBtn = document.getElementById("passwordBtn");
-
-      // 세션(탭) 기준으로 한 번만 잠금
-      if (sessionStorage.getItem(UNLOCK_KEY) === "1") {
-        lockScreen.style.display = "none";
-        appContainer.style.display = "block";
-        initApp();
-        return;
-      } else {
-        lockScreen.style.display = "flex";
-        appContainer.style.display = "none";
-      }
-
-      const submitPassword = () => {
-        const val = passwordInput.value;
-        if (val === getCurrentPassword()) {
-          sessionStorage.setItem(UNLOCK_KEY, "1");
-          passwordInput.value = "";
-          showAppAfterUnlock();
-        } else {
-          alert("비밀번호가 틀렸어.");
-          passwordInput.value = "";
-          passwordInput.focus();
-        }
-      };
-
-      passwordBtn.addEventListener("click", submitPassword);
-      passwordInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          submitPassword();
-        }
-      });
-    }
-
-    function maybeShowDeviceModal() {
       if (!getDeviceLabel()) {
         const modal = document.getElementById("deviceModal");
-        const input = document.getElementById("deviceModalInput");
         modal.style.display = "flex";
-        setTimeout(() => input.focus(), 50);
+        document.getElementById("deviceModalInput").focus();
       }
     }
 
-    function initAppEvents() {
-      // 검색
-      const searchInput = document.getElementById("searchInput");
-      searchInput.addEventListener("input", (e) => {
-        renderList(e.target.value);
+    function handlePasswordSubmit() {
+      const input = document.getElementById("passwordInput");
+      const val = input.value;
+      if (val === getCurrentPassword()) {
+        input.value = "";
+        unlockApp();
+      } else {
+        showToast("비밀번호가 틀렸어.");
+      }
+    }
+
+    /* ---------- 네비 ---------- */
+    function setActiveNav(targetId) {
+      document.querySelectorAll(".nav-btn").forEach((b) => {
+        b.classList.toggle("nav-active", b.id === targetId);
+      });
+    }
+
+    /* ---------- 초기화 ---------- */
+    document.addEventListener("DOMContentLoaded", () => {
+      // 이미지 뷰어 터치/마우스
+      initImageViewerTouch();
+
+      // 잠금
+      const savedUnlocked = sessionStorage.getItem(UNLOCK_KEY);
+      if (savedUnlocked === "1") {
+        unlockApp();
+      } else {
+        document.getElementById("lockScreen").style.display = "flex";
+        document.getElementById("appContainer").style.display = "none";
+      }
+
+      document.getElementById("passwordBtn").addEventListener("click", handlePasswordSubmit);
+      document.getElementById("passwordInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handlePasswordSubmit();
       });
 
-      // 새 필름
-      document.getElementById("newFilmBtn").addEventListener("click", openFormNew);
-
-      // 폼 관련
-      document.getElementById("filmForm").addEventListener("submit", saveFilmFromForm);
-      document.getElementById("cancelBtn").addEventListener("click", closeForm);
-      document.getElementById("setTodayBtn").addEventListener("click", () => {
-        document.getElementById("lastUsed").value = new Date().toISOString().slice(0, 10);
+      // 상단 버튼들
+      document.getElementById("newFilmBtn").addEventListener("click", () => {
+        setActiveNav("navAdd");
+        openFormNew();
+      });
+      document.getElementById("settingsBtn").addEventListener("click", () => {
+        setActiveNav("navSettingsNav");
+        openSettings();
+      });
+      document.getElementById("historyBtn").addEventListener("click", () => {
+        setActiveNav("navHistoryNav");
+        openHistoryCard();
       });
 
-      // 내보내기 / 불러오기
       document.getElementById("exportBtn").addEventListener("click", exportData);
       document.getElementById("importBtn").addEventListener("click", () => {
         document.getElementById("importFile").click();
       });
       document.getElementById("importFile").addEventListener("change", (e) => {
-        if (e.target.files && e.target.files[0]) {
-          importData(e.target.files[0]);
-        }
+        const file = e.target.files[0];
+        if (file) importData(file);
         e.target.value = "";
       });
 
-      // 설정
-      document.getElementById("settingsBtn").addEventListener("click", openSettings);
-      document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
-      document.getElementById("saveSettingsBtn").addEventListener("click", saveSettings);
+      document.getElementById("filmForm").addEventListener("submit", saveFilmFromForm);
+      document.getElementById("cancelBtn").addEventListener("click", () => {
+        closeForm();
+        setActiveNav("navHome");
+      });
+      document.getElementById("setTodayBtn").addEventListener("click", () => {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById("lastUsed").value = today;
+      });
 
-      // 히스토리
-      document.getElementById("historyBtn").addEventListener("click", openHistoryCard);
-      document.getElementById("closeHistoryBtn").addEventListener("click", closeHistoryCard);
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        renderList(e.target.value);
+      });
+
+      // 토글 버튼 그룹
+      document.querySelectorAll(".toggle-group").forEach((group) => {
+        group.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("toggle-btn")) return;
+          group.querySelectorAll(".toggle-btn").forEach((btn) => btn.classList.remove("active"));
+          e.target.classList.add("active");
+        });
+      });
+
+      // 설정 카드
+      document.getElementById("saveSettingsBtn").addEventListener("click", saveSettings);
+      document.getElementById("closeSettingsBtn").addEventListener("click", () => {
+        closeSettings();
+        setActiveNav("navHome");
+      });
+
+      // 히스토리 카드
+      document.getElementById("closeHistoryBtn").addEventListener("click", () => {
+        closeHistoryCard();
+        setActiveNav("navHome");
+      });
 
       // 기기 이름 모달
       document.getElementById("deviceModalSave").addEventListener("click", () => {
-        const name = document.getElementById("deviceModalInput").value.trim();
-        if (!name) {
-          alert("기기 이름을 입력해 줘.");
-          return;
-        }
-        setDeviceLabel(name);
+        const val = document.getElementById("deviceModalInput").value.trim();
+        if (val) setDeviceLabel(val);
         document.getElementById("deviceModal").style.display = "none";
-        showToast(`기기 이름을 '${name}'(으)로 저장했어.`);
       });
       document.getElementById("deviceModalSkip").addEventListener("click", () => {
         document.getElementById("deviceModal").style.display = "none";
       });
 
-      // 제판 방법 토글
-      document.querySelectorAll(".toggle-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const group = btn.closest(".toggle-group");
-          if (!group) return;
-          group.querySelectorAll(".toggle-btn").forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-        });
+      // 하단 네비
+      const navHome = document.getElementById("navHome");
+      const navAdd = document.getElementById("navAdd");
+      const navHistoryNav = document.getElementById("navHistoryNav");
+      const navSettingsNav = document.getElementById("navSettingsNav");
+
+      navHome.addEventListener("click", () => {
+        setActiveNav("navHome");
+        closeForm();
+        closeSettings();
+        closeHistoryCard();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      navAdd.addEventListener("click", () => {
+        setActiveNav("navAdd");
+        closeSettings();
+        closeHistoryCard();
+        openFormNew();
+      });
+      navHistoryNav.addEventListener("click", () => {
+        setActiveNav("navHistoryNav");
+        closeForm();
+        closeSettings();
+        openHistoryCard();
+        document.getElementById("historyCard").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      navSettingsNav.addEventListener("click", () => {
+        setActiveNav("navSettingsNav");
+        closeForm();
+        closeHistoryCard();
+        openSettings();
+        document.getElementById("settingsCard").scrollIntoView({ behavior: "smooth", block: "start" });
       });
 
-      // 이미지 뷰어 터치 이벤트
-      initImageViewerTouch();
-
-      // 기기 배지 초기화
-      document.getElementById("deviceBadge").textContent = getDeviceLabel() || "";
-    }
-
-    function initApp() {
-      if (appInitialized) return;
-      appInitialized = true;
-
-      // 기본 비번 없으면 세팅
-      if (!localStorage.getItem(PASSWORD_KEY)) {
-        setCurrentPassword(DEFAULT_PASSWORD);
-      }
-
-      // 이벤트 핸들러
-      initAppEvents();
-
-      // 데이터 동기화
-      startFilmsListener();
-
-      // 기기 이름 최초 1회 물어보기
-      maybeShowDeviceModal();
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      initLockScreen();
+      // 초기 뱃지 텍스트
+      setDeviceLabel(getDeviceLabel());
     });
   </script>
 </body>
-    </html>
+</html>
