@@ -463,12 +463,15 @@
   <div id="lockScreen" class="lock-screen">
     <div class="lock-card">
       <div class="lock-title">필름 관리 잠금</div>
-      <div class="lock-sub">비밀번호를 입력하면<br>탭을 닫기 전까지는 계속 열려 있어.</div>
+      <div class="lock-sub">
+        기본 비밀번호는 <b>1234</b>야.<br/>
+        바꾸고 싶으면 설정에서 변경하면 돼.
+      </div>
       <div class="lock-input-wrap">
         <input type="password" id="passwordInput" maxlength="20" placeholder="••••" />
         <button class="btn btn-primary btn-small" id="passwordBtn">입장</button>
       </div>
-      <div class="lock-info">※ 비밀번호는 이 기기/브라우저에만 저장되는 간단 잠금이야.</div>
+      <div class="lock-info">※ 이 탭을 닫기 전까지는 다시 묻지 않아.</div>
     </div>
   </div>
 
@@ -527,9 +530,12 @@
 
         <div class="form-row">
           <div class="settings-section-title">앱 잠금 비밀번호</div>
-          <div class="settings-help">비밀번호를 설정하면 다음 접속부터 먼저 물어봐. 새 비밀번호를 비워두면 잠금이 해제돼.</div>
+          <div class="settings-help">
+            기본값은 <b>1234</b>야. 새 비밀번호를 입력하면 변경되고,<br/>
+            비워두면 현재 비밀번호를 그대로 유지해.
+          </div>
           <input type="text" id="currentPwDisplay" readonly />
-          <input type="password" id="newPwInput" placeholder="새 비밀번호 (비워두면 잠금 해제)" style="margin-top:6px;" />
+          <input type="password" id="newPwInput" placeholder="새 비밀번호 (비워두면 그대로 유지)" style="margin-top:6px;" />
         </div>
 
         <div class="form-row">
@@ -649,6 +655,7 @@
     const DEVICE_KEY = "filmDeviceLabel";
     const SORT_KEY = "filmSortOption";
     const SORT_DIR_KEY = "filmSortDirection";
+    const DEFAULT_PASSWORD = "1234";
 
     let films = [];
     let editingId = null;
@@ -667,17 +674,17 @@
       }, 2000);
     }
 
-    function getCurrentPassword() {
-      return localStorage.getItem(PASSWORD_KEY) || "";
+    function getStoredPassword() {
+      return localStorage.getItem(PASSWORD_KEY); // 있을 수도 있고 없을 수도 있음
     }
-    function setCurrentPassword(pw) {
-      if (pw) {
-        localStorage.setItem(PASSWORD_KEY, pw);
-      } else {
-        localStorage.removeItem(PASSWORD_KEY);
-        sessionStorage.removeItem(UNLOCK_KEY);
-      }
+    function setStoredPassword(pw) {
+      if (pw) localStorage.setItem(PASSWORD_KEY, pw);
     }
+    function getEffectivePassword() {
+      // 저장된 값이 없으면 기본 비밀번호 1234
+      return getStoredPassword() || DEFAULT_PASSWORD;
+    }
+
     function getSortOption() {
       return localStorage.getItem(SORT_KEY) || "updated";
     }
@@ -796,8 +803,8 @@
           return {
             id: docSnap.id,
             ...data,
-            createdAt: data.createdAt ? data.createdAt.toMillis ? data.createdAt.toMillis() : data.createdAt : 0,
-            updatedAt: data.updatedAt ? data.updatedAt.toMillis ? data.updatedAt.toMillis() : data.updatedAt : 0
+            createdAt: data.createdAt ? (data.createdAt.toMillis ? data.createdAt.toMillis() : data.createdAt) : 0,
+            updatedAt: data.updatedAt ? (data.updatedAt.toMillis ? data.updatedAt.toMillis() : data.updatedAt) : 0
           };
         });
         renderList(currentSearchText);
@@ -1217,7 +1224,6 @@
             alert("형식이 올바르지 않은 파일입니다.");
             return;
           }
-          // 단순히 새로 추가 (id는 무시)
           for (const f of data) {
             const base = {
               productName: f.productName || "",
@@ -1246,9 +1252,11 @@
       document.getElementById("sortOptionSelect").value = getSortOption();
       document.getElementById("sortDirectionSelect").value = getSortDirection();
 
-      const pw = getCurrentPassword();
-      document.getElementById("currentPwDisplay").value =
-        pw ? "현재 비밀번호: 설정됨" : "현재 비밀번호: (없음)";
+      const storedPw = getStoredPassword();
+      const displayText = storedPw
+        ? "현재 비밀번호: 설정됨"
+        : `현재 비밀번호: ${DEFAULT_PASSWORD} (기본)`;
+      document.getElementById("currentPwDisplay").value = displayText;
       document.getElementById("newPwInput").value = "";
     }
     function closeSettings() {
@@ -1270,12 +1278,10 @@
           alert("비밀번호는 4글자 이상으로 설정해 줘.");
           return;
         }
-        setCurrentPassword(newPw);
-        showToast("비밀번호를 설정했어.");
+        setStoredPassword(newPw);
+        showToast("비밀번호를 변경했어.");
       } else {
-        // 입력 비워두면 잠금 해제
-        setCurrentPassword("");
-        showToast("비밀번호 잠금을 해제했어.");
+        showToast("비밀번호는 그대로 둘게.");
       }
 
       closeSettings();
@@ -1379,8 +1385,25 @@
     }
 
     // ===== 앱 초기화 =====
+    function initDeviceNameFirstTime() {
+      let label = getDeviceLabel();
+      if (!label) {
+        const guess = /Android/i.test(navigator.userAgent) ? "가은폰" : "";
+        const input = window.prompt(
+          "이 기기는 어떤 이름으로 기록할까?\n(예: 가은폰, 성규패드, 회사PC)",
+          guess
+        ) || "";
+        label = input.trim() || "이름없는 기기";
+        setDeviceLabel(label);
+        showToast(`이 기기를 "${label}" 로 저장했어.`);
+      } else {
+        setDeviceLabel(label); // 뱃지 업데이트
+      }
+    }
+
     function initApp() {
-      setDeviceLabel(getDeviceLabel());
+      initDeviceNameFirstTime();
+
       document.getElementById("sortOptionSelect").value = getSortOption();
       document.getElementById("sortDirectionSelect").value = getSortDirection();
 
@@ -1437,18 +1460,7 @@
       const pwBtn = document.getElementById("passwordBtn");
 
       function unlock() {
-        const setPw = getCurrentPassword();
-        if (!setPw) {
-          // 잠금 미사용
-          lockScreen.style.display = "none";
-          appContainer.style.display = "block";
-          if (!window._filmAppInitialized) {
-            initApp();
-            window._filmAppInitialized = true;
-          }
-          return;
-        }
-
+        const setPw = getEffectivePassword();
         const v = pwInput.value.trim();
         if (v === setPw) {
           sessionStorage.setItem(UNLOCK_KEY, "true");
@@ -1458,6 +1470,7 @@
             initApp();
             window._filmAppInitialized = true;
           }
+          showToast("잠금이 해제됐어.");
         } else {
           alert("비밀번호가 틀렸어.");
           pwInput.focus();
@@ -1466,7 +1479,7 @@
       }
 
       const unlocked = sessionStorage.getItem(UNLOCK_KEY) === "true";
-      if (unlocked || !getCurrentPassword()) {
+      if (unlocked) {
         lockScreen.style.display = "none";
         appContainer.style.display = "block";
         initApp();
@@ -1485,4 +1498,4 @@
     });
   </script>
 </body>
-            </html>
+</html>
