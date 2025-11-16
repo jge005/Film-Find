@@ -78,7 +78,7 @@
 
       --text-main: #e5e7eb;
       --text-sub: #9ca3af;
-      --text-muted: #6b7280;
+      --text-muted: #9ca3af;
       --label-color: #9ca3af;
 
       --primary-1: #6366f1;
@@ -181,7 +181,17 @@
       font-size: 14px;
       min-width: 0;
       background: rgba(255,255,255,0.9);
+      color: var(--text-main);
     }
+    .top-bar input::placeholder {
+      color: var(--text-muted);
+    }
+
+    [data-theme="night"] .top-bar input[type="text"] {
+      background: #020617;
+      border-color: #1f2937;
+    }
+
     .btn {
       padding: 8px 11px;
       border-radius: 999px;
@@ -205,6 +215,9 @@
       background: var(--primary-soft);
       color: #283252;
     }
+    [data-theme="night"] .btn-secondary {
+      color: #e5e7eb;
+    }
     .btn-danger {
       background: var(--danger-bg);
       color: var(--danger-text);
@@ -223,12 +236,19 @@
       justify-content: flex-end;
     }
 
-    /* 필름 개수 표시 */
+    /* 카운트 + 뷰 전환 */
+    .count-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
     .count-bar {
       font-size: 11px;
       color: var(--text-muted);
-      text-align: right;
-      margin-bottom: 10px;
+      text-align: left;
+      flex: 1;
     }
     .count-bar strong {
       color: var(--primary-1);
@@ -250,7 +270,7 @@
     .form-row label {
       font-size: 12px;
       margin-bottom: 4px;
-      color: #5a5f80;
+      color: var(--label-color);
     }
     .form-row input[type="text"],
     .form-row input[type="date"],
@@ -261,6 +281,15 @@
       border: 1px solid var(--card-border);
       font-size: 13px;
       background: #f9f9ff;
+      color: var(--text-main);
+    }
+    [data-theme="night"] .form-row input[type="text"],
+    [data-theme="night"] .form-row input[type="date"],
+    [data-theme="night"] .form-row input[type="password"],
+    [data-theme="night"] .form-row select {
+      background: #020617;
+      border-color: #1f2937;
+      color: #e5e7eb;
     }
     .form-row input[type="file"] {
       font-size: 12px;
@@ -278,6 +307,21 @@
       flex-direction: column;
       gap: 10px;
       margin-bottom: 24px;
+    }
+
+    /* 갤러리 모드 */
+    .list.gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .list.gallery .card {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .list.gallery .card img {
+      width: 100%;
+      height: 140px;
     }
 
     .card {
@@ -330,6 +374,7 @@
     }
     .card-row {
       margin-bottom: 2px;
+      color: var(--text-main);
     }
     .label {
       color: var(--label-color);
@@ -448,6 +493,16 @@
       font-size: 11px;
       color: #8a8fb0;
       margin-bottom: 6px;
+    }
+
+    [data-theme="night"] .settings-section-title {
+      color: #e5e7eb;
+    }
+    [data-theme="night"] .settings-help {
+      color: #9ca3af;
+    }
+    [data-theme="night"] .empty-text {
+      color: #9ca3af;
     }
 
     /* 이미지 전체 보기 */
@@ -589,6 +644,9 @@
       padding: 6px 2px 6px 20px;
       position: relative;
     }
+    [data-theme="night"] .history-row {
+      color: #e5e7eb;
+    }
     .history-row::before {
       content: "";
       position: absolute;
@@ -604,6 +662,9 @@
     .history-time {
       color: #6b6f90;
       font-size: 11px;
+    }
+    [data-theme="night"] .history-time {
+      color: #9ca3af;
     }
     .history-device {
       color: var(--primary-1);
@@ -623,16 +684,25 @@
       color: #111827;
       font-weight: 500;
     }
+    [data-theme="night"] .history-film {
+      color: #e5e7eb;
+    }
     .history-changes {
       font-size: 11px;
       color: #6b7280;
       margin-top: 2px;
+    }
+    [data-theme="night"] .history-changes {
+      color: #9ca3af;
     }
     .history-empty {
       font-size: 12px;
       color: #6b7280;
       padding-left: 20px;
       margin-top: 6px;
+    }
+    [data-theme="night"] .history-empty {
+      color: #9ca3af;
     }
 
     /* 로딩 스피너 */
@@ -757,7 +827,10 @@
         <input type="file" id="importFile" accept="application/json" style="display:none;" />
       </div>
 
-      <div id="countBar" class="count-bar">총 0개 필름</div>
+      <div class="count-wrap">
+        <div id="countBar" class="count-bar">총 0개 필름</div>
+        <button class="btn btn-secondary btn-small" id="viewToggleBtn">갤러리</button>
+      </div>
 
       <!-- 설정 카드 -->
       <div class="form-card" id="settingsCard" style="display:none;">
@@ -843,7 +916,7 @@
               <button type="button" class="toggle-btn" data-value="상">상</button>
               <button type="button" class="toggle-btn" data-value="하">하</button>
             </div>
-            <small style="font-size:11px; color:#7b7f9d;">
+            <small style="font-size:11px; color:var(--text-sub);">
               전면/배면 + 좌/우 + 상/하 조합 (예: 배면 좌상, 전면 우하 등)
             </small>
           </div>
@@ -862,7 +935,7 @@
           <div class="form-row">
             <label for="imageInput">필름 사진 (선택)</label>
             <input type="file" id="imageInput" accept="image/*" />
-            <small style="font-size:11px; color:#7b7f9d;">
+            <small style="font-size:11px; color:var(--text-sub);">
               · 새 필름에는 사진을 추가하고,<br/>
               · 수정 시 사진을 바꾸고 싶을 때만 다시 선택하세요.
             </small>
@@ -918,6 +991,7 @@
     const DEVICE_KEY = "filmDeviceLabel";
     const SORT_KEY = "filmSortOption";
     const THEME_KEY = "filmTheme";
+    const VIEW_KEY = "filmViewMode";
 
     let films = [];
     let currentSearchText = "";
@@ -929,6 +1003,8 @@
     const VISIBLE_STEP = 30;
     let visibleCount = VISIBLE_STEP;
     let loadingMore = false;
+
+    let currentViewMode = localStorage.getItem(VIEW_KEY) || "list";
 
     /* ---------- 유틸 (설정) ---------- */
     function getCurrentPassword() {
@@ -963,6 +1039,11 @@
         root.setAttribute("data-theme", theme);
       }
     }
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      localStorage.setItem(VIEW_KEY, mode);
+      applyViewMode();
+    }
 
     function formatDate(iso) {
       if (!iso) return "-";
@@ -987,7 +1068,6 @@
       unsubscribeFilms = db.collection(FILM_COLLECTION).onSnapshot(
         (snapshot) => {
           films = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          // 새로운 데이터가 들어와도 visibleCount는 유지하되, 최대값은 전체 개수
           if (!currentSearchText && visibleCount < VISIBLE_STEP) {
             visibleCount = Math.min(VISIBLE_STEP, films.length);
           }
@@ -1001,7 +1081,6 @@
     }
 
     /* ---------- 히스토리 ---------- */
-    // changes: 변경된 항목 이름 배열 (예: ["제품 이름","필름 위치"])
     async function addHistory(action, film, changes = []) {
       try {
         const entry = {
@@ -1011,7 +1090,7 @@
           productName: film.productName || "",
           deviceName: getDeviceLabel() || "",
           timestamp: Date.now(),
-          changes, // 배열 그대로 저장
+          changes,
         };
         await db.collection(HISTORY_COLLECTION).add(entry);
         if (historyLoaded) {
@@ -1096,11 +1175,15 @@
 
     function openHistoryCard() {
       const card = document.getElementById("historyCard");
-      card.style.display = "block";
-      if (!historyLoaded) {
-        loadHistory();
-      } else {
-        renderHistory();
+      const isOpen = card.style.display === "block";
+      closeAllPanels();
+      if (!isOpen) {
+        card.style.display = "block";
+        if (!historyLoaded) {
+          loadHistory();
+        } else {
+          renderHistory();
+        }
       }
     }
     function closeHistoryCard() {
@@ -1168,6 +1251,15 @@
       document.getElementById("productName").focus();
     }
 
+    function toggleFormNew() {
+      const card = document.getElementById("formCard");
+      const isOpen = card.style.display === "block";
+      closeAllPanels();
+      if (!isOpen) {
+        openFormNew();
+      }
+    }
+
     function openFormCopyFrom(id) {
       const film = films.find((f) => f.id === id);
       if (!film) return;
@@ -1178,6 +1270,7 @@
       document.getElementById("location").value = film.location || "";
       document.getElementById("lastUsed").value = "";
       setPlateInfoToForm(film.plateInfo || "");
+      closeAllPanels();
       document.getElementById("formCard").style.display = "block";
       document.getElementById("productName").focus();
     }
@@ -1185,6 +1278,7 @@
     function openFormForEdit(id) {
       const film = films.find((f) => f.id === id);
       if (!film) return;
+      closeAllPanels();
       document.getElementById("filmId").value = film.id;
       document.getElementById("productName").value = film.productName || "";
       document.getElementById("filmNumber").value = film.filmNumber || "";
@@ -1237,7 +1331,6 @@
         return combined.toLowerCase().includes(text);
       });
 
-      // 정렬
       const sortOpt = getSortOption();
       filtered = filtered.slice().sort((a, b) => {
         if (sortOpt === "name") {
@@ -1255,10 +1348,8 @@
         }
       });
 
-      // 카운트 바 업데이트
       updateCountBar(filtered.length, films.length, !!text);
 
-      // 필터 없을 때만 무한스크롤 적용
       let toRender = filtered;
       if (!text) {
         if (!visibleCount) {
@@ -1387,6 +1478,8 @@
         card.appendChild(content);
         listEl.appendChild(card);
       });
+
+      applyViewMode(); // 렌더링 후에도 뷰 모드 유지
     }
 
     /* ---------- 이미지 압축 ---------- */
@@ -1493,7 +1586,6 @@
           if (searchInput) searchInput.value = "";
           currentSearchText = "";
           closeForm();
-          // 저장 후에는 맨 위부터 다시 보여줘
           visibleCount = VISIBLE_STEP;
           window.scrollTo({ top: 0, behavior: "smooth" });
         } catch (e) {
@@ -1560,13 +1652,17 @@
     /* ---------- 설정 ---------- */
     function openSettings() {
       const card = document.getElementById("settingsCard");
-      card.style.display = "block";
-      document.getElementById("deviceNameInput").value = getDeviceLabel();
-      document.getElementById("sortOptionSelect").value = getSortOption();
-      document.getElementById("themeSelect").value = getTheme();
-      document.getElementById("currentPwInput").value = "";
-      document.getElementById("newPwInput").value = "";
-      document.getElementById("newPwConfirmInput").value = "";
+      const isOpen = card.style.display === "block";
+      closeAllPanels();
+      if (!isOpen) {
+        card.style.display = "block";
+        document.getElementById("deviceNameInput").value = getDeviceLabel();
+        document.getElementById("sortOptionSelect").value = getSortOption();
+        document.getElementById("themeSelect").value = getTheme();
+        document.getElementById("currentPwInput").value = "";
+        document.getElementById("newPwInput").value = "";
+        document.getElementById("newPwConfirmInput").value = "";
+      }
     }
     function closeSettings() {
       document.getElementById("settingsCard").style.display = "none";
@@ -1700,8 +1796,6 @@
             viewerTransX = touch.clientX - panStartX;
             viewerTransY = touch.clientY - panStartY;
             updateViewerTransform();
-          } else {
-            // 스와이프 다운 제스처 시 전체 이미지 약간 같이 내려가는 느낌 줄 수도 있음 (선택)
           }
         }
       }, { passive: false });
@@ -1713,7 +1807,6 @@
         }
         if (e.touches.length === 0) {
           isPanning = false;
-          // 스와이프 다운으로 닫기
           if (swipeDeltaY > 80 && Math.abs(swipeDeltaY) > 40) {
             closeImageViewer();
           }
@@ -1733,14 +1826,12 @@
         const vh = window.innerHeight || document.documentElement.clientHeight;
         const fullHeight = document.documentElement.scrollHeight;
 
-        // 맨 위로 버튼 표시
         if (scrollY > 200) {
           scrollTopBtn.classList.add("show");
         } else {
           scrollTopBtn.classList.remove("show");
         }
 
-        // 검색 중이거나 이미 로딩 중이면 무한스크롤 X
         if (currentSearchText || loadingMore) return;
         if (visibleCount >= films.length) return;
 
@@ -1761,26 +1852,44 @@
       });
     }
 
+    /* ---------- 패널 공통 ---------- */
+    function closeAllPanels() {
+      document.getElementById("settingsCard").style.display = "none";
+      document.getElementById("historyCard").style.display = "none";
+      document.getElementById("formCard").style.display = "none";
+    }
+
+    /* ---------- 뷰 모드 ---------- */
+    function applyViewMode() {
+      const list = document.getElementById("list");
+      const btn = document.getElementById("viewToggleBtn");
+      if (!list || !btn) return;
+      if (currentViewMode === "gallery") {
+        list.classList.add("gallery");
+        btn.textContent = "리스트";
+      } else {
+        list.classList.remove("gallery");
+        btn.textContent = "갤러리";
+      }
+    }
+
     /* ---------- 앱 초기화 ---------- */
     function initAppAfterUnlock() {
-      // 테마 적용
       setTheme(getTheme());
       const themeSelect = document.getElementById("themeSelect");
       if (themeSelect) themeSelect.value = getTheme();
 
-      // 기기 이름 표시
       setDeviceLabel(getDeviceLabel());
 
       startFilmsListener();
       renderList();
 
-      document.getElementById("newFilmBtn").addEventListener("click", openFormNew);
+      document.getElementById("newFilmBtn").addEventListener("click", toggleFormNew);
       document.getElementById("cancelBtn").addEventListener("click", closeForm);
       document.getElementById("filmForm").addEventListener("submit", saveFilmFromForm);
       document.getElementById("saveBtn").addEventListener("click", saveFilmFromForm);
       document.getElementById("searchInput").addEventListener("input", (e) => {
         currentSearchText = e.target.value;
-        // 검색할 때는 전체 보여주도록 visibleCount는 신경 안 씀
         renderList(e.target.value);
       });
       document.getElementById("setTodayBtn").addEventListener("click", () => {
@@ -1816,6 +1925,11 @@
       document.getElementById("closeViewerBtn").addEventListener("click", closeImageViewer);
       initImageViewerTouch();
       initScrollHandlers();
+
+      document.getElementById("viewToggleBtn").addEventListener("click", () => {
+        setViewMode(currentViewMode === "gallery" ? "list" : "gallery");
+      });
+      applyViewMode();
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -1824,7 +1938,6 @@
       const pwInput = document.getElementById("passwordInput");
       const pwBtn = document.getElementById("passwordBtn");
 
-      // 초기 테마 적용 (잠금 화면에도)
       setTheme(getTheme());
 
       function unlock() {
@@ -1838,7 +1951,6 @@
             window._filmAppInitialized = true;
             initAppAfterUnlock();
 
-            // 기기 이름 없는 경우 최초 한 번 모달
             if (!getDeviceLabel()) {
               const dm = document.getElementById("deviceModal");
               dm.style.display = "flex";
@@ -1876,7 +1988,6 @@
         }
       });
 
-      // 기기 모달
       const deviceModal = document.getElementById("deviceModal");
       const deviceInput = document.getElementById("deviceModalInput");
       const deviceSkip = document.getElementById("deviceModalSkip");
@@ -1899,4 +2010,4 @@
     });
   </script>
 </body>
-            </html>
+  </html>
