@@ -563,6 +563,18 @@
       background: rgba(15,23,42,0.8);
       color: #f9fafb;
     }
+    .viewer-rotate-btn {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      border-radius: 999px;
+      border: none;
+      padding: 6px 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background: rgba(15,23,42,0.85);
+      color: #f9fafb;
+    }
 
     /* 기기 이름 최초 입력 모달 */
     .device-modal {
@@ -827,6 +839,7 @@
     <div class="image-viewer-inner">
       <img id="viewerImage" src="" alt="필름 이미지" />
       <button id="closeViewerBtn" class="viewer-close-btn">✕</button>
+      <button id="rotateViewerBtn" class="viewer-rotate-btn">↻</button>
     </div>
   </div>
 
@@ -848,7 +861,7 @@
 
     <div class="app-shell">
       <div class="top-bar">
-        <input type="text" id="searchInput" placeholder="제품명 / 필름번호 / 제판타입 / 위치 / 제판방법 검색" />
+        <input type="text" id="searchInput" placeholder="제품명 / 필름번호 / 제판타입 / 위치 / 제판방법 / MESH 검색" />
         <button class="btn btn-primary" id="newFilmBtn">+ 새 필름</button>
       </div>
 
@@ -933,6 +946,11 @@
           <div class="form-row">
             <label for="method">제판 타입</label>
             <input type="text" id="method" placeholder="예: 바탕, 문자, 스모그 등" />
+          </div>
+
+          <div class="form-row">
+            <label for="mesh">MESH (메쉬)</label>
+            <input type="text" id="mesh" placeholder="예: 120T, 150T 등" />
           </div>
 
           <div class="form-row">
@@ -1257,6 +1275,7 @@
       document.getElementById("productName").value = "";
       document.getElementById("filmNumber").value = "";
       document.getElementById("method").value = "";
+      document.getElementById("mesh").value = "";
       document.getElementById("location").value = "";
       document.getElementById("lastUsed").value = "";
       document.getElementById("imageInput").value = "";
@@ -1277,6 +1296,7 @@
       const last = getLastFilmForDefaults();
       if (last) {
         document.getElementById("method").value = last.method || "";
+        document.getElementById("mesh").value = last.mesh || "";
         document.getElementById("location").value = last.location || "";
         setPlateInfoToForm(last.plateInfo || "");
       }
@@ -1300,6 +1320,7 @@
       document.getElementById("productName").value = film.productName || "";
       document.getElementById("filmNumber").value = "";
       document.getElementById("method").value = film.method || "";
+      document.getElementById("mesh").value = film.mesh || "";
       document.getElementById("location").value = film.location || "";
       document.getElementById("lastUsed").value = "";
       setPlateInfoToForm(film.plateInfo || "");
@@ -1316,6 +1337,7 @@
       document.getElementById("productName").value = film.productName || "";
       document.getElementById("filmNumber").value = film.filmNumber || "";
       document.getElementById("method").value = film.method || "";
+      document.getElementById("mesh").value = film.mesh || "";
       document.getElementById("location").value = film.location || "";
       document.getElementById("lastUsed").value = film.lastUsed || "";
       document.getElementById("imageInput").value = "";
@@ -1357,6 +1379,8 @@
           (f.filmNumber || "") +
           " " +
           (f.method || "") +
+          " " +
+          (f.mesh || "") +
           " " +
           (f.location || "") +
           " " +
@@ -1432,6 +1456,11 @@
         rowMethod.className = "card-row";
         rowMethod.innerHTML = '<span class="label">제판 타입</span>' + (film.method || "-");
         content.appendChild(rowMethod);
+
+        const rowMesh = document.createElement("div");
+        rowMesh.className = "card-row";
+        rowMesh.innerHTML = '<span class="label">MESH</span>' + (film.mesh || "-");
+        content.appendChild(rowMesh);
 
         const rowPlate = document.createElement("div");
         rowPlate.className = "card-row";
@@ -1550,6 +1579,7 @@
       if (oldData.productName !== newData.productName) changes.push("제품 이름");
       if (oldData.filmNumber !== newData.filmNumber) changes.push("필름 번호");
       if (oldData.method !== newData.method) changes.push("제판 타입");
+      if (oldData.mesh !== newData.mesh) changes.push("MESH");
       if (oldData.location !== newData.location) changes.push("필름 위치");
       if ((oldData.lastUsed || "") !== (newData.lastUsed || "")) changes.push("마지막 사용일");
       if ((oldData.plateInfo || "") !== (newData.plateInfo || "")) changes.push("제판 방법");
@@ -1565,6 +1595,7 @@
       const productName = document.getElementById("productName").value.trim();
       const filmNumber = document.getElementById("filmNumber").value.trim();
       const method = document.getElementById("method").value.trim();
+      const mesh = document.getElementById("mesh").value.trim();
       const location = document.getElementById("location").value.trim();
       const lastUsed = document.getElementById("lastUsed").value || "";
       const plateInfo = getPlateInfoFromForm();
@@ -1581,6 +1612,7 @@
         productName,
         filmNumber,
         method,
+        mesh,
         location,
         lastUsed,
         plateInfo,
@@ -1741,12 +1773,13 @@
       showToast(msg);
     }
 
-    /* ---------- 이미지 뷰어 (핀치 줌 + 스와이프 다운 닫기) ---------- */
+    /* ---------- 이미지 뷰어 (핀치 줌 + 스와이프 다운 닫기 + 회전) ---------- */
     let viewerScale = 1;
     let viewerStartDist = 0;
     let viewerLastScale = 1;
     let viewerTransX = 0;
     let viewerTransY = 0;
+    let viewerRotate = 0;
     let panStartX = 0;
     let panStartY = 0;
     let isPanning = false;
@@ -1759,15 +1792,17 @@
       viewerTransY = 0;
       viewerStartDist = 0;
       viewerLastScale = 1;
+      viewerRotate = 0;
       isPanning = false;
       swipeStartY = 0;
       swipeDeltaY = 0;
       const img = document.getElementById("viewerImage");
-      img.style.transform = "translate(0px, 0px) scale(1)";
+      img.style.transform = "translate(0px, 0px) scale(1) rotate(0deg)";
     }
     function updateViewerTransform() {
       const img = document.getElementById("viewerImage");
-      img.style.transform = "translate(" + viewerTransX + "px, " + viewerTransY + "px) scale(" + viewerScale + ")";
+      img.style.transform =
+        "translate(" + viewerTransX + "px, " + viewerTransY + "px) scale(" + viewerScale + ") rotate(" + viewerRotate + "deg)";
     }
     function openImageViewer(src) {
       if (!src) return;
@@ -1956,6 +1991,12 @@
       document.getElementById("closeHistoryBtn").addEventListener("click", closeHistoryCard);
 
       document.getElementById("closeViewerBtn").addEventListener("click", closeImageViewer);
+      const rotateBtn = document.getElementById("rotateViewerBtn");
+      rotateBtn.addEventListener("click", () => {
+        viewerRotate = (viewerRotate + 90) % 360;
+        updateViewerTransform();
+      });
+
       initImageViewerTouch();
       initScrollHandlers();
 
