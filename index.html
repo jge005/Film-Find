@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f9f4ff">
+  <meta name="theme-color" content="#f9f4ff">
   <meta charset="UTF-8" />
   <title>FILM FIND - 필름 관리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -563,18 +563,6 @@
       background: rgba(15,23,42,0.8);
       color: #f9fafb;
     }
-    .viewer-rotate-btn {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      border-radius: 999px;
-      border: none;
-      padding: 6px 10px;
-      font-size: 16px;
-      cursor: pointer;
-      background: rgba(15,23,42,0.85);
-      color: #f9fafb;
-    }
 
     /* 기기 이름 최초 입력 모달 */
     .device-modal {
@@ -839,7 +827,6 @@
     <div class="image-viewer-inner">
       <img id="viewerImage" src="" alt="필름 이미지" />
       <button id="closeViewerBtn" class="viewer-close-btn">✕</button>
-      <button id="rotateViewerBtn" class="viewer-rotate-btn">↻</button>
     </div>
   </div>
 
@@ -948,9 +935,10 @@
             <input type="text" id="method" placeholder="예: 바탕, 문자, 스모그 등" />
           </div>
 
+          <!-- MESH 항목 추가 -->
           <div class="form-row">
-            <label for="mesh">MESH (메쉬)</label>
-            <input type="text" id="mesh" placeholder="예: 120T, 150T 등" />
+            <label for="mesh">MESH</label>
+            <input type="text" id="mesh" placeholder="예: 180T, 200메쉬 등" />
           </div>
 
           <div class="form-row">
@@ -990,6 +978,14 @@
               · 새 필름에는 사진을 추가하고,<br/>
               · 수정 시 사진을 바꾸고 싶을 때만 다시 선택하세요.
             </small>
+
+            <!-- 사진 미리보기 + 회전 버튼 -->
+            <div id="imagePreviewWrapper" style="margin-top:8px; display:none; align-items:center; gap:6px;">
+              <img id="imagePreview" alt="미리보기"
+                   style="width:70px; height:70px; border-radius:10px; object-fit:cover; background:#eef1ff;" />
+              <button type="button" class="btn btn-secondary btn-small" id="rotateLeftBtn">⟲ 90°</button>
+              <button type="button" class="btn btn-secondary btn-small" id="rotateRightBtn">⟳ 90°</button>
+            </div>
           </div>
 
           <div class="form-actions">
@@ -1057,6 +1053,10 @@
 
     let currentViewMode = localStorage.getItem(VIEW_KEY) || "list";
 
+    /* 이미지 선택/회전 상태 */
+    let currentSelectedImageDataUrl = null;
+    let currentImageRotation = 0; // degree 단위 (0, 90, 180, 270)
+
     /* ---------- 유틸 (설정) ---------- */
     function getCurrentPassword() {
       return localStorage.getItem(PASSWORD_KEY) || DEFAULT_PASSWORD;
@@ -1109,6 +1109,27 @@
       setTimeout(() => {
         toast.classList.remove("show");
       }, 1800);
+    }
+
+    /* ---------- 이미지 미리보기 & 회전 ---------- */
+    function resetImagePreview() {
+      const wrapper = document.getElementById("imagePreviewWrapper");
+      const img = document.getElementById("imagePreview");
+      currentSelectedImageDataUrl = null;
+      currentImageRotation = 0;
+      if (img) {
+        img.src = "";
+        img.style.transform = "rotate(0deg)";
+      }
+      if (wrapper) {
+        wrapper.style.display = "none";
+      }
+    }
+
+    function applyPreviewRotation() {
+      const img = document.getElementById("imagePreview");
+      if (!img) return;
+      img.style.transform = "rotate(" + currentImageRotation + "deg)";
     }
 
     /* ---------- Firestore 실시간 동기화 ---------- */
@@ -1280,6 +1301,7 @@
       document.getElementById("lastUsed").value = "";
       document.getElementById("imageInput").value = "";
       clearPlateInfoForm();
+      resetImagePreview();
     }
 
     function getLastFilmForDefaults() {
@@ -1333,6 +1355,7 @@
       const film = films.find((f) => f.id === id);
       if (!film) return;
       closeAllPanels();
+      resetImagePreview();
       document.getElementById("filmId").value = film.id;
       document.getElementById("productName").value = film.productName || "";
       document.getElementById("filmNumber").value = film.filmNumber || "";
@@ -1544,22 +1567,34 @@
       applyViewMode(); // 렌더링 후에도 뷰 모드 유지
     }
 
-    /* ---------- 이미지 압축 ---------- */
-    function compressImage(dataUrl, callback) {
+    /* ---------- 이미지 압축 (회전 포함) ---------- */
+    function compressImage(dataUrl, rotationDeg, callback) {
       const img = new Image();
       img.onload = function () {
         const maxSize = 700;
         let w = img.width;
         let h = img.height;
         const ratio = Math.min(maxSize / w, maxSize / h, 1);
-        w = Math.round(w * ratio);
-        h = Math.round(h * ratio);
+        let drawW = Math.round(w * ratio);
+        let drawH = Math.round(h * ratio);
+
+        const rot = ((rotationDeg % 360) + 360) % 360;
+        let canvasW = drawW;
+        let canvasH = drawH;
+        if (rot === 90 || rot === 270) {
+          canvasW = drawH;
+          canvasH = drawW;
+        }
 
         const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
+        canvas.width = canvasW;
+        canvas.height = canvasH;
         const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, w, h);
+
+        ctx.translate(canvasW / 2, canvasH / 2);
+        ctx.rotate((rot * Math.PI) / 180);
+        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+
         const compressed = canvas.toDataURL("image/jpeg", 0.7);
         callback(compressed);
       };
@@ -1579,7 +1614,7 @@
       if (oldData.productName !== newData.productName) changes.push("제품 이름");
       if (oldData.filmNumber !== newData.filmNumber) changes.push("필름 번호");
       if (oldData.method !== newData.method) changes.push("제판 타입");
-      if (oldData.mesh !== newData.mesh) changes.push("MESH");
+      if ((oldData.mesh || "") !== (newData.mesh || "")) changes.push("MESH");
       if (oldData.location !== newData.location) changes.push("필름 위치");
       if ((oldData.lastUsed || "") !== (newData.lastUsed || "")) changes.push("마지막 사용일");
       if ((oldData.plateInfo || "") !== (newData.plateInfo || "")) changes.push("제판 방법");
@@ -1660,16 +1695,23 @@
       }
 
       if (imageInput.files && imageInput.files[0]) {
-        const file = imageInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const originalDataUrl = e.target.result;
-          compressImage(originalDataUrl, function (compressedDataUrl) {
+        // 새 사진을 선택한 경우: 현재 선택된 dataUrl과 회전값 기준으로 저장
+        if (!currentSelectedImageDataUrl) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const originalDataUrl = e.target.result;
+            compressImage(originalDataUrl, currentImageRotation, function (compressedDataUrl) {
+              finalizeSave(compressedDataUrl);
+            });
+          };
+          reader.readAsDataURL(imageInput.files[0]);
+        } else {
+          compressImage(currentSelectedImageDataUrl, currentImageRotation, function (compressedDataUrl) {
             finalizeSave(compressedDataUrl);
           });
-        };
-        reader.readAsDataURL(file);
+        }
       } else {
+        // 사진을 건드리지 않은 경우: 기존 이미지 유지 (수정 시) 또는 빈 값 (신규)
         finalizeSave(id && existing ? null : "");
       }
     }
@@ -1773,13 +1815,12 @@
       showToast(msg);
     }
 
-    /* ---------- 이미지 뷰어 (핀치 줌 + 스와이프 다운 닫기 + 회전) ---------- */
+    /* ---------- 이미지 뷰어 (핀치 줌 + 스와이프 다운 닫기) ---------- */
     let viewerScale = 1;
     let viewerStartDist = 0;
     let viewerLastScale = 1;
     let viewerTransX = 0;
     let viewerTransY = 0;
-    let viewerRotate = 0;
     let panStartX = 0;
     let panStartY = 0;
     let isPanning = false;
@@ -1792,17 +1833,15 @@
       viewerTransY = 0;
       viewerStartDist = 0;
       viewerLastScale = 1;
-      viewerRotate = 0;
       isPanning = false;
       swipeStartY = 0;
       swipeDeltaY = 0;
       const img = document.getElementById("viewerImage");
-      img.style.transform = "translate(0px, 0px) scale(1) rotate(0deg)";
+      img.style.transform = "translate(0px, 0px) scale(1)";
     }
     function updateViewerTransform() {
       const img = document.getElementById("viewerImage");
-      img.style.transform =
-        "translate(" + viewerTransX + "px, " + viewerTransY + "px) scale(" + viewerScale + ") rotate(" + viewerRotate + "deg)";
+      img.style.transform = "translate(" + viewerTransX + "px, " + viewerTransY + "px) scale(" + viewerScale + ")";
     }
     function openImageViewer(src) {
       if (!src) return;
@@ -1991,12 +2030,6 @@
       document.getElementById("closeHistoryBtn").addEventListener("click", closeHistoryCard);
 
       document.getElementById("closeViewerBtn").addEventListener("click", closeImageViewer);
-      const rotateBtn = document.getElementById("rotateViewerBtn");
-      rotateBtn.addEventListener("click", () => {
-        viewerRotate = (viewerRotate + 90) % 360;
-        updateViewerTransform();
-      });
-
       initImageViewerTouch();
       initScrollHandlers();
 
@@ -2004,6 +2037,57 @@
         setViewMode(currentViewMode === "gallery" ? "list" : "gallery");
       });
       applyViewMode();
+
+      // 이미지 선택 & 회전 이벤트
+      const imageInputEl = document.getElementById("imageInput");
+      const rotateLeftBtn = document.getElementById("rotateLeftBtn");
+      const rotateRightBtn = document.getElementById("rotateRightBtn");
+      const previewWrapper = document.getElementById("imagePreviewWrapper");
+      const previewImg = document.getElementById("imagePreview");
+
+      if (imageInputEl) {
+        imageInputEl.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) {
+            resetImagePreview();
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            currentSelectedImageDataUrl = ev.target.result;
+            currentImageRotation = 0;
+            if (previewImg) {
+              previewImg.src = currentSelectedImageDataUrl;
+              previewImg.style.transform = "rotate(0deg)";
+            }
+            if (previewWrapper) {
+              previewWrapper.style.display = "flex";
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      if (rotateLeftBtn) {
+        rotateLeftBtn.addEventListener("click", () => {
+          if (!currentSelectedImageDataUrl) {
+            showToast("먼저 사진을 선택해 줘.");
+            return;
+          }
+          currentImageRotation = (currentImageRotation - 90) % 360;
+          applyPreviewRotation();
+        });
+      }
+      if (rotateRightBtn) {
+        rotateRightBtn.addEventListener("click", () => {
+          if (!currentSelectedImageDataUrl) {
+            showToast("먼저 사진을 선택해 줘.");
+            return;
+          }
+          currentImageRotation = (currentImageRotation + 90) % 360;
+          applyPreviewRotation();
+        });
+      }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
