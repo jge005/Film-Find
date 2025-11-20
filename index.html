@@ -848,7 +848,7 @@
 
     <div class="app-shell">
       <div class="top-bar">
-        <input type="text" id="searchInput" placeholder="제품명 / 필름번호 / 제판타입 / 위치 / 제판방법 / MESH 검색" />
+        <input type="text" id="searchInput" placeholder="제품명 / 필름번호 / 제판타입 / 위치 / 제판방법 / MESH / 요청 인쇄자 검색" />
         <button class="btn btn-primary" id="newFilmBtn">+ 새 필름</button>
       </div>
 
@@ -964,6 +964,27 @@
             <label for="location">필름 위치</label>
             <input type="text" id="location" placeholder="예: A-3 서랍, 4층 우측 랙 등" />
           </div>
+
+          <!-- 요청 인쇄자 -->
+          <div class="form-row">
+            <label for="requestPrinter">요청 인쇄자</label>
+            <select id="requestPrinter">
+              <option value="">선택 안 함</option>
+              <option value="이창민 부장님">이창민 부장님</option>
+              <option value="고광운 과장님">고광운 과장님</option>
+              <option value="김규헌 차장님">김규헌 차장님</option>
+              <option value="박재현 대리님">박재현 대리님</option>
+              <option value="조영빈 대리님">조영빈 대리님</option>
+              <option value="김현규 대리님">김현규 대리님</option>
+              <option value="장진우 대리님">장진우 대리님</option>
+              <option value="김미은 주임님">김미은 주임님</option>
+              <option value="이수안 사원님">이수안 사원님</option>
+              <option value="박지안 사원님">박지안 사원님</option>
+              <option value="김인선 사원님">김인선 사원님</option>
+              <option value="김용원 사원님">김용원 사원님</option>
+            </select>
+          </div>
+
           <div class="form-row">
             <label for="lastUsed">마지막 사용일</label>
             <div style="display:flex; gap:6px;">
@@ -1298,6 +1319,7 @@
       document.getElementById("method").value = "";
       document.getElementById("mesh").value = "";
       document.getElementById("location").value = "";
+      document.getElementById("requestPrinter").value = "";
       document.getElementById("lastUsed").value = "";
       document.getElementById("imageInput").value = "";
       clearPlateInfoForm();
@@ -1320,6 +1342,7 @@
         document.getElementById("method").value = last.method || "";
         document.getElementById("mesh").value = last.mesh || "";
         document.getElementById("location").value = last.location || "";
+        document.getElementById("requestPrinter").value = last.requestPrinter || "";
         setPlateInfoToForm(last.plateInfo || "");
       }
       document.getElementById("formCard").style.display = "block";
@@ -1344,6 +1367,7 @@
       document.getElementById("method").value = film.method || "";
       document.getElementById("mesh").value = film.mesh || "";
       document.getElementById("location").value = film.location || "";
+      document.getElementById("requestPrinter").value = film.requestPrinter || "";
       document.getElementById("lastUsed").value = "";
       setPlateInfoToForm(film.plateInfo || "");
       closeAllPanels();
@@ -1362,6 +1386,7 @@
       document.getElementById("method").value = film.method || "";
       document.getElementById("mesh").value = film.mesh || "";
       document.getElementById("location").value = film.location || "";
+      document.getElementById("requestPrinter").value = film.requestPrinter || "";
       document.getElementById("lastUsed").value = film.lastUsed || "";
       document.getElementById("imageInput").value = "";
       setPlateInfoToForm(film.plateInfo || "");
@@ -1407,7 +1432,9 @@
           " " +
           (f.location || "") +
           " " +
-          (f.plateInfo || "");
+          (f.plateInfo || "") +
+          " " +
+          (f.requestPrinter || "");
         return combined.toLowerCase().includes(text);
       });
 
@@ -1494,6 +1521,11 @@
         rowLoc.className = "card-row";
         rowLoc.innerHTML = '<span class="label">필름 위치</span>' + (film.location || "-");
         content.appendChild(rowLoc);
+
+        const rowReq = document.createElement("div");
+        rowReq.className = "card-row";
+        rowReq.innerHTML = '<span class="label">요청 인쇄자</span>' + (film.requestPrinter || "-");
+        content.appendChild(rowReq);
 
         const footer = document.createElement("div");
         footer.className = "card-footer";
@@ -1618,6 +1650,7 @@
       if (oldData.location !== newData.location) changes.push("필름 위치");
       if ((oldData.lastUsed || "") !== (newData.lastUsed || "")) changes.push("마지막 사용일");
       if ((oldData.plateInfo || "") !== (newData.plateInfo || "")) changes.push("제판 방법");
+      if ((oldData.requestPrinter || "") !== (newData.requestPrinter || "")) changes.push("요청 인쇄자");
       if (imageChanged) changes.push("이미지");
       if (!changes.length) changes.push("기타 수정");
       return changes;
@@ -1632,6 +1665,7 @@
       const method = document.getElementById("method").value.trim();
       const mesh = document.getElementById("mesh").value.trim();
       const location = document.getElementById("location").value.trim();
+      const requestPrinter = document.getElementById("requestPrinter").value;
       const lastUsed = document.getElementById("lastUsed").value || "";
       const plateInfo = getPlateInfoFromForm();
       const imageInput = document.getElementById("imageInput");
@@ -1651,6 +1685,7 @@
         location,
         lastUsed,
         plateInfo,
+        requestPrinter,
       };
 
       async function finalizeSave(imageDataUrl) {
