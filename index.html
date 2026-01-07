@@ -1,11 +1,10 @@
-Html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f9f4ff">
   <meta charset="UTF-8" />
-  <title>FILM FIND - 필름/판 관리</title>
+  <title>FILM FIND - 필름 관리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- 폰트 (Pretendard) -->
@@ -13,6 +12,7 @@ Html
 
   <style>
     :root {
+      /* 기본(라벤더) 테마 */
       --bg-gradient: linear-gradient(145deg, #f9fafb, #f4f0ff, #fdf2f8);
       --card-bg: rgba(255,255,255,0.98);
       --card-border: #e3e6ff;
@@ -43,6 +43,7 @@ Html
       --spinner-glow: rgba(129, 140, 248, 0.7);
     }
 
+    /* 민트 테마 */
     [data-theme="mint"] {
       --bg-gradient: linear-gradient(145deg, #f0fdfa, #e0f2fe, #fefce8);
       --primary-1: #34d399;
@@ -56,6 +57,7 @@ Html
       --spinner-glow: rgba(45, 212, 191, 0.7);
     }
 
+    /* 피치 테마 */
     [data-theme="peach"] {
       --bg-gradient: linear-gradient(145deg, #fff7ed, #fee2e2, #fef9c3);
       --primary-1: #fb7185;
@@ -69,6 +71,7 @@ Html
       --spinner-glow: rgba(248, 113, 113, 0.75);
     }
 
+    /* 나이트(어두운) 테마 */
     [data-theme="night"] {
       --bg-gradient: radial-gradient(circle at top, #020617, #020617, #111827);
       --card-bg: rgba(15,23,42,0.98);
@@ -112,8 +115,12 @@ Html
       color: var(--text-main);
     }
 
-    .app-shell { max-width: 720px; margin: 0 auto; }
+    .app-shell {
+      max-width: 720px;
+      margin: 0 auto;
+    }
 
+    /* 상단 헤더 */
     .app-header {
       max-width: 720px;
       margin: 0 auto 6px;
@@ -122,10 +129,21 @@ Html
       justify-content: space-between;
       gap: 8px;
     }
-    .title-wrap { display: flex; flex-direction: column; gap: 2px; }
-    .app-title { font-size: 20px; font-weight: 700; letter-spacing: 2px; color: var(--text-main); }
-    .app-subtitle { font-size: 11px; color: var(--text-sub); }
-
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .app-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-main);
+    }
+    .app-subtitle {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
     .device-badge {
       font-size: 11px;
       padding: 4px 12px;
@@ -133,14 +151,14 @@ Html
       background: var(--pill-bg);
       color: var(--text-sub);
       white-space: nowrap;
-      max-width: 190px;
+      max-width: 150px;
       text-overflow: ellipsis;
       overflow: hidden;
       border: 1px solid var(--pill-border);
       box-shadow: 0 0 8px rgba(129, 140, 248, 0.28);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       justify-content: flex-end;
     }
     .device-dot {
@@ -149,14 +167,6 @@ Html
       border-radius: 999px;
       background: var(--primary-1);
       box-shadow: 0 0 6px rgba(129, 140, 248, 0.9);
-    }
-    .mode-badge {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--chip-bg);
-      color: var(--chip-text);
-      border: 1px solid var(--card-border);
     }
 
     .top-bar {
@@ -175,8 +185,14 @@ Html
       background: rgba(255,255,255,0.9);
       color: var(--text-main);
     }
-    .top-bar input::placeholder { color: var(--text-muted); }
-    [data-theme="night"] .top-bar input[type="text"] { background: #020617; border-color: #1f2937; }
+    .top-bar input::placeholder {
+      color: var(--text-muted);
+    }
+
+    [data-theme="night"] .top-bar input[type="text"] {
+      background: #020617;
+      border-color: #1f2937;
+    }
 
     .btn {
       padding: 8px 11px;
@@ -187,16 +203,32 @@ Html
       white-space: nowrap;
       transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.1s ease, opacity 0.1s ease;
     }
-    .btn:active { transform: translateY(1px); box-shadow: none; opacity: 0.92; }
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+      opacity: 0.92;
+    }
     .btn-primary {
       background: linear-gradient(135deg, var(--primary-1), var(--primary-2));
       color: white;
       box-shadow: 0 4px 10px rgba(127,157,255,0.35);
     }
-    .btn-secondary { background: var(--primary-soft); color: #283252; }
-    [data-theme="night"] .btn-secondary { color: #e5e7eb; }
-    .btn-danger { background: var(--danger-bg); color: var(--danger-text); }
-    .btn-small { font-size: 12px; padding: 5px 9px; border-radius: 999px; }
+    .btn-secondary {
+      background: var(--primary-soft);
+      color: #283252;
+    }
+    [data-theme="night"] .btn-secondary {
+      color: #e5e7eb;
+    }
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+    }
+    .btn-small {
+      font-size: 12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
 
     .tools-bar {
       display: flex;
@@ -206,6 +238,7 @@ Html
       justify-content: flex-end;
     }
 
+    /* 카운트 + 뷰 전환 */
     .count-wrap {
       display: flex;
       justify-content: space-between;
@@ -213,8 +246,15 @@ Html
       gap: 8px;
       margin-bottom: 10px;
     }
-    .count-bar { font-size: 11px; color: var(--text-muted); text-align: left; flex: 1; }
-    .count-bar strong { color: var(--primary-1); }
+    .count-bar {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: left;
+      flex: 1;
+    }
+    .count-bar strong {
+      color: var(--primary-1);
+    }
 
     .form-card {
       background: var(--card-bg);
@@ -224,14 +264,20 @@ Html
       box-shadow: var(--shadow-soft);
       border: 1px solid var(--card-border);
     }
-    .form-row { display: flex; flex-direction: column; margin-bottom: 9px; }
-    .form-row label { font-size: 12px; margin-bottom: 4px; color: var(--label-color); }
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 9px;
+    }
+    .form-row label {
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: var(--label-color);
+    }
     .form-row input[type="text"],
     .form-row input[type="date"],
     .form-row input[type="password"],
-    .form-row input[type="number"],
-    .form-row select,
-    .form-row textarea {
+    .form-row select {
       padding: 7px 10px;
       border-radius: 10px;
       border: 1px solid var(--card-border);
@@ -239,21 +285,47 @@ Html
       background: #f9f9ff;
       color: var(--text-main);
     }
-    .form-row textarea { min-height: 70px; resize: vertical; }
-    [data-theme="night"] .form-row input,
-    [data-theme="night"] .form-row select,
-    [data-theme="night"] .form-row textarea {
+    [data-theme="night"] .form-row input[type="text"],
+    [data-theme="night"] .form-row input[type="date"],
+    [data-theme="night"] .form-row input[type="password"],
+    [data-theme="night"] .form-row select {
       background: #020617;
       border-color: #1f2937;
       color: #e5e7eb;
     }
+    .form-row input[type="file"] {
+      font-size: 12px;
+    }
 
-    .form-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px; }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 6px;
+    }
 
-    .list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
-    .list.gallery { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    .list.gallery .card { flex-direction: column; align-items: stretch; }
-    .list.gallery .card img { width: 100%; height: 180px; object-fit: cover; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    /* 갤러리 모드 (반응형) */
+    .list.gallery {
+      display: grid;
+      grid-template-columns: 1fr; /* 모바일: 1열 */
+      gap: 12px;
+    }
+    .list.gallery .card {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .list.gallery .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
 
     .card {
       background: rgba(255,255,255,0.96);
@@ -266,31 +338,94 @@ Html
       border: 1px solid var(--card-border);
       animation: cardFadeIn 0.18s ease-out;
     }
-    [data-theme="night"] .card { background: rgba(15,23,42,0.98); box-shadow: 0 8px 22px rgba(15,23,42,0.85); }
-    @keyframes cardFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    [data-theme="night"] .card {
+      background: rgba(15,23,42,0.98);
+      box-shadow: 0 8px 22px rgba(15,23,42,0.85);
+    }
+
+    @keyframes cardFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     .card img {
-      width: 70px; height: 70px;
+      width: 70px;
+      height: 70px;
       object-fit: cover;
       border-radius: 12px;
       background: #eef1ff;
       flex-shrink: 0;
       cursor: pointer;
     }
-    .card-content { flex: 1; font-size: 13px; }
-    .card-row-main { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 4px; align-items: center; }
-    .card-title { font-weight: 600; font-size: 14px; color: var(--text-main); }
-    .card-tag { font-size: 11px; padding: 3px 7px; border-radius: 999px; background: var(--chip-bg); color: var(--chip-text); align-self: flex-start; }
-    .card-row { margin-bottom: 2px; color: var(--text-main); }
-    .label { color: var(--label-color); font-size: 11px; margin-right: 4px; }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; gap: 6px; flex-wrap: wrap; }
-    .last-used { font-size: 11px; color: var(--text-muted); }
-    .card-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
+    .card-content {
+      flex: 1;
+      font-size: 13px;
+    }
+    .card-row-main {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 4px;
+      align-items: center;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+    .card-tag {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: var(--chip-bg);
+      color: var(--chip-text);
+      align-self: flex-start;
+    }
+    .card-row {
+      margin-bottom: 2px;
+      color: var(--text-main);
+    }
+    .label {
+      color: var(--label-color);
+      font-size: 11px;
+      margin-right: 4px;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .last-used {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .card-buttons {
+      display: flex;
+      gap: 4px;
+    }
 
-    .empty-text { text-align: center; color: #777; font-size: 13px; margin-top: 20px; }
-    [data-theme="night"] .empty-text { color: #9ca3af; }
+    .empty-text {
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+      margin-top: 20px;
+    }
 
-    .toggle-group { display: flex; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+    .toggle-group {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
     .toggle-btn {
       padding: 5px 10px;
       font-size: 12px;
@@ -301,7 +436,11 @@ Html
       cursor: pointer;
       transition: background 0.1s ease, color 0.1s ease, border 0.1s ease;
     }
-    .toggle-btn.active { border-color: var(--primary-1); background: var(--primary-1); color: #fff; }
+    .toggle-btn.active {
+      border-color: var(--primary-1);
+      background: var(--primary-1);
+      color: #fff;
+    }
 
     /* 잠금 화면 */
     .lock-screen {
@@ -316,7 +455,7 @@ Html
     }
     .lock-card {
       width: 100%;
-      max-width: 340px;
+      max-width: 320px;
       margin: 0 auto;
       background: rgba(255,255,255,0.98);
       border-radius: 20px;
@@ -325,9 +464,24 @@ Html
       border: 1px solid #dde1ff;
       text-align: center;
     }
-    .lock-title { font-size: 18px; margin-bottom: 8px; font-weight: 600; color: #303656; }
-    .lock-sub { font-size: 12px; color: #7b7f9d; margin-bottom: 14px; }
-    .lock-input-wrap { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; justify-content: space-between; }
+    .lock-title {
+      font-size: 18px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #303656;
+    }
+    .lock-sub {
+      font-size: 12px;
+      color: #7b7f9d;
+      margin-bottom: 14px;
+    }
+    .lock-input-wrap {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
     .lock-input-wrap input {
       flex: 1;
       padding: 8px 10px;
@@ -339,14 +493,121 @@ Html
       letter-spacing: 3px;
       min-width: 0;
     }
-    .lock-info { font-size: 11px; color: #9296b8; line-height: 1.35; }
+    .lock-info {
+      font-size: 11px;
+      color: #9296b8;
+    }
+
+    .settings-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #3c4266;
+    }
+    .settings-help {
+      font-size: 11px;
+      color: #8a8fb0;
+      margin-bottom: 6px;
+    }
+
+    [data-theme="night"] .settings-section-title {
+      color: #e5e7eb;
+    }
+    [data-theme="night"] .settings-help {
+      color: #9ca3af;
+    }
+    [data-theme="night"] .empty-text {
+      color: #9ca3af;
+    }
 
     /* 이미지 전체 보기 */
-    .image-viewer { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1500; }
-    .image-viewer-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75); }
-    .image-viewer-inner { position: relative; max-width: 100%; max-height: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; }
-    #viewerImage { max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); touch-action: none; transition: transform 0.1s ease-out; }
-    .viewer-close-btn { position: absolute; top: 16px; right: 16px; border-radius: 999px; border: none; padding: 6px 10px; font-size: 14px; cursor: pointer; background: rgba(15,23,42,0.8); color: #f9fafb; }
+    .image-viewer {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+    }
+    .image-viewer-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+    }
+    .image-viewer-inner {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #viewerImage {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+      touch-action: none;
+      transition: transform 0.1s ease-out;
+    }
+    .viewer-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      border-radius: 999px;
+      border: none;
+      padding: 6px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      background: rgba(15,23,42,0.8);
+      color: #f9fafb;
+    }
+
+    /* 기기 이름 최초 입력 모달 */
+    .device-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      padding: 16px;
+    }
+    .device-modal-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px 18px 14px;
+      max-width: 320px;
+      width: 100%;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    }
+    .device-modal-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #272a3f;
+    }
+    .device-modal-text {
+      font-size: 12px;
+      color: #767a98;
+      margin-bottom: 10px;
+    }
+    .device-modal-input {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px solid #d6d9ff;
+      font-size: 13px;
+      background: #f9f9ff;
+      margin-bottom: 10px;
+    }
+    .device-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
 
     /* 토스트 */
     .toast {
@@ -370,37 +631,117 @@ Html
       overflow: hidden;
       box-shadow: 0 10px 24px rgba(15,23,42,0.6);
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* 히스토리 타임라인 */
-    .history-list { max-height: 280px; overflow-y: auto; padding-right: 4px; margin-top: 4px; position: relative; }
-    .history-list::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(148,163,184,0.6), rgba(199,210,254,0.2)); }
-    .history-row { font-size: 12px; color: #444867; padding: 6px 2px 6px 20px; position: relative; }
-    [data-theme="night"] .history-row { color: #e5e7eb; }
-    .history-row::before { content: ""; position: absolute; left: 4px; top: 10px; width: 8px; height: 8px; border-radius: 999px; background: #fff; border: 2px solid var(--primary-1); box-shadow: 0 0 0 4px rgba(129,140,248,0.15); }
-    .history-time { color: #6b6f90; font-size: 11px; }
-    [data-theme="night"] .history-time { color: #9ca3af; }
-    .history-device { color: var(--primary-1); font-size: 11px; margin-left: 4px; }
-    .history-action-chip { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; font-size: 11px; background: var(--chip-bg); color: var(--chip-text); }
-    .history-film { color: #111827; font-weight: 500; }
-    [data-theme="night"] .history-film { color: #e5e7eb; }
-    .history-changes { font-size: 11px; color: #6b7280; margin-top: 2px; }
-    [data-theme="night"] .history-changes { color: #9ca3af; }
-    .history-empty { font-size: 12px; color: #6b7280; padding-left: 20px; margin-top: 6px; }
-    [data-theme="night"] .history-empty { color: #9ca3af; }
+    .history-list {
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-top: 4px;
+      position: relative;
+    }
+    .history-list::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(148,163,184,0.6), rgba(199,210,254,0.2));
+    }
+    .history-row {
+      font-size: 12px;
+      color: #444867;
+      padding: 6px 2px 6px 20px;
+      position: relative;
+    }
+    [data-theme="night"] .history-row {
+      color: #e5e7eb;
+    }
+    .history-row::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #fff;
+      border: 2px solid var(--primary-1);
+      box-shadow: 0 0 0 4px rgba(129,140,248,0.15);
+    }
+    .history-time {
+      color: #6b6f90;
+      font-size: 11px;
+    }
+    [data-theme="night"] .history-time {
+      color: #9ca3af;
+    }
+    .history-device {
+      color: var(--primary-1);
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .history-action-chip {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: var(--chip-bg);
+      color: var(--chip-text);
+    }
+    .history-film {
+      color: #111827;
+      font-weight: 500;
+    }
+    [data-theme="night"] .history-film {
+      color: #e5e7eb;
+    }
+    .history-changes {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+    [data-theme="night"] .history-changes {
+      color: #9ca3af;
+    }
+    .history-empty {
+      font-size: 12px;
+      color: #6b7280;
+      padding-left: 20px;
+      margin-top: 6px;
+    }
+    [data-theme="night"] .history-empty {
+      color: #9ca3af;
+    }
 
     /* 로딩 스피너 */
-    .spinner-wrapper { display: none; justify-content: center; align-items: center; padding: 4px 0 16px; }
-    .spinner-wrapper.show { display: flex; }
+    .spinner-wrapper {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 4px 0 16px;
+    }
+    .spinner-wrapper.show {
+      display: flex;
+    }
     .spinner-circle {
-      width: 28px; height: 28px;
+      width: 28px;
+      height: 28px;
       border-radius: 999px;
       border: 3px solid var(--spinner-border);
       border-top-color: var(--primary-1);
       box-shadow: 0 0 12px var(--spinner-glow);
       animation: spin 0.8s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
     /* 맨 위로 버튼 */
     .scroll-top-btn {
@@ -421,19 +762,49 @@ Html
       box-shadow: 0 10px 24px rgba(107,114,128,0.6);
       z-index: 1900;
     }
-    .scroll-top-btn.show { display: flex; }
-
-    @media (min-width: 768px) { body { padding-top: 24px; } }
-    @media (min-width: 600px) { .list.gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (min-width: 1024px) {
-      .app-shell, .app-header { max-width: 1080px; }
-      .list.gallery { grid-template-columns: repeat(3, minmax(260px, 1fr)); }
+    .scroll-top-btn.show {
+      display: flex;
     }
 
-    /* ====== 메모: 바텀 시트 ====== */
-    .memo-sheet { position: fixed; inset: 0; display: none; align-items: flex-end; justify-content: center; z-index: 1600; }
+    @media (min-width: 768px) {
+      body {
+        padding-top: 24px;
+      }
+    }
+
+    /* 태블릿 이상에서 갤러리 2열 */
+    @media (min-width: 600px) {
+      .list.gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    /* PC: 전체 폭 넓게 + 갤러리 3열 */
+    @media (min-width: 1024px) {
+      .app-shell,
+      .app-header {
+        max-width: 1080px;
+      }
+      .list.gallery {
+        grid-template-columns: repeat(3, minmax(260px, 1fr));
+      }
+    }
+
+    /* ====== 필름 메모: 슬라이드(바텀 시트) ====== */
+    .memo-sheet {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 1600;
+    }
     .memo-sheet.show { display: flex; }
-    .memo-sheet-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45); }
+    .memo-sheet-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+    }
     .memo-sheet-panel {
       position: relative;
       width: 100%;
@@ -445,10 +816,27 @@ Html
       padding: 12px 14px 14px;
       animation: sheetUp 0.16s ease-out;
     }
-    @keyframes sheetUp { from { transform: translateY(14px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .memo-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-    .memo-sheet-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
-    .memo-sheet-sub { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+    @keyframes sheetUp {
+      from { transform: translateY(14px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .memo-sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .memo-sheet-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .memo-sheet-sub {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 2px;
+    }
     .memo-sheet-textarea {
       width: 100%;
       min-height: 120px;
@@ -461,12 +849,30 @@ Html
       font-size: 13px;
       line-height: 1.45;
     }
-    [data-theme="night"] .memo-sheet-textarea { background: #020617; border-color: #1f2937; color: #e5e7eb; }
-    .memo-sheet-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; }
-    .btn-memo-has { box-shadow: 0 0 0 2px rgba(127,157,255,0.18) inset; }
+    [data-theme="night"] .memo-sheet-textarea {
+      background: #020617;
+      border-color: #1f2937;
+      color: #e5e7eb;
+    }
+    .memo-sheet-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 10px;
+    }
 
-    /* ====== 히스토리 메모 ====== */
-    .history-headline { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    /* 메모 버튼: 메모 있으면 살짝 강조 */
+    .btn-memo-has {
+      box-shadow: 0 0 0 2px rgba(127,157,255,0.18) inset;
+    }
+
+    /* ====== 히스토리: 연필 버튼 + 노트 표시 ====== */
+    .history-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
     .history-pencil {
       border: none;
       cursor: pointer;
@@ -476,7 +882,9 @@ Html
       background: var(--primary-soft);
       color: var(--text-main);
     }
-    [data-theme="night"] .history-pencil { color: #e5e7eb; }
+    [data-theme="night"] .history-pencil {
+      color: #e5e7eb;
+    }
     .history-note {
       margin-top: 6px;
       padding: 8px 10px;
@@ -485,13 +893,18 @@ Html
       background: rgba(228,231,255,0.65);
       font-size: 12px;
       color: var(--text-main);
+
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    [data-theme="night"] .history-note { background: rgba(79,70,229,0.18); border-color: #1f2937; }
+    [data-theme="night"] .history-note {
+      background: rgba(79,70,229,0.18);
+      border-color: #1f2937;
+    }
 
+    /* ====== 히스토리 메모 모달 ====== */
     .note-modal {
       position: fixed;
       inset: 0;
@@ -508,12 +921,21 @@ Html
       border: 1px solid var(--card-border);
       border-radius: 18px;
       padding: 16px 18px 14px;
-      max-width: 420px;
+      max-width: 380px;
       width: 100%;
       box-shadow: 0 10px 24px rgba(0,0,0,0.25);
     }
-    .note-modal-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
-    .note-modal-text { font-size: 12px; color: var(--text-sub); margin-bottom: 10px; }
+    .note-modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    .note-modal-text {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+    }
     .note-modal-textarea {
       width: 100%;
       min-height: 120px;
@@ -526,59 +948,17 @@ Html
       font-size: 13px;
       line-height: 1.45;
     }
-    [data-theme="night"] .note-modal-textarea { background: #020617; border-color: #1f2937; color: #e5e7eb; }
-    .note-modal-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; }
-
-    /* ====== 판 모달(수량 등록/히스토리) ====== */
-    .plate-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.35);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1750;
-      padding: 16px;
+    [data-theme="night"] .note-modal-textarea {
+      background: #020617;
+      border-color: #1f2937;
+      color: #e5e7eb;
     }
-    .plate-modal.show { display: flex; }
-    .plate-modal-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      padding: 14px 14px 12px;
-      max-width: 520px;
-      width: 100%;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    .note-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 10px;
     }
-    .plate-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-    .plate-modal-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
-    .plate-modal-sub { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
-    .plate-stats {
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 12px;
-      border: 1px solid var(--card-border);
-      background: rgba(228,231,255,0.55);
-      color: var(--text-main);
-      margin-bottom: 10px;
-    }
-    [data-theme="night"] .plate-stats { background: rgba(79,70,229,0.18); border-color: #1f2937; }
-    .warn { color: #b45309; font-weight: 700; }
-    .over { color: #e11d48; font-weight: 900; }
-
-    .pill-row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:4px; }
-    .mini-pill {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--card-border);
-      background: rgba(255,255,255,0.7);
-      color: var(--text-sub);
-    }
-    [data-theme="night"] .mini-pill { background: rgba(2,6,23,0.9); border-color: #1f2937; }
-
-    .divider { height: 1px; background: rgba(148,163,184,0.35); margin: 10px 0; }
-
   </style>
 </head>
 <body>
@@ -586,18 +966,27 @@ Html
   <div id="lockScreen" class="lock-screen">
     <div class="lock-card">
       <div class="lock-title">FILM FIND 잠금</div>
-      <div class="lock-sub">
-        비밀번호로 모드를 선택해.<br>
-        탭을 닫기 전까지는 계속 열려 있어.
-      </div>
+      <div class="lock-sub">비밀번호를 입력하면<br>탭을 닫기 전까지는 계속 열려 있어.</div>
       <div class="lock-input-wrap">
         <input type="password" id="passwordInput" maxlength="20" placeholder="••••" />
         <button class="btn btn-primary btn-small" id="passwordBtn">입장</button>
       </div>
-      <div class="lock-info">
-        <b>관리자</b> : <b>0605</b><br>
-        <b>인쇄기사</b> : <b>1234</b><br>
-        (설정에서 변경 가능)
+      <div class="lock-info">기본 비밀번호는 <b>1234</b>야. 설정에서 변경할 수 있어.</div>
+    </div>
+  </div>
+
+  <!-- 기기 이름 최초 입력 모달 -->
+  <div id="deviceModal" class="device-modal">
+    <div class="device-modal-card">
+      <div class="device-modal-title">이 기기 이름 정하기</div>
+      <div class="device-modal-text">
+        예: 가은폰, 성규패드, 회사PC 같은 식으로 적어줘.<br />
+        기록·동기화할 때 어디에서 입력했는지 확인하기 쉬워져.
+      </div>
+      <input id="deviceModalInput" class="device-modal-input" type="text" placeholder="예: 가은폰" />
+      <div class="device-modal-actions">
+        <button class="btn btn-secondary btn-small" id="deviceModalSkip">나중에</button>
+        <button class="btn btn-primary btn-small" id="deviceModalSave">저장</button>
       </div>
     </div>
   </div>
@@ -646,106 +1035,55 @@ Html
     </div>
   </div>
 
-  <!-- ====== 판 모달: 수량 등록 + 판 히스토리 ====== -->
-  <div id="plateModal" class="plate-modal">
-    <div class="plate-modal-card">
-      <div class="plate-modal-head">
-        <div>
-          <div class="plate-modal-title" id="plateModalTitle">판</div>
-          <div class="plate-modal-sub" id="plateModalSub">제품명</div>
-          <div class="pill-row">
-            <span class="mini-pill" id="plateModalFilmNo">필름</span>
-            <span class="mini-pill" id="plateModalPlateNo">판</span>
-            <span class="mini-pill" id="plateModalStatus">상태</span>
-          </div>
-        </div>
-        <button class="btn btn-secondary btn-small" id="plateModalCloseBtn">닫기</button>
-      </div>
-
-      <div id="plateModalStats" class="plate-stats">-</div>
-
-      <div id="plateRegisterSection" class="form-card" style="padding:10px 12px; margin-bottom:10px;">
-        <div class="form-row">
-          <label>인쇄기사 이름</label>
-          <select id="platePrinterSelect"></select>
-        </div>
-        <div class="form-row">
-          <label>인쇄 수량 *</label>
-          <input type="number" id="plateQtyInput" min="1" step="1" placeholder="예: 500" />
-        </div>
-        <div class="form-row">
-          <label>메모(선택)</label>
-          <input type="text" id="plateLogNoteInput" placeholder="예: 2색 / 1차만" />
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-secondary btn-small" id="plateRegisterCancelBtn">취소</button>
-          <button class="btn btn-primary btn-small" id="plateRegisterSaveBtn">등록</button>
-        </div>
-      </div>
-
-      <div class="settings-section-title" style="margin-bottom:6px;">판 히스토리</div>
-      <div id="plateHistoryList" class="history-list" style="max-height:240px;"></div>
-
-      <div id="plateAdminActions" style="display:none; margin-top:10px;">
-        <div class="divider"></div>
-        <div class="settings-section-title" style="margin-bottom:6px;">관리자 작업</div>
-        <div class="form-row">
-          <label>최대 제품 개수(판 수명) 수정</label>
-          <input type="number" id="plateMaxEditInput" min="1" step="1" placeholder="예: 3000" />
-        </div>
-        <div class="form-actions" style="justify-content:space-between;">
-          <button class="btn btn-danger btn-small" id="plateTrashBtn">휴지통으로</button>
-          <div style="display:flex; gap:6px;">
-            <button class="btn btn-secondary btn-small" id="plateDiscardBtn">폐기 처리</button>
-            <button class="btn btn-primary btn-small" id="plateMaxSaveBtn">저장</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- 실제 앱 -->
   <div id="appContainer" style="display:none;">
     <div class="app-header">
       <div class="title-wrap">
         <div class="app-title">FILM FIND</div>
-        <div class="app-subtitle" id="subtitleText">필름 관리</div>
+        <div class="app-subtitle">필름 관리</div>
       </div>
       <div id="deviceBadge" class="device-badge">
         <span class="device-dot"></span>
         <span id="deviceBadgeText"></span>
-        <span class="mode-badge" id="modeBadge">MODE</span>
       </div>
     </div>
 
     <div class="app-shell">
       <div class="top-bar">
-        <input type="text" id="searchInput" placeholder="(관리자) 제품명/필름번호/위치...  |  (인쇄기사) 제품명/판번호 검색" />
+        <input type="text" id="searchInput" placeholder="제품명 / 필름번호 / 제판타입 / 위치 / 제판방법 / MESH / 요청 인쇄자 검색" />
         <button class="btn btn-primary" id="newFilmBtn">+ 새 필름</button>
       </div>
 
       <div class="tools-bar">
         <button class="btn btn-secondary btn-small" id="settingsBtn">⚙ 설정</button>
         <button class="btn btn-secondary btn-small" id="historyBtn">📜 히스토리</button>
-        <button class="btn btn-secondary btn-small" id="trashBtn">🗑 판 휴지통</button>
         <button class="btn btn-secondary btn-small" id="exportBtn">데이터 내보내기</button>
         <button class="btn btn-secondary btn-small" id="importBtn">데이터 불러오기</button>
         <input type="file" id="importFile" accept="application/json" style="display:none;" />
       </div>
 
       <div class="count-wrap">
-        <div id="countBar" class="count-bar">총 0개</div>
+        <div id="countBar" class="count-bar">총 0개 필름</div>
         <button class="btn btn-secondary btn-small" id="viewToggleBtn">갤러리</button>
       </div>
 
       <!-- 설정 카드 -->
       <div class="form-card" id="settingsCard" style="display:none;">
         <div class="form-row">
-          <div class="settings-section-title">기기 이름</div>
-          <div class="settings-help">예: 가은폰, 성규패드, 회사PC</div>
+          <div class="settings-section-title">이 기기 이름</div>
+          <div class="settings-help">예: 가은폰, 성규패드, 회사PC. 이 기기에서만 표시돼.</div>
           <input type="text" id="deviceNameInput" placeholder="기기 이름을 입력하세요" />
         </div>
-
+        <div class="form-row">
+          <div class="settings-section-title">기본 정렬 방식</div>
+          <div class="settings-help">리스트를 어떤 기준으로 정렬할지 선택해.</div>
+          <select id="sortOptionSelect">
+            <option value="updated">최근 수정순</option>
+            <option value="name">제품명 가나다순</option>
+            <option value="number">필름번호 순</option>
+            <option value="lastUsed">마지막 사용일 최신순</option>
+          </select>
+        </div>
         <div class="form-row">
           <div class="settings-section-title">테마 색상</div>
           <div class="settings-help">앱의 색 분위기를 선택해 줘.</div>
@@ -756,45 +1094,25 @@ Html
             <option value="night">나이트</option>
           </select>
         </div>
-
         <div class="form-row">
-          <div class="settings-section-title">기본 정렬 방식(관리자 필름 리스트)</div>
-          <select id="sortOptionSelect">
-            <option value="updated">최근 수정순</option>
-            <option value="name">제품명 가나다순</option>
-            <option value="number">필름번호 순</option>
-            <option value="lastUsed">마지막 사용일 최신순</option>
-          </select>
+          <div class="settings-section-title">비밀번호 변경</div>
+          <div class="settings-help">현재 비밀번호와 새 비밀번호를 입력해.</div>
+          <input type="password" id="currentPwInput" placeholder="현재 비밀번호" />
+          <input type="password" id="newPwInput" placeholder="새 비밀번호" style="margin-top:6px;" />
+          <input type="password" id="newPwConfirmInput" placeholder="새 비밀번호 확인" style="margin-top:6px;" />
         </div>
-
-        <div class="form-row">
-          <div class="settings-section-title">모드 비밀번호</div>
-          <div class="settings-help">0605(관리자) / 1234(인쇄기사) 기본값. 원하면 변경 가능.</div>
-          <input type="password" id="adminPinInput" placeholder="관리자 비번(예: 0605)" />
-          <input type="password" id="printerPinInput" placeholder="인쇄기사 비번(예: 1234)" style="margin-top:6px;" />
-          <small style="font-size:11px; color:var(--text-sub);">
-            · 너무 짧으면(4자 미만) 저장 안 됨<br>
-            · 바꾸면 다음 로그인부터 적용
-          </small>
-        </div>
-
-        <div class="form-row">
-          <div class="settings-section-title">새 판 기본 최대수량</div>
-          <div class="settings-help">판을 새로 만들 때 자동으로 들어가는 기본값(관리자만 의미 있음)</div>
-          <input type="number" id="defaultPlateMaxInput" min="1" step="1" placeholder="예: 3000" />
-        </div>
-
         <div class="form-actions">
           <button type="button" class="btn btn-secondary btn-small" id="closeSettingsBtn">닫기</button>
           <button type="button" class="btn btn-primary btn-small" id="saveSettingsBtn">저장</button>
         </div>
       </div>
 
-      <!-- 히스토리 카드(필름 변경 기록) -->
+      <!-- 히스토리 카드 -->
       <div class="form-card" id="historyCard" style="display:none;">
-        <div class="settings-section-title">📜 히스토리(필름)</div>
+        <div class="settings-section-title">📜 히스토리</div>
         <div class="settings-help">
-          등록 / 수정 / 삭제 / 오늘 사용 기록 (최근 100개)
+          등록 / 수정 / 삭제 / 오늘 사용 기록을 최근 100개까지 보여줄게.<br>
+          (기기 이름과 어떤 항목이 바뀌었는지도 같이 표시돼.)
         </div>
         <div id="historyList" class="history-list"></div>
         <div class="form-actions">
@@ -802,20 +1120,7 @@ Html
         </div>
       </div>
 
-      <!-- 판 휴지통 카드 -->
-      <div class="form-card" id="trashCard" style="display:none;">
-        <div class="settings-section-title">🗑 판 휴지통</div>
-        <div class="settings-help">
-          휴지통에 들어간 판은 <b>30일</b> 뒤 자동 삭제돼.<br>
-          (자동 삭제는 앱이 열릴 때/휴지통 열 때 정리돼)
-        </div>
-        <div id="trashList" class="list" style="margin-bottom:10px;"></div>
-        <div class="form-actions">
-          <button type="button" class="btn btn-secondary btn-small" id="closeTrashBtn">닫기</button>
-        </div>
-      </div>
-
-      <!-- 필름 입력 폼(관리자 전용) -->
+      <!-- 필름 입력 폼 -->
       <div class="form-card" id="formCard" style="display:none;">
         <form id="filmForm">
           <input type="hidden" id="filmId" />
@@ -832,6 +1137,7 @@ Html
             <input type="text" id="method" placeholder="예: 바탕, 문자, 스모그 등" />
           </div>
 
+          <!-- MESH 항목 추가 -->
           <div class="form-row">
             <label for="mesh">MESH</label>
             <input type="text" id="mesh" placeholder="예: 180T, 200메쉬 등" />
@@ -852,7 +1158,7 @@ Html
               <button type="button" class="toggle-btn" data-value="하">하</button>
             </div>
             <small style="font-size:11px; color:var(--text-sub);">
-              전면/배면 + 좌/우 + 상/하 조합
+              전면/배면 + 좌/우 + 상/하 조합 (예: 배면 좌상, 전면 우하 등)
             </small>
           </div>
 
@@ -861,14 +1167,25 @@ Html
             <input type="text" id="location" placeholder="예: A-3 서랍, 4층 우측 랙 등" />
           </div>
 
+          <!-- 요청 인쇄자 -->
           <div class="form-row">
             <label for="requestPrinter">요청 인쇄자</label>
-            <select id="requestPrinter"></select>
-          </div>
-
-          <div class="form-row">
-            <label for="etc">기타(선택)</label>
-            <input type="text" id="etc" placeholder="예: 주의사항/특이사항" />
+            <select id="requestPrinter">
+              <option value="">선택 안 함</option>
+              <option value="이창민 부장님">이창민 부장님</option>
+              <option value="고광운 과장님">고광운 과장님</option>
+              <option value="김규헌 차장님">김규헌 차장님</option>
+              <option value="박재현 대리님">박재현 대리님</option>
+              <option value="조영빈 대리님">조영빈 대리님</option>
+              <option value="김현규 대리님">김현규 대리님</option>
+              <option value="장진우 대리님">장진우 대리님</option>
+              <option value="김미은 주임님">김미은 주임님</option>
+              <option value="이수안 사원님">이수안 사원님</option>
+              <option value="박지안 사원님">박지안 사원님</option>
+              <option value="김인선 사원님">김인선 사원님</option>
+              <option value="김용원 사원님">김용원 사원님</option>
+              <option value="최성규 사원님">최성규 사원님</option>
+            </select>
           </div>
 
           <div class="form-row">
@@ -878,15 +1195,15 @@ Html
               <button type="button" class="btn btn-secondary btn-small" id="setTodayBtn">오늘</button>
             </div>
           </div>
-
           <div class="form-row">
             <label for="imageInput">필름 사진 (선택)</label>
             <input type="file" id="imageInput" accept="image/*" />
             <small style="font-size:11px; color:var(--text-sub);">
-              · 새 필름에는 사진 추가 가능<br/>
-              · 수정 시 사진 바꿀 때만 다시 선택
+              · 새 필름에는 사진을 추가하고,<br/>
+              · 수정 시 사진을 바꾸고 싶을 때만 다시 선택하세요.
             </small>
 
+            <!-- 사진 미리보기 + 회전 버튼 -->
             <div id="imagePreviewWrapper" style="margin-top:8px; display:none; align-items:center; gap:6px;">
               <img id="imagePreview" alt="미리보기"
                    style="width:70px; height:70px; border-radius:10px; object-fit:cover; background:#eef1ff;" />
@@ -899,19 +1216,15 @@ Html
             <button type="button" class="btn btn-secondary" id="cancelBtn">취소</button>
             <button type="submit" class="btn btn-primary" id="saveBtn">저장</button>
           </div>
-
-          <div style="margin-top:10px; font-size:11px; color:var(--text-sub);">
-            ✅ 새 필름 등록 시 <b>첫 번째 판(필름번호-1)</b>이 자동 생성돼.<br>
-            (기본 최대수량은 설정의 “새 판 기본 최대수량” 사용)
-          </div>
         </form>
       </div>
 
-      <!-- 리스트 -->
       <div id="list" class="list"></div>
-      <div id="emptyText" class="empty-text" style="display:none;"></div>
+      <div id="emptyText" class="empty-text" style="display:none;">
+        등록된 필름이 없습니다.<br/>오른쪽 위 <b>+ 새 필름</b> 버튼으로 추가하세요.
+      </div>
 
-      <!-- 로딩 스피너 -->
+      <!-- 로딩 스피너 (무한 스크롤용) -->
       <div id="loadingSpinner" class="spinner-wrapper">
         <div class="spinner-circle"></div>
       </div>
@@ -939,38 +1252,21 @@ Html
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
     const FILM_COLLECTION = "films";
     const HISTORY_COLLECTION = "history";
 
-    /* ✅ 추가 컬렉션 */
-    const PLATE_COLLECTION = "plates";
-    const PLATE_LOG_COLLECTION = "plateLogs";
-
     /* ---------- 앱 설정/키 ---------- */
+    const DEFAULT_PASSWORD = "1234";
+    const PASSWORD_KEY = "filmAppPassword";
     const UNLOCK_KEY = "filmAppUnlocked";
-    const ROLE_KEY = "filmAppRole";
     const DEVICE_KEY = "filmDeviceLabel";
     const SORT_KEY = "filmSortOption";
     const THEME_KEY = "filmTheme";
     const VIEW_KEY = "filmViewMode";
 
-    /* ✅ 비번 2개 */
-    const ADMIN_PIN_KEY = "filmAdminPin";
-    const PRINTER_PIN_KEY = "filmPrinterPin";
-    const DEFAULT_ADMIN_PIN = "0605";
-    const DEFAULT_PRINTER_PIN = "1234";
-
-    /* ✅ 새 판 기본 최대수량 */
-    const DEFAULT_PLATE_MAX_KEY = "filmDefaultPlateMax";
-    const DEFAULT_PLATE_MAX_FALLBACK = 3000;
-
-    let currentRole = "admin"; // 'admin' | 'printer'
     let films = [];
-    let plates = [];
     let currentSearchText = "";
     let unsubscribeFilms = null;
-    let unsubscribePlates = null;
 
     let historyEntries = [];
     let historyLoaded = false;
@@ -981,36 +1277,1258 @@ Html
 
     let currentViewMode = localStorage.getItem(VIEW_KEY) || "list";
 
+    /* 이미지 선택/회전 상태 */
     let currentSelectedImageDataUrl = null;
-    let currentImageRotation = 0;
+    let currentImageRotation = 0; // degree 단위 (0, 90, 180, 270)
 
+    /* ====== 메모 기능 상태 ====== */
     let currentMemoFilmId = null;
     let currentHistoryNoteId = null;
 
-    /* ✅ 판 모달 상태 */
-    let currentPlateId = null;
-
-    const PRINTER_OPTIONS = [
-      "", "이창민 부장님", "고광운 과장님", "김규헌 차장님", "박재현 대리님", "조영빈 대리님",
-      "김현규 대리님", "장진우 대리님", "김미은 주임님", "이수안 사원님", "박지안 사원님",
-      "김인선 사원님", "김용원 사원님", "최성규 사원님"
-    ];
-
-    /* ---------- 유틸 ---------- */
-    function showToast(msg) {
-      const toast = document.getElementById("toast");
-      if (!toast) return;
-      toast.textContent = msg;
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 1800);
+    /* ---------- 유틸 (설정) ---------- */
+    function getCurrentPassword() {
+      return localStorage.getItem(PASSWORD_KEY) || DEFAULT_PASSWORD;
     }
-
-    function getDeviceLabel() { return localStorage.getItem(DEVICE_KEY) || ""; }
+    function setCurrentPassword(pw) {
+      localStorage.setItem(PASSWORD_KEY, pw);
+    }
+    function getSortOption() {
+      return localStorage.getItem(SORT_KEY) || "updated";
+    }
+    function setSortOption(opt) {
+      localStorage.setItem(SORT_KEY, opt);
+    }
+    function getDeviceLabel() {
+      return localStorage.getItem(DEVICE_KEY) || "";
+    }
     function setDeviceLabel(label) {
       localStorage.setItem(DEVICE_KEY, label);
       const badgeText = document.getElementById("deviceBadgeText");
       if (badgeText) badgeText.textContent = label || "기기 미지정";
     }
+    function getTheme() {
+      return localStorage.getItem(THEME_KEY) || "default";
+    }
+    function setTheme(theme) {
+      localStorage.setItem(THEME_KEY, theme);
+      const root = document.documentElement;
+      if (theme === "default") {
+        root.removeAttribute("data-theme");
+      } else {
+        root.setAttribute("data-theme", theme);
+      }
+    }
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      localStorage.setItem(VIEW_KEY, mode);
+      applyViewMode();
+    }
 
-    function getTheme() { return localStorage.getItem(THEME_KEY) || "default"; }
-    function setTheme
+    function formatDate(iso) {
+      if (!iso) return "-";
+      return iso;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    /* ---------- 이미지 미리보기 & 회전 ---------- */
+    function resetImagePreview() {
+      const wrapper = document.getElementById("imagePreviewWrapper");
+      const img = document.getElementById("imagePreview");
+      currentSelectedImageDataUrl = null;
+      currentImageRotation = 0;
+      if (img) {
+        img.src = "";
+        img.style.transform = "rotate(0deg)";
+      }
+      if (wrapper) {
+        wrapper.style.display = "none";
+      }
+    }
+
+    function applyPreviewRotation() {
+      const img = document.getElementById("imagePreview");
+      if (!img) return;
+      img.style.transform = "rotate(" + currentImageRotation + "deg)";
+    }
+
+    /* ---------- Firestore 실시간 동기화 ---------- */
+    function startFilmsListener() {
+      if (unsubscribeFilms) {
+        unsubscribeFilms();
+      }
+      unsubscribeFilms = db.collection(FILM_COLLECTION).onSnapshot(
+        (snapshot) => {
+          films = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          if (!currentSearchText && visibleCount < VISIBLE_STEP) {
+            visibleCount = Math.min(VISIBLE_STEP, films.length);
+          }
+          renderList(currentSearchText);
+        },
+        (error) => {
+          console.error("실시간 동기화 오류:", error);
+          showToast("서버 동기화 중 오류가 발생했어.");
+        }
+      );
+    }
+
+    /* ---------- 히스토리 ---------- */
+    async function addHistory(action, film, changes = []) {
+      try {
+        const entry = {
+          action,
+          filmId: film.id || null,
+          filmNumber: film.filmNumber || "",
+          productName: film.productName || "",
+          deviceName: getDeviceLabel() || "",
+          timestamp: Date.now(),
+          changes,
+        };
+        await db.collection(HISTORY_COLLECTION).add(entry);
+        if (historyLoaded) {
+          await loadHistory();
+        }
+      } catch (e) {
+        console.error("히스토리 기록 중 오류:", e);
+      }
+    }
+
+    async function loadHistory() {
+      try {
+        const snap = await db
+          .collection(HISTORY_COLLECTION)
+          .orderBy("timestamp", "desc")
+          .limit(100)
+          .get();
+        historyEntries = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        historyLoaded = true;
+        renderHistory();
+      } catch (e) {
+        console.error("히스토리 로드 중 오류:", e);
+        showToast("히스토리를 불러오지 못했어.");
+      }
+    }
+
+    function actionLabel(action) {
+      if (action === "등록") return "필름 등록";
+      if (action === "수정") return "필름 수정";
+      if (action === "삭제") return "필름 삭제";
+      if (action === "오늘 사용") return "오늘 사용 체크";
+      return action || "변경";
+    }
+
+    function renderHistory() {
+      const list = document.getElementById("historyList");
+      if (!list) return;
+      list.innerHTML = "";
+
+      if (!historyEntries.length) {
+        const empty = document.createElement("div");
+        empty.className = "history-empty";
+        empty.innerHTML = "아직 기록이 없어.";
+        list.appendChild(empty);
+        return;
+      }
+
+      historyEntries.forEach((entry) => {
+        const row = document.createElement("div");
+        row.className = "history-row";
+
+        const d = new Date(entry.timestamp || 0);
+        let ts = "";
+        if (!isNaN(d.getTime())) {
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          const hh = String(d.getHours()).padStart(2, "0");
+          const mm = String(d.getMinutes()).padStart(2, "0");
+          ts = `${y}-${m}-${day} ${hh}:${mm}`;
+        }
+
+        const device = entry.deviceName || "기기 미지정";
+        const filmLabel =
+          (entry.filmNumber || "") +
+          (entry.productName ? ` (${entry.productName})` : "");
+
+        const changesArr = Array.isArray(entry.changes) ? entry.changes : [];
+        const noteText = (entry.note || "").trim();
+
+        row.innerHTML =
+          `<div class="history-headline">` +
+            `<div>` +
+              `<span class="history-time">${ts}</span>` +
+              `<span class="history-device">${device}</span>` +
+              `<span class="history-action-chip">${actionLabel(entry.action)}</span>` +
+            `</div>` +
+            `<button class="history-pencil" data-id="${entry.id}">✏️</button>` +
+          `</div>` +
+          `<div class="history-film">${filmLabel || "필름 정보 없음"}</div>` +
+          (changesArr.length
+            ? `<div class="history-changes">변경 항목: ${changesArr.join(", ")}</div>`
+            : "") +
+          (noteText ? `<div class="history-note">${noteText}</div>` : "");
+
+        const pencilBtn = row.querySelector(".history-pencil");
+        if (pencilBtn) {
+          pencilBtn.addEventListener("click", () => {
+            openHistoryNoteModal(entry.id);
+          });
+        }
+
+        list.appendChild(row);
+      });
+    }
+
+    function openHistoryCard() {
+      const card = document.getElementById("historyCard");
+      const isOpen = card.style.display === "block";
+      closeAllPanels();
+      if (!isOpen) {
+        card.style.display = "block";
+        if (!historyLoaded) {
+          loadHistory();
+        } else {
+          renderHistory();
+        }
+      }
+    }
+    function closeHistoryCard() {
+      document.getElementById("historyCard").style.display = "none";
+    }
+
+    /* ====== 필름 메모(슬라이드) ====== */
+    function openMemoSheet(filmId) {
+      const film = films.find((f) => f.id === filmId);
+      if (!film) return;
+
+      currentMemoFilmId = filmId;
+
+      const title = document.getElementById("memoSheetTitle");
+      const sub = document.getElementById("memoSheetSub");
+      const ta = document.getElementById("memoTextarea");
+      const sheet = document.getElementById("memoSheet");
+
+      if (title) title.textContent = `메모 · ${film.filmNumber || ""}`;
+      if (sub) sub.textContent = (film.productName || "") ? film.productName : "필름별 메모";
+      if (ta) ta.value = film.memo || "";
+
+      sheet.classList.add("show");
+    }
+
+    function closeMemoSheet() {
+      const sheet = document.getElementById("memoSheet");
+      sheet.classList.remove("show");
+      currentMemoFilmId = null;
+    }
+
+    async function saveMemoSheet() {
+      if (!currentMemoFilmId) return;
+      const ta = document.getElementById("memoTextarea");
+      const memo = (ta.value || "").trim();
+
+      try {
+        await db.collection(FILM_COLLECTION).doc(currentMemoFilmId).set(
+          {
+            memo,
+            updatedAt: Date.now(),
+          },
+          { merge: true }
+        );
+        showToast("메모를 저장했어.");
+        closeMemoSheet();
+      } catch (e) {
+        console.error(e);
+        showToast("메모 저장 중 오류가 났어.");
+      }
+    }
+
+    /* ====== 히스토리 메모(모달) ====== */
+    function openHistoryNoteModal(historyId) {
+      const entry = historyEntries.find((h) => h.id === historyId);
+      if (!entry) return;
+
+      currentHistoryNoteId = historyId;
+
+      const modal = document.getElementById("historyNoteModal");
+      const ta = document.getElementById("historyNoteTextarea");
+      if (ta) ta.value = entry.note || "";
+
+      modal.classList.add("show");
+    }
+
+    function closeHistoryNoteModal() {
+      const modal = document.getElementById("historyNoteModal");
+      modal.classList.remove("show");
+      currentHistoryNoteId = null;
+    }
+
+    async function saveHistoryNoteModal() {
+      if (!currentHistoryNoteId) return;
+      const ta = document.getElementById("historyNoteTextarea");
+      const note = (ta.value || "").trim();
+
+      try {
+        await db.collection(HISTORY_COLLECTION).doc(currentHistoryNoteId).set(
+          { note },
+          { merge: true }
+        );
+
+        // 로컬 캐시 갱신
+        const idx = historyEntries.findIndex((h) => h.id === currentHistoryNoteId);
+        if (idx >= 0) historyEntries[idx].note = note;
+
+        renderHistory();
+        showToast("히스토리 메모 저장됨.");
+        closeHistoryNoteModal();
+      } catch (e) {
+        console.error(e);
+        showToast("히스토리 메모 저장 중 오류.");
+      }
+    }
+
+    /* ---------- 제판 방법 토글 ---------- */
+    function clearPlateInfoForm() {
+      document.querySelectorAll(".toggle-btn").forEach((btn) => {
+        btn.classList.remove("active");
+      });
+    }
+
+    function setPlateInfoToForm(str) {
+      clearPlateInfoForm();
+      if (!str) return;
+      const parts = str.split(" ");
+      document.querySelectorAll(".toggle-btn").forEach((btn) => {
+        if (parts.includes(btn.dataset.value)) {
+          btn.classList.add("active");
+        }
+      });
+    }
+
+    function getPlateInfoFromForm() {
+      const groups = document.querySelectorAll(".toggle-group");
+      const values = [];
+      groups.forEach((group) => {
+        const active = group.querySelector(".toggle-btn.active");
+        if (active) values.push(active.dataset.value);
+      });
+      return values.join(" ");
+    }
+
+    /* ---------- 폼/리스트 ---------- */
+    function resetForm() {
+      document.getElementById("filmId").value = "";
+      document.getElementById("productName").value = "";
+      document.getElementById("filmNumber").value = "";
+      document.getElementById("method").value = "";
+      document.getElementById("mesh").value = "";
+      document.getElementById("location").value = "";
+      document.getElementById("requestPrinter").value = "";
+      document.getElementById("lastUsed").value = "";
+      document.getElementById("imageInput").value = "";
+      clearPlateInfoForm();
+      resetImagePreview();
+    }
+
+    function getLastFilmForDefaults() {
+      if (!films.length) return null;
+      return films.reduce((acc, cur) => {
+        const a = acc.updatedAt || acc.createdAt || 0;
+        const b = cur.updatedAt || cur.createdAt || 0;
+        return b > a ? cur : acc;
+      });
+    }
+
+    function openFormNew() {
+      resetForm();
+      const last = getLastFilmForDefaults();
+      if (last) {
+        document.getElementById("method").value = last.method || "";
+        document.getElementById("mesh").value = last.mesh || "";
+        document.getElementById("location").value = last.location || "";
+        document.getElementById("requestPrinter").value = last.requestPrinter || "";
+        setPlateInfoToForm(last.plateInfo || "");
+      }
+      document.getElementById("formCard").style.display = "block";
+      document.getElementById("productName").focus();
+    }
+
+    function toggleFormNew() {
+      const card = document.getElementById("formCard");
+      const isOpen = card.style.display === "block";
+      closeAllPanels();
+      if (!isOpen) {
+        openFormNew();
+      }
+    }
+
+    function openFormCopyFrom(id) {
+      const film = films.find((f) => f.id === id);
+      if (!film) return;
+      resetForm();
+      document.getElementById("productName").value = film.productName || "";
+      document.getElementById("filmNumber").value = "";
+      document.getElementById("method").value = film.method || "";
+      document.getElementById("mesh").value = film.mesh || "";
+      document.getElementById("location").value = film.location || "";
+      document.getElementById("requestPrinter").value = film.requestPrinter || "";
+      document.getElementById("lastUsed").value = "";
+      setPlateInfoToForm(film.plateInfo || "");
+      closeAllPanels();
+      document.getElementById("formCard").style.display = "block";
+      document.getElementById("productName").focus();
+    }
+
+    function openFormForEdit(id) {
+      const film = films.find((f) => f.id === id);
+      if (!film) return;
+      closeAllPanels();
+      resetImagePreview();
+      document.getElementById("filmId").value = film.id;
+      document.getElementById("productName").value = film.productName || "";
+      document.getElementById("filmNumber").value = film.filmNumber || "";
+      document.getElementById("method").value = film.method || "";
+      document.getElementById("mesh").value = film.mesh || "";
+      document.getElementById("location").value = film.location || "";
+      document.getElementById("requestPrinter").value = film.requestPrinter || "";
+      document.getElementById("lastUsed").value = film.lastUsed || "";
+      document.getElementById("imageInput").value = "";
+      setPlateInfoToForm(film.plateInfo || "");
+      document.getElementById("formCard").style.display = "block";
+      document.getElementById("productName").focus();
+    }
+
+    function closeForm() {
+      document.getElementById("formCard").style.display = "none";
+      resetForm();
+    }
+
+    function updateCountBar(filteredLength, totalLength, hasFilter) {
+      const bar = document.getElementById("countBar");
+      if (!bar) return;
+      if (hasFilter) {
+        bar.innerHTML = `검색 결과 <strong>${filteredLength}</strong>개 / 전체 ${totalLength}개`;
+      } else {
+        bar.innerHTML = `총 <strong>${totalLength}</strong>개 필름`;
+      }
+    }
+
+    function renderList(filterText = "") {
+      const listEl = document.getElementById("list");
+      const emptyText = document.getElementById("emptyText");
+      if (!listEl || !emptyText) return;
+
+      listEl.innerHTML = "";
+      currentSearchText = filterText || "";
+
+      const text = (filterText || "").trim().toLowerCase();
+
+      let filtered = films.filter((f) => {
+        if (!text) return true;
+        const combined =
+          (f.productName || "") +
+          " " +
+          (f.filmNumber || "") +
+          " " +
+          (f.method || "") +
+          " " +
+          (f.mesh || "") +
+          " " +
+          (f.location || "") +
+          " " +
+          (f.plateInfo || "") +
+          " " +
+          (f.requestPrinter || "");
+        return combined.toLowerCase().includes(text);
+      });
+
+      const sortOpt = getSortOption();
+      filtered = filtered.slice().sort((a, b) => {
+        if (sortOpt === "name") {
+          return (a.productName || "").localeCompare(b.productName || "", "ko");
+        } else if (sortOpt === "number") {
+          return (a.filmNumber || "").localeCompare(b.filmNumber || "", "ko");
+        } else if (sortOpt === "lastUsed") {
+          const la = a.lastUsed || "";
+          const lb = b.lastUsed || "";
+          return (lb || "").localeCompare(la || "");
+        } else {
+          const atA = a.updatedAt || a.createdAt || 0;
+          const atB = b.updatedAt || b.createdAt || 0;
+          return atB - atA;
+        }
+      });
+
+      updateCountBar(filtered.length, films.length, !!text);
+
+      let toRender = filtered;
+      if (!text) {
+        if (!visibleCount) {
+          visibleCount = Math.min(VISIBLE_STEP, filtered.length);
+        } else {
+          visibleCount = Math.min(visibleCount, filtered.length);
+        }
+        toRender = filtered.slice(0, visibleCount);
+      }
+
+      if (filtered.length === 0) {
+        emptyText.style.display = "block";
+        return;
+      } else {
+        emptyText.style.display = "none";
+      }
+
+      toRender.forEach((film) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const img = document.createElement("img");
+        if (film.imageDataUrl) {
+          img.src = film.imageDataUrl;
+          img.addEventListener("click", () => openImageViewer(film.imageDataUrl));
+        } else {
+          img.alt = "이미지 없음";
+        }
+        card.appendChild(img);
+
+        const content = document.createElement("div");
+        content.className = "card-content";
+
+        const rowMain = document.createElement("div");
+        rowMain.className = "card-row-main";
+        const title = document.createElement("div");
+        title.className = "card-title";
+        title.textContent = film.productName || "(제품명 없음)";
+        const tag = document.createElement("div");
+        tag.className = "card-tag";
+        tag.textContent = film.filmNumber || "번호 없음";
+        rowMain.appendChild(title);
+        rowMain.appendChild(tag);
+        content.appendChild(rowMain);
+
+        const rowMethod = document.createElement("div");
+        rowMethod.className = "card-row";
+        rowMethod.innerHTML = '<span class="label">제판 타입</span>' + (film.method || "-");
+        content.appendChild(rowMethod);
+
+        const rowMesh = document.createElement("div");
+        rowMesh.className = "card-row";
+        rowMesh.innerHTML = '<span class="label">MESH</span>' + (film.mesh || "-");
+        content.appendChild(rowMesh);
+
+        const rowPlate = document.createElement("div");
+        rowPlate.className = "card-row";
+        rowPlate.innerHTML = '<span class="label">제판 방법</span>' + (film.plateInfo || "-");
+        content.appendChild(rowPlate);
+
+        const rowLoc = document.createElement("div");
+        rowLoc.className = "card-row";
+        rowLoc.innerHTML = '<span class="label">필름 위치</span>' + (film.location || "-");
+        content.appendChild(rowLoc);
+
+        const rowReq = document.createElement("div");
+        rowReq.className = "card-row";
+        rowReq.innerHTML = '<span class="label">요청 인쇄자</span>' + (film.requestPrinter || "-");
+        content.appendChild(rowReq);
+
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+
+        const lastUsed = document.createElement("div");
+        lastUsed.className = "last-used";
+        lastUsed.textContent = "마지막 사용일: " + formatDate(film.lastUsed || "");
+        footer.appendChild(lastUsed);
+
+        const btnWrap = document.createElement("div");
+        btnWrap.className = "card-buttons";
+
+        const useTodayBtn = document.createElement("button");
+        useTodayBtn.className = "btn btn-secondary btn-small";
+        useTodayBtn.textContent = "오늘 사용";
+        useTodayBtn.addEventListener("click", async () => {
+          const today = new Date().toISOString().slice(0, 10);
+          try {
+            await db.collection(FILM_COLLECTION).doc(film.id).set(
+              {
+                lastUsed: today,
+                updatedAt: Date.now(),
+              },
+              { merge: true }
+            );
+            await addHistory("오늘 사용", { ...film, lastUsed: today }, ["마지막 사용일"]);
+            showToast("오늘 사용으로 기록했어.");
+          } catch (e) {
+            console.error(e);
+            showToast("업데이트 중 오류가 났어.");
+          }
+        });
+
+        const memoBtn = document.createElement("button");
+        memoBtn.className = "btn btn-secondary btn-small";
+        memoBtn.textContent = "메모";
+        if ((film.memo || "").trim()) memoBtn.classList.add("btn-memo-has");
+        memoBtn.addEventListener("click", () => openMemoSheet(film.id));
+
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "btn btn-secondary btn-small";
+        copyBtn.textContent = "복사";
+        copyBtn.addEventListener("click", () => openFormCopyFrom(film.id));
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "btn btn-primary btn-small";
+        editBtn.textContent = "수정";
+        editBtn.addEventListener("click", () => openFormForEdit(film.id));
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "btn btn-danger btn-small";
+        delBtn.textContent = "삭제";
+        delBtn.addEventListener("click", async () => {
+          if (!confirm("이 필름 정보를 삭제할까요?")) return;
+          try {
+            await db.collection(FILM_COLLECTION).doc(film.id).delete();
+            await addHistory("삭제", film, ["삭제"]);
+            showToast("삭제했어.");
+          } catch (e) {
+            console.error(e);
+            showToast("삭제 중 오류가 났어.");
+          }
+        });
+
+        btnWrap.appendChild(useTodayBtn);
+        btnWrap.appendChild(memoBtn);
+        btnWrap.appendChild(copyBtn);
+        btnWrap.appendChild(editBtn);
+        btnWrap.appendChild(delBtn);
+
+        footer.appendChild(btnWrap);
+        content.appendChild(footer);
+
+        card.appendChild(content);
+        listEl.appendChild(card);
+      });
+
+      applyViewMode(); // 렌더링 후에도 뷰 모드 유지
+    }
+
+    /* ---------- 이미지 압축 (회전 포함) ---------- */
+    function compressImage(dataUrl, rotationDeg, callback) {
+      const img = new Image();
+      img.onload = function () {
+        const maxSize = 700;
+        let w = img.width;
+        let h = img.height;
+        const ratio = Math.min(maxSize / w, maxSize / h, 1);
+        let drawW = Math.round(w * ratio);
+        let drawH = Math.round(h * ratio);
+
+        const rot = ((rotationDeg % 360) + 360) % 360;
+        let canvasW = drawW;
+        let canvasH = drawH;
+        if (rot === 90 || rot === 270) {
+          canvasW = drawH;
+          canvasH = drawW;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = canvasW;
+        canvas.height = canvasH;
+        const ctx = canvas.getContext("2d");
+
+        ctx.translate(canvasW / 2, canvasH / 2);
+        ctx.rotate((rot * Math.PI) / 180);
+        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+
+        const compressed = canvas.toDataURL("image/jpeg", 0.7);
+        callback(compressed);
+      };
+      img.onerror = function () {
+        callback(dataUrl);
+      };
+      img.src = dataUrl;
+    }
+
+    /* ---------- 저장 ---------- */
+    function computeChanges(oldData, newData, imageChanged) {
+      const changes = [];
+      if (!oldData) {
+        changes.push("등록");
+        return changes;
+      }
+      if (oldData.productName !== newData.productName) changes.push("제품 이름");
+      if (oldData.filmNumber !== newData.filmNumber) changes.push("필름 번호");
+      if (oldData.method !== newData.method) changes.push("제판 타입");
+      if ((oldData.mesh || "") !== (newData.mesh || "")) changes.push("MESH");
+      if (oldData.location !== newData.location) changes.push("필름 위치");
+      if ((oldData.lastUsed || "") !== (newData.lastUsed || "")) changes.push("마지막 사용일");
+      if ((oldData.plateInfo || "") !== (newData.plateInfo || "")) changes.push("제판 방법");
+      if ((oldData.requestPrinter || "") !== (newData.requestPrinter || "")) changes.push("요청 인쇄자");
+      if (imageChanged) changes.push("이미지");
+      if (!changes.length) changes.push("기타 수정");
+      return changes;
+    }
+
+    async function saveFilmFromForm(event) {
+      if (event) event.preventDefault();
+
+      const id = document.getElementById("filmId").value || null;
+      const productName = document.getElementById("productName").value.trim();
+      const filmNumber = document.getElementById("filmNumber").value.trim();
+      const method = document.getElementById("method").value.trim();
+      const mesh = document.getElementById("mesh").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const requestPrinter = document.getElementById("requestPrinter").value;
+      const lastUsed = document.getElementById("lastUsed").value || "";
+      const plateInfo = getPlateInfoFromForm();
+      const imageInput = document.getElementById("imageInput");
+
+      if (!productName || !filmNumber) {
+        alert("제품 이름과 필름 번호는 필수입니다.");
+        return;
+      }
+
+      const existing = id ? films.find((f) => f.id === id) : null;
+
+      const baseData = {
+        productName,
+        filmNumber,
+        method,
+        mesh,
+        location,
+        lastUsed,
+        plateInfo,
+        requestPrinter,
+      };
+
+      async function finalizeSave(imageDataUrl) {
+        try {
+          if (id && existing) {
+            const payload = {
+              ...baseData,
+              updatedAt: Date.now(),
+            };
+            let imageChanged = false;
+            if (imageDataUrl !== null) {
+              payload.imageDataUrl = imageDataUrl;
+              imageChanged = true;
+            }
+
+            const changes = computeChanges(existing, payload, imageChanged);
+
+            await db.collection(FILM_COLLECTION).doc(id).set(payload, { merge: true });
+            await addHistory("수정", { id, ...(existing || {}), ...payload }, changes);
+          } else {
+            const payload = {
+              ...baseData,
+              imageDataUrl: imageDataUrl || "",
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+              deviceName: getDeviceLabel() || "",
+            };
+            const ref = await db.collection(FILM_COLLECTION).add(payload);
+            await addHistory("등록", { id: ref.id, ...payload }, ["등록"]);
+          }
+          showToast("저장되었습니다.");
+          const searchInput = document.getElementById("searchInput");
+          if (searchInput) searchInput.value = "";
+          currentSearchText = "";
+          closeForm();
+          visibleCount = VISIBLE_STEP;
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch (e) {
+          console.error(e);
+          showToast("저장 중 오류가 발생했어.");
+        }
+      }
+
+      if (imageInput.files && imageInput.files[0]) {
+        // 새 사진을 선택한 경우: 현재 선택된 dataUrl과 회전값 기준으로 저장
+        if (!currentSelectedImageDataUrl) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const originalDataUrl = e.target.result;
+            compressImage(originalDataUrl, currentImageRotation, function (compressedDataUrl) {
+              finalizeSave(compressedDataUrl);
+            });
+          };
+          reader.readAsDataURL(imageInput.files[0]);
+        } else {
+          compressImage(currentSelectedImageDataUrl, currentImageRotation, function (compressedDataUrl) {
+            finalizeSave(compressedDataUrl);
+          });
+        }
+      } else {
+        // 사진을 건드리지 않은 경우: 기존 이미지 유지 (수정 시) 또는 빈 값 (신규)
+        finalizeSave(id && existing ? null : "");
+      }
+    }
+
+    /* ---------- 내보내기/불러오기 ---------- */
+    function exportData() {
+      const json = JSON.stringify(films, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      a.href = url;
+      a.download = "films_" + date + ".json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = async function (e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (Array.isArray(data)) {
+            for (const f of data) {
+              const payload = { ...f };
+              delete payload.id;
+              if (!payload.createdAt) payload.createdAt = Date.now();
+              if (!payload.updatedAt) payload.updatedAt = Date.now();
+              await db.collection(FILM_COLLECTION).add(payload);
+            }
+            showToast("데이터를 불러왔습니다.");
+          } else {
+            alert("형식이 올바르지 않은 파일입니다.");
+          }
+        } catch (err) {
+          console.error(err);
+          showToast("파일을 읽는 중 오류가 발생했습니다.");
+        }
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    /* ---------- 설정 ---------- */
+    function openSettings() {
+      const card = document.getElementById("settingsCard");
+      const isOpen = card.style.display === "block";
+      closeAllPanels();
+      if (!isOpen) {
+        card.style.display = "block";
+        document.getElementById("deviceNameInput").value = getDeviceLabel();
+        document.getElementById("sortOptionSelect").value = getSortOption();
+        document.getElementById("themeSelect").value = getTheme();
+        document.getElementById("currentPwInput").value = "";
+        document.getElementById("newPwInput").value = "";
+        document.getElementById("newPwConfirmInput").value = "";
+      }
+    }
+    function closeSettings() {
+      document.getElementById("settingsCard").style.display = "none";
+    }
+
+    function saveSettings() {
+      const deviceName = document.getElementById("deviceNameInput").value.trim();
+      const sortOpt = document.getElementById("sortOptionSelect").value;
+      const theme = document.getElementById("themeSelect").value;
+      const currentPw = document.getElementById("currentPwInput").value;
+      const newPw = document.getElementById("newPwInput").value;
+      const newPw2 = document.getElementById("newPwConfirmInput").value;
+
+      setDeviceLabel(deviceName);
+      setSortOption(sortOpt);
+      setTheme(theme);
+
+      let msg = "설정이 저장되었습니다.";
+
+      if (newPw || newPw2 || currentPw) {
+        if (currentPw !== getCurrentPassword()) {
+          alert("현재 비밀번호가 올바르지 않습니다.");
+          return;
+        }
+        if (!newPw) {
+          alert("새 비밀번호를 입력해 주세요.");
+          return;
+        }
+        if (newPw !== newPw2) {
+          alert("새 비밀번호가 서로 다릅니다.");
+          return;
+        }
+        if (newPw.length < 4) {
+          alert("비밀번호는 4글자 이상으로 설정해 주세요.");
+          return;
+        }
+        setCurrentPassword(newPw);
+        msg = "비밀번호가 변경되었습니다.";
+      }
+
+      closeSettings();
+      renderList(currentSearchText);
+      showToast(msg);
+    }
+
+    /* ---------- 이미지 뷰어 (핀치 줌 + 스와이프 다운 닫기) ---------- */
+    let viewerScale = 1;
+    let viewerStartDist = 0;
+    let viewerLastScale = 1;
+    let viewerTransX = 0;
+    let viewerTransY = 0;
+    let panStartX = 0;
+    let panStartY = 0;
+    let isPanning = false;
+    let swipeStartY = 0;
+    let swipeDeltaY = 0;
+
+    function resetViewerTransform() {
+      viewerScale = 1;
+      viewerTransX = 0;
+      viewerTransY = 0;
+      viewerStartDist = 0;
+      viewerLastScale = 1;
+      isPanning = false;
+      swipeStartY = 0;
+      swipeDeltaY = 0;
+      const img = document.getElementById("viewerImage");
+      img.style.transform = "translate(0px, 0px) scale(1)";
+    }
+    function updateViewerTransform() {
+      const img = document.getElementById("viewerImage");
+      img.style.transform = "translate(" + viewerTransX + "px, " + viewerTransY + "px) scale(" + viewerScale + ")";
+    }
+    function openImageViewer(src) {
+      if (!src) return;
+      const viewer = document.getElementById("imageViewer");
+      const img = document.getElementById("viewerImage");
+      img.src = src;
+      resetViewerTransform();
+      viewer.style.display = "flex";
+    }
+    function closeImageViewer() {
+      const viewer = document.getElementById("imageViewer");
+      viewer.style.display = "none";
+    }
+    function initImageViewerTouch() {
+      const img = document.getElementById("viewerImage");
+      const backdrop = document.getElementById("viewerBackdrop");
+
+      backdrop.addEventListener("click", () => {
+        closeImageViewer();
+      });
+
+      img.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          viewerStartDist = Math.sqrt(dx*dx + dy*dy);
+          viewerLastScale = viewerScale;
+        } else if (e.touches.length === 1) {
+          swipeStartY = e.touches[0].clientY;
+          swipeDeltaY = 0;
+          if (viewerScale > 1) {
+            isPanning = true;
+            panStartX = e.touches[0].clientX - viewerTransX;
+            panStartY = e.touches[0].clientY - viewerTransY;
+          }
+        }
+      }, { passive: false });
+
+      img.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (viewerStartDist > 0) {
+            let scale = viewerLastScale * (dist / viewerStartDist);
+            if (scale < 1) scale = 1;
+            if (scale > 4) scale = 4;
+            viewerScale = scale;
+            updateViewerTransform();
+          }
+        } else if (e.touches.length === 1) {
+          e.preventDefault();
+          const touch = e.touches[0];
+          swipeDeltaY = touch.clientY - swipeStartY;
+
+          if (viewerScale > 1 && isPanning) {
+            viewerTransX = touch.clientX - panStartX;
+            viewerTransY = touch.clientY - panStartY;
+            updateViewerTransform();
+          }
+        }
+      }, { passive: false });
+
+      img.addEventListener("touchend", (e) => {
+        if (e.touches.length < 2) {
+          viewerStartDist = 0;
+          viewerLastScale = viewerScale;
+        }
+        if (e.touches.length === 0) {
+          isPanning = false;
+          if (swipeDeltaY > 80 && Math.abs(swipeDeltaY) > 40) {
+            closeImageViewer();
+          }
+          swipeStartY = 0;
+          swipeDeltaY = 0;
+        }
+      });
+    }
+
+    /* ---------- 스크롤 관련 (무한 스크롤 + 맨 위로 버튼) ---------- */
+    function initScrollHandlers() {
+      const scrollTopBtn = document.getElementById("scrollTopBtn");
+      const spinner = document.getElementById("loadingSpinner");
+
+      window.addEventListener("scroll", () => {
+        const scrollY = window.scrollY || window.pageYOffset;
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        const fullHeight = document.documentElement.scrollHeight;
+
+        if (scrollY > 200) {
+          scrollTopBtn.classList.add("show");
+        } else {
+          scrollTopBtn.classList.remove("show");
+        }
+
+        if (currentSearchText || loadingMore) return;
+        if (visibleCount >= films.length) return;
+
+        if (scrollY + vh >= fullHeight - 80) {
+          loadingMore = true;
+          spinner.classList.add("show");
+          setTimeout(() => {
+            visibleCount = Math.min(visibleCount + VISIBLE_STEP, films.length);
+            renderList(currentSearchText);
+            spinner.classList.remove("show");
+            loadingMore = false;
+          }, 500);
+        }
+      });
+
+      scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+
+    /* ---------- 패널 공통 ---------- */
+    function closeAllPanels() {
+      document.getElementById("settingsCard").style.display = "none";
+      document.getElementById("historyCard").style.display = "none";
+      document.getElementById("formCard").style.display = "none";
+    }
+
+    /* ---------- 뷰 모드 ---------- */
+    function applyViewMode() {
+      const list = document.getElementById("list");
+      const btn = document.getElementById("viewToggleBtn");
+      if (!list || !btn) return;
+      if (currentViewMode === "gallery") {
+        list.classList.add("gallery");
+        btn.textContent = "리스트";
+      } else {
+        list.classList.remove("gallery");
+        btn.textContent = "갤러리";
+      }
+    }
+
+    /* ---------- 앱 초기화 ---------- */
+    function initAppAfterUnlock() {
+      setTheme(getTheme());
+      const themeSelect = document.getElementById("themeSelect");
+      if (themeSelect) themeSelect.value = getTheme();
+
+      setDeviceLabel(getDeviceLabel());
+
+      startFilmsListener();
+      renderList();
+
+      document.getElementById("newFilmBtn").addEventListener("click", toggleFormNew);
+      document.getElementById("cancelBtn").addEventListener("click", closeForm);
+      document.getElementById("filmForm").addEventListener("submit", saveFilmFromForm);
+      document.getElementById("saveBtn").addEventListener("click", saveFilmFromForm);
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        currentSearchText = e.target.value;
+        renderList(e.target.value);
+      });
+      document.getElementById("setTodayBtn").addEventListener("click", () => {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById("lastUsed").value = today;
+      });
+
+      document.querySelectorAll(".toggle-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const group = btn.closest(".toggle-group");
+          group.querySelectorAll(".toggle-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+
+      document.getElementById("exportBtn").addEventListener("click", exportData);
+      document.getElementById("importBtn").addEventListener("click", () => {
+        document.getElementById("importFile").click();
+      });
+      document.getElementById("importFile").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) importData(file);
+        e.target.value = "";
+      });
+
+      document.getElementById("settingsBtn").addEventListener("click", openSettings);
+      document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
+      document.getElementById("saveSettingsBtn").addEventListener("click", saveSettings);
+
+      document.getElementById("historyBtn").addEventListener("click", openHistoryCard);
+      document.getElementById("closeHistoryBtn").addEventListener("click", closeHistoryCard);
+
+      document.getElementById("closeViewerBtn").addEventListener("click", closeImageViewer);
+      initImageViewerTouch();
+      initScrollHandlers();
+
+      document.getElementById("viewToggleBtn").addEventListener("click", () => {
+        setViewMode(currentViewMode === "gallery" ? "list" : "gallery");
+      });
+      applyViewMode();
+
+      // 이미지 선택 & 회전 이벤트
+      const imageInputEl = document.getElementById("imageInput");
+      const rotateLeftBtn = document.getElementById("rotateLeftBtn");
+      const rotateRightBtn = document.getElementById("rotateRightBtn");
+      const previewWrapper = document.getElementById("imagePreviewWrapper");
+      const previewImg = document.getElementById("imagePreview");
+
+      if (imageInputEl) {
+        imageInputEl.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) {
+            resetImagePreview();
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            currentSelectedImageDataUrl = ev.target.result;
+            currentImageRotation = 0;
+            if (previewImg) {
+              previewImg.src = currentSelectedImageDataUrl;
+              previewImg.style.transform = "rotate(0deg)";
+            }
+            if (previewWrapper) {
+              previewWrapper.style.display = "flex";
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      if (rotateLeftBtn) {
+        rotateLeftBtn.addEventListener("click", () => {
+          if (!currentSelectedImageDataUrl) {
+            showToast("먼저 사진을 선택해 줘.");
+            return;
+          }
+          currentImageRotation = (currentImageRotation - 90) % 360;
+          applyPreviewRotation();
+        });
+      }
+      if (rotateRightBtn) {
+        rotateRightBtn.addEventListener("click", () => {
+          if (!currentSelectedImageDataUrl) {
+            showToast("먼저 사진을 선택해 줘.");
+            return;
+          }
+          currentImageRotation = (currentImageRotation + 90) % 360;
+          applyPreviewRotation();
+        });
+      }
+
+      /* ====== 메모 슬라이드 이벤트 ====== */
+      document.getElementById("memoSheetBackdrop").addEventListener("click", closeMemoSheet);
+      document.getElementById("memoSheetCloseBtn").addEventListener("click", closeMemoSheet);
+      document.getElementById("memoSheetCancelBtn").addEventListener("click", closeMemoSheet);
+      document.getElementById("memoSheetSaveBtn").addEventListener("click", saveMemoSheet);
+
+      /* ====== 히스토리 메모 모달 이벤트 ====== */
+      document.getElementById("historyNoteCancelBtn").addEventListener("click", closeHistoryNoteModal);
+      document.getElementById("historyNoteSaveBtn").addEventListener("click", saveHistoryNoteModal);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const lockScreen = document.getElementById("lockScreen");
+      const appContainer = document.getElementById("appContainer");
+      const pwInput = document.getElementById("passwordInput");
+      const pwBtn = document.getElementById("passwordBtn");
+
+      setTheme(getTheme());
+
+      function unlock() {
+        const v = pwInput.value.trim();
+        if (v === getCurrentPassword()) {
+          sessionStorage.setItem(UNLOCK_KEY, "true");
+          lockScreen.style.display = "none";
+          appContainer.style.display = "block";
+
+          if (!window._filmAppInitialized) {
+            window._filmAppInitialized = true;
+            initAppAfterUnlock();
+
+            if (!getDeviceLabel()) {
+              const dm = document.getElementById("deviceModal");
+              dm.style.display = "flex";
+            }
+          }
+        } else {
+          alert("비밀번호가 틀렸어.");
+          pwInput.focus();
+          pwInput.select();
+        }
+      }
+
+      const unlocked = sessionStorage.getItem(UNLOCK_KEY) === "true";
+      if (unlocked) {
+        lockScreen.style.display = "none";
+        appContainer.style.display = "block";
+        if (!window._filmAppInitialized) {
+          window._filmAppInitialized = true;
+          initAppAfterUnlock();
+
+          if (!getDeviceLabel()) {
+            const dm = document.getElementById("deviceModal");
+            dm.style.display = "flex";
+          }
+        }
+      } else {
+        lockScreen.style.display = "flex";
+        appContainer.style.display = "none";
+      }
+
+      pwBtn.addEventListener("click", unlock);
+      pwInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          unlock();
+        }
+      });
+
+      const deviceModal = document.getElementById("deviceModal");
+      const deviceInput = document.getElementById("deviceModalInput");
+      const deviceSkip = document.getElementById("deviceModalSkip");
+      const deviceSave = document.getElementById("deviceModalSave");
+
+      deviceSkip.addEventListener("click", () => {
+        deviceModal.style.display = "none";
+        showToast("언제든 설정에서 기기 이름을 바꿀 수 있어.");
+      });
+      deviceSave.addEventListener("click", () => {
+        const name = deviceInput.value.trim();
+        if (!name) {
+          alert("기기 이름을 입력해 줘.");
+          return;
+        }
+        setDeviceLabel(name);
+        deviceModal.style.display = "none";
+        showToast("기기 이름을 저장했어.");
+      });
+    });
+  </script>
+</body>
+  </html>
