@@ -789,6 +789,176 @@
         grid-template-columns: repeat(3, minmax(260px, 1fr));
       }
     }
+
+    /* ====== 필름 메모: 슬라이드(바텀 시트) ====== */
+    .memo-sheet {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 1600;
+    }
+    .memo-sheet.show { display: flex; }
+    .memo-sheet-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+    }
+    .memo-sheet-panel {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px 18px 0 0;
+      box-shadow: 0 -12px 28px rgba(0,0,0,0.25);
+      padding: 12px 14px 14px;
+      animation: sheetUp 0.16s ease-out;
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(14px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .memo-sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .memo-sheet-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .memo-sheet-sub {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 2px;
+    }
+    .memo-sheet-textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: #f9f9ff;
+      color: var(--text-main);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    [data-theme="night"] .memo-sheet-textarea {
+      background: #020617;
+      border-color: #1f2937;
+      color: #e5e7eb;
+    }
+    .memo-sheet-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    /* 메모 버튼: 메모 있으면 살짝 강조 */
+    .btn-memo-has {
+      box-shadow: 0 0 0 2px rgba(127,157,255,0.18) inset;
+    }
+
+    /* ====== 히스토리: 연필 버튼 + 노트 표시 ====== */
+    .history-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .history-pencil {
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: var(--primary-soft);
+      color: var(--text-main);
+    }
+    [data-theme="night"] .history-pencil {
+      color: #e5e7eb;
+    }
+    .history-note {
+      margin-top: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: rgba(228,231,255,0.65);
+      font-size: 12px;
+      color: var(--text-main);
+
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    [data-theme="night"] .history-note {
+      background: rgba(79,70,229,0.18);
+      border-color: #1f2937;
+    }
+
+    /* ====== 히스토리 메모 모달 ====== */
+    .note-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1700;
+      padding: 16px;
+    }
+    .note-modal.show { display: flex; }
+    .note-modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px 18px 14px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    }
+    .note-modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    .note-modal-text {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+    }
+    .note-modal-textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: #f9f9ff;
+      color: var(--text-main);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    [data-theme="night"] .note-modal-textarea {
+      background: #020617;
+      border-color: #1f2937;
+      color: #e5e7eb;
+    }
+    .note-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -832,6 +1002,38 @@
 
   <!-- 토스트 -->
   <div id="toast" class="toast"></div>
+
+  <!-- ====== 필름 메모 슬라이드 ====== -->
+  <div id="memoSheet" class="memo-sheet">
+    <div id="memoSheetBackdrop" class="memo-sheet-backdrop"></div>
+    <div class="memo-sheet-panel">
+      <div class="memo-sheet-head">
+        <div>
+          <div class="memo-sheet-title" id="memoSheetTitle">메모</div>
+          <div class="memo-sheet-sub" id="memoSheetSub">필름별 메모를 적고 저장할 수 있어.</div>
+        </div>
+        <button class="btn btn-secondary btn-small" id="memoSheetCloseBtn">닫기</button>
+      </div>
+      <textarea id="memoTextarea" class="memo-sheet-textarea" placeholder="예: 텐션 23 이하에서 번짐 / 우측 2mm 밀림 주의"></textarea>
+      <div class="memo-sheet-actions">
+        <button class="btn btn-secondary btn-small" id="memoSheetCancelBtn">취소</button>
+        <button class="btn btn-primary btn-small" id="memoSheetSaveBtn">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 히스토리 메모 모달 ====== -->
+  <div id="historyNoteModal" class="note-modal">
+    <div class="note-modal-card">
+      <div class="note-modal-title">히스토리 메모</div>
+      <div class="note-modal-text">이 변경 기록에 “왜 바뀌었는지”를 적어둘 수 있어.</div>
+      <textarea id="historyNoteTextarea" class="note-modal-textarea" placeholder="예: 겹침 이슈로 4-2-1.6번으로 이동"></textarea>
+      <div class="note-modal-actions">
+        <button class="btn btn-secondary btn-small" id="historyNoteCancelBtn">취소</button>
+        <button class="btn btn-primary btn-small" id="historyNoteSaveBtn">저장</button>
+      </div>
+    </div>
+  </div>
 
   <!-- 실제 앱 -->
   <div id="appContainer" style="display:none;">
@@ -1079,6 +1281,10 @@
     let currentSelectedImageDataUrl = null;
     let currentImageRotation = 0; // degree 단위 (0, 90, 180, 270)
 
+    /* ====== 메모 기능 상태 ====== */
+    let currentMemoFilmId = null;
+    let currentHistoryNoteId = null;
+
     /* ---------- 유틸 (설정) ---------- */
     function getCurrentPassword() {
       return localStorage.getItem(PASSWORD_KEY) || DEFAULT_PASSWORD;
@@ -1253,15 +1459,29 @@
           (entry.productName ? ` (${entry.productName})` : "");
 
         const changesArr = Array.isArray(entry.changes) ? entry.changes : [];
+        const noteText = (entry.note || "").trim();
 
         row.innerHTML =
-          `<div><span class="history-time">${ts}</span>` +
-          `<span class="history-device">${device}</span>` +
-          `<span class="history-action-chip">${actionLabel(entry.action)}</span></div>` +
+          `<div class="history-headline">` +
+            `<div>` +
+              `<span class="history-time">${ts}</span>` +
+              `<span class="history-device">${device}</span>` +
+              `<span class="history-action-chip">${actionLabel(entry.action)}</span>` +
+            `</div>` +
+            `<button class="history-pencil" data-id="${entry.id}">✏️</button>` +
+          `</div>` +
           `<div class="history-film">${filmLabel || "필름 정보 없음"}</div>` +
           (changesArr.length
             ? `<div class="history-changes">변경 항목: ${changesArr.join(", ")}</div>`
-            : "");
+            : "") +
+          (noteText ? `<div class="history-note">${noteText}</div>` : "");
+
+        const pencilBtn = row.querySelector(".history-pencil");
+        if (pencilBtn) {
+          pencilBtn.addEventListener("click", () => {
+            openHistoryNoteModal(entry.id);
+          });
+        }
 
         list.appendChild(row);
       });
@@ -1282,6 +1502,96 @@
     }
     function closeHistoryCard() {
       document.getElementById("historyCard").style.display = "none";
+    }
+
+    /* ====== 필름 메모(슬라이드) ====== */
+    function openMemoSheet(filmId) {
+      const film = films.find((f) => f.id === filmId);
+      if (!film) return;
+
+      currentMemoFilmId = filmId;
+
+      const title = document.getElementById("memoSheetTitle");
+      const sub = document.getElementById("memoSheetSub");
+      const ta = document.getElementById("memoTextarea");
+      const sheet = document.getElementById("memoSheet");
+
+      if (title) title.textContent = `메모 · ${film.filmNumber || ""}`;
+      if (sub) sub.textContent = (film.productName || "") ? film.productName : "필름별 메모";
+      if (ta) ta.value = film.memo || "";
+
+      sheet.classList.add("show");
+    }
+
+    function closeMemoSheet() {
+      const sheet = document.getElementById("memoSheet");
+      sheet.classList.remove("show");
+      currentMemoFilmId = null;
+    }
+
+    async function saveMemoSheet() {
+      if (!currentMemoFilmId) return;
+      const ta = document.getElementById("memoTextarea");
+      const memo = (ta.value || "").trim();
+
+      try {
+        await db.collection(FILM_COLLECTION).doc(currentMemoFilmId).set(
+          {
+            memo,
+            updatedAt: Date.now(),
+          },
+          { merge: true }
+        );
+        showToast("메모를 저장했어.");
+        closeMemoSheet();
+      } catch (e) {
+        console.error(e);
+        showToast("메모 저장 중 오류가 났어.");
+      }
+    }
+
+    /* ====== 히스토리 메모(모달) ====== */
+    function openHistoryNoteModal(historyId) {
+      const entry = historyEntries.find((h) => h.id === historyId);
+      if (!entry) return;
+
+      currentHistoryNoteId = historyId;
+
+      const modal = document.getElementById("historyNoteModal");
+      const ta = document.getElementById("historyNoteTextarea");
+      if (ta) ta.value = entry.note || "";
+
+      modal.classList.add("show");
+    }
+
+    function closeHistoryNoteModal() {
+      const modal = document.getElementById("historyNoteModal");
+      modal.classList.remove("show");
+      currentHistoryNoteId = null;
+    }
+
+    async function saveHistoryNoteModal() {
+      if (!currentHistoryNoteId) return;
+      const ta = document.getElementById("historyNoteTextarea");
+      const note = (ta.value || "").trim();
+
+      try {
+        await db.collection(HISTORY_COLLECTION).doc(currentHistoryNoteId).set(
+          { note },
+          { merge: true }
+        );
+
+        // 로컬 캐시 갱신
+        const idx = historyEntries.findIndex((h) => h.id === currentHistoryNoteId);
+        if (idx >= 0) historyEntries[idx].note = note;
+
+        renderHistory();
+        showToast("히스토리 메모 저장됨.");
+        closeHistoryNoteModal();
+      } catch (e) {
+        console.error(e);
+        showToast("히스토리 메모 저장 중 오류.");
+      }
     }
 
     /* ---------- 제판 방법 토글 ---------- */
@@ -1560,6 +1870,12 @@
           }
         });
 
+        const memoBtn = document.createElement("button");
+        memoBtn.className = "btn btn-secondary btn-small";
+        memoBtn.textContent = "메모";
+        if ((film.memo || "").trim()) memoBtn.classList.add("btn-memo-has");
+        memoBtn.addEventListener("click", () => openMemoSheet(film.id));
+
         const copyBtn = document.createElement("button");
         copyBtn.className = "btn btn-secondary btn-small";
         copyBtn.textContent = "복사";
@@ -1586,6 +1902,7 @@
         });
 
         btnWrap.appendChild(useTodayBtn);
+        btnWrap.appendChild(memoBtn);
         btnWrap.appendChild(copyBtn);
         btnWrap.appendChild(editBtn);
         btnWrap.appendChild(delBtn);
@@ -2124,6 +2441,16 @@
           applyPreviewRotation();
         });
       }
+
+      /* ====== 메모 슬라이드 이벤트 ====== */
+      document.getElementById("memoSheetBackdrop").addEventListener("click", closeMemoSheet);
+      document.getElementById("memoSheetCloseBtn").addEventListener("click", closeMemoSheet);
+      document.getElementById("memoSheetCancelBtn").addEventListener("click", closeMemoSheet);
+      document.getElementById("memoSheetSaveBtn").addEventListener("click", saveMemoSheet);
+
+      /* ====== 히스토리 메모 모달 이벤트 ====== */
+      document.getElementById("historyNoteCancelBtn").addEventListener("click", closeHistoryNoteModal);
+      document.getElementById("historyNoteSaveBtn").addEventListener("click", saveHistoryNoteModal);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -2204,4 +2531,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
