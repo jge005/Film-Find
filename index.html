@@ -2916,14 +2916,51 @@ content.appendChild(img);
       document.getElementById("historyNoteCancelBtn").addEventListener("click", closeHistoryNoteModal);
       document.getElementById("historyNoteSaveBtn").addEventListener("click", saveHistoryNoteModal);
 
-      // 스크롤 탑
+            // 스크롤 이벤트 (맨 위로 버튼 + 무한 스크롤)
       const scrollBtn = document.getElementById("scrollTopBtn");
+      const spinner = document.getElementById("loadingSpinner");
+
       window.addEventListener("scroll", () => {
-        if (!scrollBtn) return;
-        if (window.scrollY > 600) scrollBtn.classList.add("show");
-        else scrollBtn.classList.remove("show");
+        // 1. 맨 위로 가기 버튼 표시/숨김
+        if (scrollBtn) {
+          if (window.scrollY > 600) scrollBtn.classList.add("show");
+          else scrollBtn.classList.remove("show");
+        }
+
+        // 2. 무한 스크롤 (바닥 감지 로직 추가됨!)
+        if (loadingMore) return; // 이미 로딩 중이면 실행 안 함
+
+        // 문서 전체 높이 - (현재 스크롤 위치 + 화면 높이) < 50px (바닥에 거의 닿음)
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        
+        if (scrollTop + clientHeight >= scrollHeight - 50) {
+          // 더 보여줄 데이터가 있는지 확인
+          let totalLen = (currentTab === "films") ? films.length : plates.length;
+
+          // 이미 다 보여줬으면 중단 (검색어 없을 때만 체크)
+          if (visibleCount >= totalLen && currentSearchText === "") return;
+
+          loadingMore = true;
+          if (spinner) spinner.classList.add("show");
+
+          // 스피너를 잠깐 보여주기 위해 0.5초 딜레이
+          setTimeout(() => {
+            visibleCount += VISIBLE_STEP; // 보여줄 개수 늘리기
+            renderCurrentTab(); // 화면 다시 그리기
+            
+            if (spinner) spinner.classList.remove("show");
+            loadingMore = false;
+          }, 500);
+        }
       });
-      scrollBtn.addEventListener("click", () => window.scrollTo({ top:0, behavior:"smooth" }));
+
+      // 맨 위로 가기 버튼 클릭 이벤트
+      if (scrollBtn) {
+        scrollBtn.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
 
       // ✅ (선택) 페이지가 살아있을 때만 유지 / 창 완전 종료면 sessionStorage 자동 초기화
       // (추가 삭제 없음)
