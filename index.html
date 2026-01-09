@@ -2916,7 +2916,7 @@ content.appendChild(img);
       document.getElementById("historyNoteCancelBtn").addEventListener("click", closeHistoryNoteModal);
       document.getElementById("historyNoteSaveBtn").addEventListener("click", saveHistoryNoteModal);
 
-            // 스크롤 이벤트 (맨 위로 버튼 + 무한 스크롤)
+                  // 스크롤 이벤트 (맨 위로 버튼 + 무한 스크롤 - 강력한 버전)
       const scrollBtn = document.getElementById("scrollTopBtn");
       const spinner = document.getElementById("loadingSpinner");
 
@@ -2927,26 +2927,32 @@ content.appendChild(img);
           else scrollBtn.classList.remove("show");
         }
 
-        // 2. 무한 스크롤 (바닥 감지 로직 추가됨!)
+        // 2. 무한 스크롤 (바닥 감지)
         if (loadingMore) return; // 이미 로딩 중이면 실행 안 함
 
-        // 문서 전체 높이 - (현재 스크롤 위치 + 화면 높이) < 50px (바닥에 거의 닿음)
-        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-        
-        if (scrollTop + clientHeight >= scrollHeight - 50) {
-          // 더 보여줄 데이터가 있는지 확인
-          let totalLen = (currentTab === "films") ? films.length : plates.length;
+        // [수정] 모바일/PC 모든 브라우저 호환성을 위한 높이 계산
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
+        const docHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
 
-          // 이미 다 보여줬으면 중단 (검색어 없을 때만 체크)
+        // 바닥에서 100px 정도 남았을 때 미리 로딩 (감도 높임)
+        if (scrollTop + windowHeight >= docHeight - 100) {
+          
+          // 현재 탭에 맞는 전체 데이터 개수 확인
+          let totalLen = 0;
+          if (currentTab === "films") totalLen = films.length;
+          else totalLen = plates.length;
+
+          // 검색 중이 아닐 때, 이미 다 보여줬으면 중단
           if (visibleCount >= totalLen && currentSearchText === "") return;
 
           loadingMore = true;
           if (spinner) spinner.classList.add("show");
 
-          // 스피너를 잠깐 보여주기 위해 0.5초 딜레이
+          // 스피너 보여주기 (0.5초 딜레이)
           setTimeout(() => {
-            visibleCount += VISIBLE_STEP; // 보여줄 개수 늘리기
-            renderCurrentTab(); // 화면 다시 그리기
+            visibleCount += VISIBLE_STEP; // 개수 늘리기
+            renderCurrentTab(); // 화면 갱신
             
             if (spinner) spinner.classList.remove("show");
             loadingMore = false;
@@ -2960,6 +2966,7 @@ content.appendChild(img);
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
       }
+
 
 
       // ✅ (선택) 페이지가 살아있을 때만 유지 / 창 완전 종료면 sessionStorage 자동 초기화
