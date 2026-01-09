@@ -215,11 +215,38 @@
     @keyframes cardFadeIn { from { opacity:0; transform: translateY(4px); } to { opacity:1; transform: translateY(0);} }
 
     .warn-badge{
-      position:absolute; top:10px; left:10px;
-      font-size:12px; background: rgba(255,107,129,0.12);
-      border: 1px solid rgba(255,107,129,0.35); color:#ff2f54;
-      padding:3px 8px; border-radius:999px; display:none;
-    }
+  position: relative;      /* ✅ absolute -> relative */
+  top:auto; left:auto;     /* ✅ 혹시 남아있으면 무력화 */
+  font-size:12px;
+  padding:3px 8px;
+  border-radius:999px;
+  display:none;
+
+  white-space:nowrap;      /* ✅ 줄바꿈 방지 */
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.warn-badge.ok{
+  background: rgba(120, 210, 140, 0.14);
+  border: 1px solid rgba(120, 210, 140, 0.35);
+  color: #1e7a3a;
+}
+.warn-badge.warn{
+  background: rgba(255, 200, 90, 0.18);
+  border: 1px solid rgba(255, 200, 90, 0.45);
+  color: #8a5a00;
+}
+.warn-badge.danger{
+  background: rgba(255, 140, 140, 0.14);
+  border: 1px solid rgba(255, 140, 140, 0.35);
+  color: #b12b2b;
+}
+.warn-badge.over{
+  background: rgba(170, 110, 255, 0.14);
+  border: 1px solid rgba(170, 110, 255, 0.35);
+  color: #5a2bb1;
+}
     [data-theme="night"] .warn-badge{
       color:#ffd2d8; background: rgba(249,115,115,0.14); border-color: rgba(249,115,115,0.28);
     }
@@ -792,8 +819,7 @@
             <input type="file" id="imageInput" accept="image/*" />
             <small style="font-size:11px; color:var(--text-sub);">
               · 새 필름에는 사진을 추가하고,<br/>
-              · 수정 시 사진을 바꾸고 싶을 때만 다시 선택하세요.
-            </small>
+              · 수정 시 사진을 바꾸고 싶을 때만 다시 선택하세요.</small>
 
             <div id="imagePreviewWrapper" style="margin-top:8px; display:none; align-items:center; gap:6px;">
               <img id="imagePreview" alt="미리보기"
@@ -1807,8 +1833,7 @@
           });
           btnWrap.appendChild(useTodayBtn);
 
-          const editBtn = document.createElement("button");
-          editBtn.className = "btn btn-secondary btn-small";
+          const editBtn = document.createElement("button");editBtn.className = "btn btn-secondary btn-small";
           editBtn.textContent = "수정";
           editBtn.addEventListener("click", () => openFormForEdit(film.id));
           btnWrap.appendChild(editBtn);
@@ -2073,14 +2098,15 @@
       return { pct, used, max };
     }
 
-    // ✅ 4) 사용량 뱃지(적절/유의/주의/경고)
-    function getUsageBadgeInfo(plate){
-      const { pct } = getPlateUsedRatio(plate);
-      if (pct > 100) return { label: "경고", show: true };
-      if (pct >= 90) return { label: "주의", show: true };
-      if (pct >= 70) return { label: "유의", show: true };
-      return { label: "적절", show: true };
-    }
+  // ✅ 4) 사용량 뱃지(적정/유의/주의/경고) + 색 클래스 추가
+function getUsageBadgeInfo(plate){
+  const { pct } = getPlateUsedRatio(plate);
+
+  if (pct > 100) return { label: "초과", show: true, cls: "over" };
+  if (pct >= 90) return { label: "주의", show: true, cls: "danger" };
+  if (pct >= 70) return { label: "유의", show: true, cls: "warn" };
+  return { label: "적정", show: true, cls: "ok" };
+}
 
     function openPlateUseSheet(plateId){
       if (currentMode !== MODE_ADMIN && currentMode !== MODE_PRINTER) return;
@@ -2321,7 +2347,7 @@
         // ✅ 4) 사용량 뱃지 표시(좌상단)
         const badge = document.createElement("div");
         const b = getUsageBadgeInfo(plate);
-        badge.className = "warn-badge show";
+        badge.className = `warn-badge ${b.cls} show`;
         // label별 색 느낌은 기존 warn-badge 스타일 그대로(요구: 뱃지 표시)라 색 크게 건드리지 않음
         // 대신 텍스트에 단계 표시
         const r = getPlateUsedRatio(plate);
