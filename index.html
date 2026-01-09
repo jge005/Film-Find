@@ -114,13 +114,8 @@
       padding: 12px;
       color: var(--text-main);
     }
+    .app-shell { max-width: 720px; margin: 0 auto; }
 
-    .app-shell {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-
-    /* 상단 헤더 */
     .app-header {
       max-width: 720px;
       margin: 0 auto 6px;
@@ -129,21 +124,10 @@
       justify-content: space-between;
       gap: 8px;
     }
-    .title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .app-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--text-main);
-    }
-    .app-subtitle {
-      font-size: 11px;
-      color: var(--text-sub);
-    }
+    .title-wrap { display: flex; flex-direction: column; gap: 2px; }
+    .app-title { font-size: 20px; font-weight: 700; letter-spacing: 2px; color: var(--text-main); }
+    .app-subtitle { font-size: 11px; color: var(--text-sub); }
+
     .device-badge {
       font-size: 11px;
       padding: 4px 12px;
@@ -161,13 +145,7 @@
       gap: 6px;
       justify-content: flex-end;
     }
-    .device-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--primary-1);
-      box-shadow: 0 0 6px rgba(129, 140, 248, 0.9);
-    }
+    .device-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--primary-1); box-shadow: 0 0 6px rgba(129, 140, 248, 0.9); }
     .mode-chip {
       display: inline-flex;
       align-items: center;
@@ -183,20 +161,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .mode-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--primary-2);
-      box-shadow: 0 0 6px rgba(179, 140, 255, 0.8);
-    }
+    .mode-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--primary-2); box-shadow: 0 0 6px rgba(179, 140, 255, 0.8); }
 
-    .top-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
+    .top-bar { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
     .top-bar input[type="text"] {
       flex: 1;
       padding: 9px 11px;
@@ -207,14 +174,8 @@
       background: rgba(255,255,255,0.9);
       color: var(--text-main);
     }
-    .top-bar input::placeholder {
-      color: var(--text-muted);
-    }
-
-    [data-theme="night"] .top-bar input[type="text"] {
-      background: #020617;
-      border-color: #1f2937;
-    }
+    .top-bar input::placeholder { color: var(--text-muted); }
+    [data-theme="night"] .top-bar input[type="text"] { background: #020617; border-color: #1f2937; }
 
     .btn {
       padding: 8px 11px;
@@ -225,60 +186,18 @@
       white-space: nowrap;
       transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.1s ease, opacity 0.1s ease;
     }
-    .btn:active {
-      transform: translateY(1px);
-      box-shadow: none;
-      opacity: 0.92;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary-1), var(--primary-2));
-      color: white;
-      box-shadow: 0 4px 10px rgba(127,157,255,0.35);
-    }
-    .btn-secondary {
-      background: var(--primary-soft);
-      color: #283252;
-    }
-    [data-theme="night"] .btn-secondary {
-      color: #e5e7eb;
-    }
-    .btn-danger {
-      background: var(--danger-bg);
-      color: var(--danger-text);
-    }
-    .btn-small {
-      font-size: 12px;
-      padding: 5px 9px;
-      border-radius: 999px;
-    }
-    .btn-ghost {
-      background: rgba(255,255,255,0.55);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-    }
-    [data-theme="night"] .btn-ghost {
-      background: rgba(2,6,23,0.55);
-      border-color: #1f2937;
-      color: #e5e7eb;
-    }
+    .btn:active { transform: translateY(1px); box-shadow: none; opacity: 0.92; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary-1), var(--primary-2)); color: white; box-shadow: 0 4px 10px rgba(127,157,255,0.35); }
+    .btn-secondary { background: var(--primary-soft); color: #283252; }
+    [data-theme="night"] .btn-secondary { color: #e5e7eb; }
+    .btn-danger { background: var(--danger-bg); color: var(--danger-text); }
+    .btn-small { font-size: 12px; padding: 5px 9px; border-radius: 999px; }
+    .btn-ghost { background: rgba(255,255,255,0.55); border: 1px solid var(--card-border); color: var(--text-main); }
+    [data-theme="night"] .btn-ghost { background: rgba(2,6,23,0.55); border-color: #1f2937; color: #e5e7eb; }
 
-    .tools-bar {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
+    .tools-bar { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
-    /* 탭 바 */
-    .tabbar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: flex-start;
-      margin: 8px 0 10px;
-      flex-wrap: wrap;
-    }
+    .tabbar { display: flex; gap: 8px; align-items: center; justify-content: flex-start; margin: 8px 0 10px; flex-wrap: wrap; }
     .tab-btn {
       padding: 7px 12px;
       border-radius: 999px;
@@ -291,10 +210,7 @@
       align-items: center;
       gap: 6px;
     }
-    [data-theme="night"] .tab-btn {
-      background: rgba(2,6,23,0.55);
-      border-color: #1f2937;
-    }
+    [data-theme="night"] .tab-btn { background: rgba(2,6,23,0.55); border-color: #1f2937; }
     .tab-btn.active {
       border-color: var(--primary-1);
       background: linear-gradient(135deg, var(--primary-1), var(--primary-2));
@@ -302,23 +218,9 @@
       box-shadow: 0 6px 16px rgba(127,157,255,0.25);
     }
 
-    /* 카운트 + 뷰 전환 */
-    .count-wrap {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .count-bar {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-align: left;
-      flex: 1;
-    }
-    .count-bar strong {
-      color: var(--primary-1);
-    }
+    .count-wrap { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .count-bar { font-size: 11px; color: var(--text-muted); text-align: left; flex: 1; }
+    .count-bar strong { color: var(--primary-1); }
 
     .form-card {
       background: var(--card-bg);
@@ -328,16 +230,8 @@
       box-shadow: var(--shadow-soft);
       border: 1px solid var(--card-border);
     }
-    .form-row {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 9px;
-    }
-    .form-row label {
-      font-size: 12px;
-      margin-bottom: 4px;
-      color: var(--label-color);
-    }
+    .form-row { display: flex; flex-direction: column; margin-bottom: 9px; }
+    .form-row label { font-size: 12px; margin-bottom: 4px; color: var(--label-color); }
     .form-row input[type="text"],
     .form-row input[type="date"],
     .form-row input[type="password"],
@@ -361,39 +255,12 @@
       border-color: #1f2937;
       color: #e5e7eb;
     }
-    .form-row input[type="file"] {
-      font-size: 12px;
-    }
+    .form-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px; }
 
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    .list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    /* 갤러리 모드 (반응형) */
-    .list.gallery {
-      display: grid;
-      grid-template-columns: 1fr; /* 모바일: 1열 */
-      gap: 12px;
-    }
-    .list.gallery .card {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .list.gallery .card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
+    .list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .list.gallery { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .list.gallery .card { flex-direction: column; align-items: stretch; }
+    .list.gallery .card img { width: 100%; height: 180px; object-fit: cover; }
 
     .card {
       background: rgba(255,255,255,0.96);
@@ -407,37 +274,8 @@
       animation: cardFadeIn 0.18s ease-out;
       position: relative;
     }
-    [data-theme="night"] .card {
-      background: rgba(15,23,42,0.98);
-      box-shadow: 0 8px 22px rgba(15,23,42,0.85);
-    }
-
-    /* ✅ 경고 배지(표시용) */
-    .warn-badge {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 12px;
-      background: rgba(255,107,129,0.12);
-      border: 1px solid rgba(255,107,129,0.35);
-      color: #ff2f54;
-      padding: 3px 8px;
-      border-radius: 999px;
-      display: none;
-      align-items: center;
-      gap: 6px;
-    }
-    [data-theme="night"] .warn-badge {
-      color: #ffd2d8;
-      background: rgba(249,115,115,0.14);
-      border-color: rgba(249,115,115,0.28);
-    }
-    .warn-badge.show { display: inline-flex; }
-
-    @keyframes cardFadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    [data-theme="night"] .card { background: rgba(15,23,42,0.98); box-shadow: 0 8px 22px rgba(15,23,42,0.85); }
+    @keyframes cardFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
     .card img {
       width: 70px;
@@ -448,79 +286,20 @@
       flex-shrink: 0;
       cursor: pointer;
     }
-    .card-content {
-      flex: 1;
-      font-size: 13px;
-    }
-    .card-row-main {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 4px;
-      align-items: center;
-    }
-    .card-title {
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--text-main);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .card-tag {
-      font-size: 11px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      background: var(--chip-bg);
-      color: var(--chip-text);
-      align-self: flex-start;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .card-row {
-      margin-bottom: 2px;
-      color: var(--text-main);
-    }
-    .label {
-      color: var(--label-color);
-      font-size: 11px;
-      margin-right: 4px;
-    }
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .last-used {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .card-buttons {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
+    .card-content { flex: 1; font-size: 13px; }
+    .card-row-main { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 4px; align-items: center; }
+    .card-title { font-weight: 600; font-size: 14px; color: var(--text-main); display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .card-tag { font-size: 11px; padding: 3px 7px; border-radius: 999px; background: var(--chip-bg); color: var(--chip-text); align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; }
+    .card-row { margin-bottom: 2px; color: var(--text-main); }
+    .label { color: var(--label-color); font-size: 11px; margin-right: 4px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; gap: 6px; flex-wrap: wrap; }
+    .last-used { font-size: 11px; color: var(--text-muted); }
+    .card-buttons { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
 
-    .empty-text {
-      text-align: center;
-      color: #777;
-      font-size: 13px;
-      margin-top: 20px;
-    }
+    .empty-text { text-align: center; color: #777; font-size: 13px; margin-top: 20px; }
     [data-theme="night"] .empty-text { color: #9ca3af; }
 
-    .toggle-group {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 4px;
-      flex-wrap: wrap;
-    }
+    .toggle-group { display: flex; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
     .toggle-btn {
       padding: 5px 10px;
       font-size: 12px;
@@ -531,11 +310,7 @@
       cursor: pointer;
       transition: background 0.1s ease, color 0.1s ease, border 0.1s ease;
     }
-    .toggle-btn.active {
-      border-color: var(--primary-1);
-      background: var(--primary-1);
-      color: #fff;
-    }
+    .toggle-btn.active { border-color: var(--primary-1); background: var(--primary-1); color: #fff; }
 
     /* 잠금 화면 */
     .lock-screen {
@@ -559,12 +334,7 @@
       border: 1px solid #dde1ff;
       text-align: center;
     }
-    .lock-input-wrap {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: space-between;
-    }
+    .lock-input-wrap { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
     .lock-input-wrap input {
       flex: 1;
       padding: 10px 10px;
@@ -577,52 +347,16 @@
       min-width: 0;
     }
 
-    .settings-section-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #3c4266;
-    }
-    .settings-help {
-      font-size: 11px;
-      color: #8a8fb0;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
+    .settings-section-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #3c4266; }
+    .settings-help { font-size: 11px; color: #8a8fb0; margin-bottom: 6px; line-height: 1.4; }
     [data-theme="night"] .settings-section-title { color: #e5e7eb; }
     [data-theme="night"] .settings-help { color: #9ca3af; }
 
     /* 이미지 전체 보기 */
-    .image-viewer {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1500;
-    }
-    .image-viewer-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.75);
-    }
-    .image-viewer-inner {
-      position: relative;
-      max-width: 100%;
-      max-height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    #viewerImage {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 12px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-      touch-action: none;
-      transition: transform 0.1s ease-out;
-    }
+    .image-viewer { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1500; }
+    .image-viewer-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75); }
+    .image-viewer-inner { position: relative; max-width: 100%; max-height: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    #viewerImage { max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); touch-action: none; transition: transform 0.1s ease-out; }
     .viewer-close-btn {
       position: absolute;
       top: 16px;
@@ -647,40 +381,11 @@
       z-index: 1200;
       padding: 16px;
     }
-    .device-modal-card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 16px 18px 14px;
-      max-width: 320px;
-      width: 100%;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-    }
-    .device-modal-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #272a3f;
-    }
-    .device-modal-text {
-      font-size: 12px;
-      color: #767a98;
-      margin-bottom: 10px;
-      line-height: 1.45;
-    }
-    .device-modal-input {
-      width: 100%;
-      padding: 7px 10px;
-      border-radius: 10px;
-      border: 1px solid #d6d9ff;
-      font-size: 13px;
-      background: #f9f9ff;
-      margin-bottom: 10px;
-    }
-    .device-modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-    }
+    .device-modal-card { background: #fff; border-radius: 18px; padding: 16px 18px 14px; max-width: 320px; width: 100%; box-shadow: 0 10px 24px rgba(0,0,0,0.25); }
+    .device-modal-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #272a3f; }
+    .device-modal-text { font-size: 12px; color: #767a98; margin-bottom: 10px; line-height: 1.45; }
+    .device-modal-input { width: 100%; padding: 7px 10px; border-radius: 10px; border: 1px solid #d6d9ff; font-size: 13px; background: #f9f9ff; margin-bottom: 10px; }
+    .device-modal-actions { display: flex; justify-content: flex-end; gap: 6px; }
 
     /* 토스트 */
     .toast {
@@ -704,59 +409,18 @@
       overflow: hidden;
       box-shadow: 0 10px 24px rgba(15,23,42,0.6);
     }
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     /* 히스토리 타임라인 */
-    .history-list {
-      max-height: 280px;
-      overflow-y: auto;
-      padding-right: 4px;
-      margin-top: 4px;
-      position: relative;
-    }
-    .history-list::before {
-      content: "";
-      position: absolute;
-      left: 8px;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom, rgba(148,163,184,0.6), rgba(199,210,254,0.2));
-    }
-    .history-row {
-      font-size: 12px;
-      color: #444867;
-      padding: 6px 2px 6px 20px;
-      position: relative;
-    }
+    .history-list { max-height: 280px; overflow-y: auto; padding-right: 4px; margin-top: 4px; position: relative; }
+    .history-list::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(148,163,184,0.6), rgba(199,210,254,0.2)); }
+    .history-row { font-size: 12px; color: #444867; padding: 6px 2px 6px 20px; position: relative; }
     [data-theme="night"] .history-row { color: #e5e7eb; }
-    .history-row::before {
-      content: "";
-      position: absolute;
-      left: 4px;
-      top: 10px;
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #fff;
-      border: 2px solid var(--primary-1);
-      box-shadow: 0 0 0 4px rgba(129,140,248,0.15);
-    }
+    .history-row::before { content: ""; position: absolute; left: 4px; top: 10px; width: 8px; height: 8px; border-radius: 999px; background: #fff; border: 2px solid var(--primary-1); box-shadow: 0 0 0 4px rgba(129,140,248,0.15); }
     .history-time { color: #6b6f90; font-size: 11px; }
     [data-theme="night"] .history-time { color: #9ca3af; }
     .history-device { color: var(--primary-1); font-size: 11px; margin-left: 4px; }
-    .history-action-chip {
-      display: inline-block;
-      margin-left: 6px;
-      padding: 1px 6px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: var(--chip-bg);
-      color: var(--chip-text);
-    }
+    .history-action-chip { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; font-size: 11px; background: var(--chip-bg); color: var(--chip-text); }
     .history-film { color: #111827; font-weight: 500; }
     [data-theme="night"] .history-film { color: #e5e7eb; }
     .history-changes { font-size: 11px; color: #6b7280; margin-top: 2px; }
@@ -798,27 +462,14 @@
     .scroll-top-btn.show { display: flex; }
 
     @media (min-width: 768px) { body { padding-top: 24px; } }
-
-    /* 태블릿 이상에서 갤러리 2열 */
-    @media (min-width: 600px) {
-      .list.gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    /* PC: 전체 폭 넓게 + 갤러리 3열 */
+    @media (min-width: 600px) { .list.gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (min-width: 1024px) {
       .app-shell, .app-header { max-width: 1080px; }
       .list.gallery { grid-template-columns: repeat(3, minmax(260px, 1fr)); }
     }
 
-    /* ====== 필름 메모: 슬라이드(바텀 시트) ====== */
-    .memo-sheet {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 1600;
-    }
+    /* ====== 필름/판 메모: 슬라이드 ====== */
+    .memo-sheet { position: fixed; inset: 0; display: none; align-items: flex-end; justify-content: center; z-index: 1600; }
     .memo-sheet.show { display: flex; }
     .memo-sheet-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45); }
     .memo-sheet-panel {
@@ -833,13 +484,7 @@
       animation: sheetUp 0.16s ease-out;
     }
     @keyframes sheetUp { from { transform: translateY(14px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .memo-sheet-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+    .memo-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
     .memo-sheet-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
     .memo-sheet-sub { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
     .memo-sheet-textarea {
@@ -860,10 +505,7 @@
 
     /* ====== 히스토리: 연필 버튼 + 노트 표시 ====== */
     .history-headline { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .history-pencil {
-      border: none; cursor: pointer; padding: 4px 8px; border-radius: 999px;
-      font-size: 12px; background: var(--primary-soft); color: var(--text-main);
-    }
+    .history-pencil { border: none; cursor: pointer; padding: 4px 8px; border-radius: 999px; font-size: 12px; background: var(--primary-soft); color: var(--text-main); }
     [data-theme="night"] .history-pencil { color: #e5e7eb; }
     .history-note {
       margin-top: 6px;
@@ -881,16 +523,7 @@
     [data-theme="night"] .history-note { background: rgba(79,70,229,0.18); border-color: #1f2937; }
 
     /* ====== 히스토리 메모 모달 ====== */
-    .note-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.35);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1700;
-      padding: 16px;
-    }
+    .note-modal { position: fixed; inset: 0; background: rgba(15,23,42,0.35); display: none; align-items: center; justify-content: center; z-index: 1700; padding: 16px; }
     .note-modal.show { display: flex; }
     .note-modal-card {
       background: var(--card-bg);
@@ -919,14 +552,7 @@
     .note-modal-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; }
 
     /* ====== 판 사용/히스토리 시트 ====== */
-    .sheet {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 1650;
-    }
+    .sheet { position: fixed; inset: 0; display: none; align-items: flex-end; justify-content: center; z-index: 1650; }
     .sheet.show { display: flex; }
     .sheet-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.45); }
     .sheet-panel {
@@ -945,12 +571,7 @@
     .sheet-sub { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
     .sheet-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; }
 
-    .usage-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
+    .usage-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
     .usage-chip {
       font-size: 11px;
       padding: 4px 10px;
@@ -961,6 +582,22 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+    }
+    .progress-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.6);
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    [data-theme="night"] .progress-pill {
+      background: rgba(2,6,23,0.55);
+      border-color: #1f2937;
+      color: #e5e7eb;
     }
     .usage-list {
       max-height: 300px;
@@ -978,17 +615,8 @@
       margin-bottom: 8px;
       background: rgba(255,255,255,0.65);
     }
-    [data-theme="night"] .usage-row {
-      background: rgba(2,6,23,0.45);
-      border-color: #1f2937;
-    }
-    .usage-row .u-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: baseline;
-      flex-wrap: wrap;
-    }
+    [data-theme="night"] .usage-row { background: rgba(2,6,23,0.45); border-color: #1f2937; }
+    .usage-row .u-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
     .usage-row .u-time { font-size: 11px; color: var(--text-muted); }
     .usage-row .u-who { font-weight: 600; color: var(--text-main); }
     .usage-row .u-qty { font-weight: 700; color: var(--primary-1); }
@@ -1090,7 +718,12 @@
       <div class="form-row">
         <label for="plateUseWho">인쇄기사</label>
         <select id="plateUseWho"></select>
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <button class="btn btn-ghost btn-small" id="printerAddBtn" type="button">+ 추가</button>
+          <button class="btn btn-ghost btn-small" id="printerDelBtn" type="button">- 삭제</button>
+        </div>
       </div>
+
       <div class="form-row">
         <label for="plateUseQty">인쇄 수량</label>
         <input type="number" id="plateUseQty" min="1" step="1" />
@@ -1264,7 +897,6 @@
             <input type="text" id="method" placeholder="예: 바탕, 문자, 스모그 등" />
           </div>
 
-          <!-- MESH 항목 추가 -->
           <div class="form-row">
             <label for="mesh">MESH</label>
             <input type="text" id="mesh" placeholder="예: 180T, 200메쉬 등" />
@@ -1294,7 +926,6 @@
             <input type="text" id="location" placeholder="예: A-3 서랍, 4층 우측 랙 등" />
           </div>
 
-          <!-- 요청 인쇄자 -->
           <div class="form-row">
             <label for="requestPrinter">요청 인쇄자</label>
             <select id="requestPrinter">
@@ -1331,7 +962,6 @@
               · 수정 시 사진을 바꾸고 싶을 때만 다시 선택하세요.
             </small>
 
-            <!-- 사진 미리보기 + 회전 버튼 -->
             <div id="imagePreviewWrapper" style="margin-top:8px; display:none; align-items:center; gap:6px;">
               <img id="imagePreview" alt="미리보기"
                    style="width:70px; height:70px; border-radius:10px; object-fit:cover; background:#eef1ff;" />
@@ -1353,7 +983,7 @@
           <input type="hidden" id="plateId" />
           <input type="hidden" id="plateFilmId" />
           <div class="settings-section-title">판 등록/수정</div>
-          <div class="settings-help">필름에서 상속된 정보는 자동 입력됨 (사진/제품명/필름번호/메쉬)</div>
+          <div class="settings-help">필름에서 상속된 정보는 자동 입력됨 (제품명/필름번호/메쉬)</div>
 
           <div class="form-row">
             <label>제품 이름</label>
@@ -1413,7 +1043,6 @@
     </div>
   </div>
 
-  <!-- 맨 위로 버튼 -->
   <button id="scrollTopBtn" class="scroll-top-btn">↑</button>
 
   <!-- Firebase SDK -->
@@ -1437,17 +1066,16 @@
 
     const FILM_COLLECTION = "films";
     const HISTORY_COLLECTION = "history";
-    const PLATE_COLLECTION = "plates";                 // plates/{plateId}
-    const PLATE_USAGE_SUB = "usage";                   // plates/{plateId}/usage/{usageId}
-    const CONFIG_COLLECTION = "appConfig";             // appConfig/*
+
+    const PLATE_COLLECTION = "plates";
+    const PLATE_USAGE_SUB = "usage";
+    const CONFIG_COLLECTION = "appConfig";
     const AUTH_DOC = "auth";
 
-    /* ---------- 모드/로그인 ---------- */
     const MODE_ADMIN = "admin";
     const MODE_PRINTER = "printer";
     const MODE_VIEWER = "viewer";
 
-    // 기본 비번(초기값) - 실제 로그인 힌트로는 사용하지 않음
     const DEFAULT_ADMIN_PW = "0605";
     const DEFAULT_PRINTER_PW = "1234";
     const DEFAULT_VIEWER_PW = "0000";
@@ -1455,7 +1083,6 @@
     const UNLOCK_KEY = "filmAppUnlocked";
     const UNLOCK_MODE_KEY = "filmAppMode";
 
-    /* ---------- 앱 설정/키 ---------- */
     const DEVICE_KEY = "filmDeviceLabel";
     const SORT_KEY = "filmSortOption";
     const THEME_KEY = "filmTheme";
@@ -1463,7 +1090,6 @@
 
     let films = [];
     let plates = [];
-
     let currentSearchText = "";
     let unsubscribeFilms = null;
     let unsubscribePlates = null;
@@ -1473,20 +1099,17 @@
 
     const VISIBLE_STEP = 30;
     let visibleCount = VISIBLE_STEP;
-
     let currentViewMode = localStorage.getItem(VIEW_KEY) || "list";
 
-    /* 이미지 선택/회전 상태 */
     let currentSelectedImageDataUrl = null;
     let currentImageRotation = 0;
 
-    /* 메모 상태 */
     let currentMemoFilmId = null;
     let currentHistoryNoteId = null;
 
-    /* 판 상태 */
-    let currentTab = "films"; // "films" | "plates"
-    let currentMode = null;   // admin|printer|viewer
+    let currentTab = "films";
+    let currentMode = null;
+
     let authConfig = {
       adminPw: DEFAULT_ADMIN_PW,
       printerPw: DEFAULT_PRINTER_PW,
@@ -1498,18 +1121,17 @@
     let currentPlateHistoryId = null;
 
     /* ---------- 유틸 ---------- */
+    function $(id){ return document.getElementById(id); }
+
     function showToast(msg) {
-      const toast = document.getElementById("toast");
+      const toast = $("toast");
       if (!toast) return;
       toast.textContent = msg;
       toast.classList.add("show");
       setTimeout(() => toast.classList.remove("show"), 1800);
     }
 
-    function formatDate(iso) {
-      if (!iso) return "-";
-      return iso;
-    }
+    function formatDate(iso) { return iso ? iso : "-"; }
 
     function formatTs(ts) {
       const d = new Date(ts || 0);
@@ -1522,38 +1144,8 @@
       return `${y}-${m}-${day} ${hh}:${mm}`;
     }
 
-    /* ✅ 경고 배지 로직 (수정 핵심)
-      - plates 문서에 usedQtyTotal(누적 사용수량)을 유지한다.
-      - 사용등록 시 FieldValue.increment로 plate.usedQtyTotal 갱신.
-      - 렌더에서 maxQty 대비:
-          >= 100% : "사용 한도 초과"
-          >= 90%  : "교체 임박"
-      - usedQtyTotal이 없으면 0으로 처리.
-    */
-    function applyWarnBadge(cardEl, { show, text }) {
-      let badge = cardEl.querySelector(".warn-badge");
-      if (!badge) {
-        badge = document.createElement("div");
-        badge.className = "warn-badge";
-        cardEl.appendChild(badge);
-      }
-      if (show) {
-        badge.textContent = text || "경고";
-        badge.classList.add("show");
-      } else {
-        badge.textContent = "";
-        badge.classList.remove("show");
-      }
-    }
-
-    function getPlateWarnState(plate) {
-      const maxQty = Number(plate.maxQty || 5000);
-      const used = Number(plate.usedQtyTotal || 0);
-      if (maxQty <= 0) return { show: false, text: "" };
-      const ratio = used / maxQty;
-      if (ratio >= 1) return { show: true, text: "사용 한도 초과" };
-      if (ratio >= 0.9) return { show: true, text: "교체 임박" };
-      return { show: false, text: "" };
+    function todayISO(){
+      return new Date().toISOString().slice(0,10);
     }
 
     /* ---------- 로컬 설정 ---------- */
@@ -1563,7 +1155,7 @@
     function getDeviceLabel() { return localStorage.getItem(DEVICE_KEY) || ""; }
     function setDeviceLabel(label) {
       localStorage.setItem(DEVICE_KEY, label);
-      const badgeText = document.getElementById("deviceBadgeText");
+      const badgeText = $("deviceBadgeText");
       if (badgeText) badgeText.textContent = label || "기기 미지정";
     }
 
@@ -1581,20 +1173,73 @@
       applyViewMode();
     }
 
-    /* ---------- 모드 UI ---------- */
-    function applyModeUI() {
-      const modeText = document.getElementById("modeChipText");
-      const subtitle = document.getElementById("subtitleText");
-      const settingsBtn = document.getElementById("settingsBtn");
-      const historyBtn = document.getElementById("historyBtn");
-      const exportBtn = document.getElementById("exportBtn");
-      const importBtn = document.getElementById("importBtn");
-      const newFilmBtn = document.getElementById("newFilmBtn");
-      const viewToggleBtn = document.getElementById("viewToggleBtn");
-      const pwSection = document.getElementById("pwSection");
+    /* ---------- 패널 닫기 ---------- */
+    function closeAllPanels() {
+      $("settingsCard").style.display = "none";
+      $("historyCard").style.display = "none";
+      $("formCard").style.display = "none";
+      $("plateFormCard").style.display = "none";
+    }
 
-      const tabFilmsBtn = document.getElementById("tabFilmsBtn");
-      const tabPlatesBtn = document.getElementById("tabPlatesBtn");
+    /* ---------- 이미지 뷰어 ---------- */
+    function openImageViewer(src){
+      const viewer = $("imageViewer");
+      const img = $("viewerImage");
+      if (!viewer || !img) return;
+      img.src = src;
+      img.style.transform = "scale(1)";
+      viewer.style.display = "flex";
+    }
+    function closeImageViewer(){
+      const viewer = $("imageViewer");
+      const img = $("viewerImage");
+      if (viewer) viewer.style.display = "none";
+      if (img) img.src = "";
+    }
+
+    /* ---------- 모드 UI ---------- */
+    function updateSearchPlaceholder() {
+      const searchInput = $("searchInput");
+      if (!searchInput) return;
+      if (currentTab === "films") {
+        searchInput.placeholder = "제품명 / 필름번호 / 제판타입 / 위치 / 제판방법 / MESH / 요청 인쇄자 검색";
+      } else {
+        searchInput.placeholder = "제품명 / 필름번호 / 판번호 / 텐션 / 판위치 / MESH 검색";
+      }
+    }
+
+    function setActiveTabUI() {
+      const tabFilmsBtn = $("tabFilmsBtn");
+      const tabPlatesBtn = $("tabPlatesBtn");
+      if (tabFilmsBtn) tabFilmsBtn.classList.toggle("active", currentTab === "films");
+      if (tabPlatesBtn) tabPlatesBtn.classList.toggle("active", currentTab === "plates");
+      updateSearchPlaceholder();
+      closeAllPanels();
+      $("searchInput").value = "";
+      currentSearchText = "";
+      visibleCount = VISIBLE_STEP;
+      renderCurrentTab();
+    }
+
+    function switchToTab(tab) {
+      if (currentMode === MODE_PRINTER && tab !== "plates") return;
+      currentTab = tab;
+      setActiveTabUI();
+    }
+
+    function applyModeUI() {
+      const modeText = $("modeChipText");
+      const subtitle = $("subtitleText");
+      const settingsBtn = $("settingsBtn");
+      const historyBtn = $("historyBtn");
+      const exportBtn = $("exportBtn");
+      const importBtn = $("importBtn");
+      const newFilmBtn = $("newFilmBtn");
+      const viewToggleBtn = $("viewToggleBtn");
+      const pwSection = $("pwSection");
+
+      const tabFilmsBtn = $("tabFilmsBtn");
+      const tabPlatesBtn = $("tabPlatesBtn");
 
       if (currentMode === MODE_ADMIN) {
         if (modeText) modeText.textContent = "관리자";
@@ -1606,7 +1251,6 @@
         if (newFilmBtn) newFilmBtn.style.display = "inline-block";
         if (viewToggleBtn) viewToggleBtn.style.display = "inline-block";
         if (pwSection) pwSection.style.display = "block";
-
         if (tabFilmsBtn) tabFilmsBtn.style.display = "inline-flex";
         if (tabPlatesBtn) tabPlatesBtn.style.display = "inline-flex";
       }
@@ -1621,10 +1265,8 @@
         if (newFilmBtn) newFilmBtn.style.display = "none";
         if (viewToggleBtn) viewToggleBtn.style.display = "none";
         if (pwSection) pwSection.style.display = "none";
-
         if (tabFilmsBtn) tabFilmsBtn.style.display = "none";
         if (tabPlatesBtn) tabPlatesBtn.style.display = "inline-flex";
-
         currentTab = "plates";
         setActiveTabUI();
       }
@@ -1639,7 +1281,6 @@
         if (newFilmBtn) newFilmBtn.style.display = "none";
         if (viewToggleBtn) viewToggleBtn.style.display = "inline-block";
         if (pwSection) pwSection.style.display = "none";
-
         if (tabFilmsBtn) tabFilmsBtn.style.display = "inline-flex";
         if (tabPlatesBtn) tabPlatesBtn.style.display = "inline-flex";
       }
@@ -1647,71 +1288,39 @@
       updateSearchPlaceholder();
     }
 
-    function updateSearchPlaceholder() {
-      const searchInput = document.getElementById("searchInput");
-      if (!searchInput) return;
-      if (currentTab === "films") {
-        searchInput.placeholder = "제품명 / 필름번호 / 제판타입 / 위치 / 제판방법 / MESH / 요청 인쇄자 검색";
+    function applyViewMode() {
+      const list = $("list");
+      const btn = $("viewToggleBtn");
+      if (!list || !btn) return;
+      if (currentViewMode === "gallery") {
+        list.classList.add("gallery");
+        btn.textContent = "리스트";
       } else {
-        searchInput.placeholder = "제품명 / 필름번호 / 판번호 / 텐션 / 판위치 / MESH 검색";
+        list.classList.remove("gallery");
+        btn.textContent = "갤러리";
       }
     }
 
-    function setActiveTabUI() {
-      const tabFilmsBtn = document.getElementById("tabFilmsBtn");
-      const tabPlatesBtn = document.getElementById("tabPlatesBtn");
-      if (tabFilmsBtn) tabFilmsBtn.classList.toggle("active", currentTab === "films");
-      if (tabPlatesBtn) tabPlatesBtn.classList.toggle("active", currentTab === "plates");
-      updateSearchPlaceholder();
-      closeAllPanels();
-      const s = document.getElementById("searchInput");
-      if (s) s.value = "";
-      currentSearchText = "";
-      visibleCount = VISIBLE_STEP;
-      renderCurrentTab();
-    }
-
-    function switchToTab(tab) {
-      if (currentMode === MODE_PRINTER && tab !== "plates") return;
-      currentTab = tab;
-      setActiveTabUI();
-    }
-
-    /* ---------- 이미지 뷰어 ---------- */
-    function openImageViewer(src) {
-      const viewer = document.getElementById("imageViewer");
-      const img = document.getElementById("viewerImage");
-      if (!viewer || !img) return;
-      img.src = src || "";
-      viewer.style.display = "flex";
-    }
-    function closeImageViewer() {
-      const viewer = document.getElementById("imageViewer");
-      const img = document.getElementById("viewerImage");
-      if (!viewer || !img) return;
-      img.src = "";
-      viewer.style.display = "none";
-    }
-
-    /* ---------- 이미지 미리보기 & 회전 ---------- */
-    function resetImagePreview() {
-      const wrapper = document.getElementById("imagePreviewWrapper");
-      const img = document.getElementById("imagePreview");
-      currentSelectedImageDataUrl = null;
-      currentImageRotation = 0;
-      if (img) {
-        img.src = "";
-        img.style.transform = "rotate(0deg)";
+    function updateCountBar(filteredLength, totalLength, hasFilter) {
+      const bar = $("countBar");
+      if (!bar) return;
+      if (currentTab === "films") {
+        bar.innerHTML = hasFilter
+          ? `검색 결과 <strong>${filteredLength}</strong>개 / 전체 ${totalLength}개`
+          : `총 <strong>${totalLength}</strong>개 필름`;
+      } else {
+        bar.innerHTML = hasFilter
+          ? `검색 결과 <strong>${filteredLength}</strong>개 / 전체 ${totalLength}개`
+          : `총 <strong>${totalLength}</strong>개 판`;
       }
-      if (wrapper) wrapper.style.display = "none";
-    }
-    function applyPreviewRotation() {
-      const img = document.getElementById("imagePreview");
-      if (!img) return;
-      img.style.transform = "rotate(" + currentImageRotation + "deg)";
     }
 
-    /* ---------- Firestore: 인증 설정 로드/저장 ---------- */
+    function renderCurrentTab() {
+      if (currentTab === "films") renderFilmsList(currentSearchText);
+      else renderPlatesList(currentSearchText);
+    }
+
+    /* ---------- Firestore: 인증 설정 ---------- */
     async function loadAuthConfig() {
       try {
         const ref = db.collection(CONFIG_COLLECTION).doc(AUTH_DOC);
@@ -1748,7 +1357,6 @@
         viewerPw: newViewerPw,
         updatedAt: Date.now()
       }, { merge: true });
-
       authConfig.adminPw = newAdminPw;
       authConfig.printerPw = newPrinterPw;
       authConfig.viewerPw = newViewerPw;
@@ -1761,16 +1369,16 @@
       return null;
     }
 
-    /* ---------- Firestore 실시간 동기화 ---------- */
+    /* ---------- 실시간 동기화 ---------- */
     function startFilmsListener() {
       if (unsubscribeFilms) unsubscribeFilms();
       unsubscribeFilms = db.collection(FILM_COLLECTION).onSnapshot(
         (snapshot) => {
           films = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          if (currentTab === "films") renderList(currentSearchText);
+          if (currentTab === "films") renderFilmsList(currentSearchText);
         },
         (error) => {
-          console.error("필름 실시간 동기화 오류:", error);
+          console.error("필름 동기화 오류:", error);
           showToast("서버 동기화 중 오류가 발생했어.");
         }
       );
@@ -1784,13 +1392,13 @@
           if (currentTab === "plates") renderPlatesList(currentSearchText);
         },
         (error) => {
-          console.error("판 실시간 동기화 오류:", error);
+          console.error("판 동기화 오류:", error);
           showToast("판 동기화 중 오류가 발생했어.");
         }
       );
     }
 
-    /* ---------- 히스토리 (삭제 금지) ---------- */
+    /* ---------- 히스토리 (필름) ---------- */
     async function addHistory(action, film, changes = []) {
       try {
         const entry = {
@@ -1805,22 +1413,18 @@
         await db.collection(HISTORY_COLLECTION).add(entry);
         if (historyLoaded) await loadHistory();
       } catch (e) {
-        console.error("히스토리 기록 중 오류:", e);
+        console.error("히스토리 기록 오류:", e);
       }
     }
 
     async function loadHistory() {
       try {
-        const snap = await db
-          .collection(HISTORY_COLLECTION)
-          .orderBy("timestamp", "desc")
-          .limit(100)
-          .get();
+        const snap = await db.collection(HISTORY_COLLECTION).orderBy("timestamp", "desc").limit(100).get();
         historyEntries = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         historyLoaded = true;
         renderHistory();
       } catch (e) {
-        console.error("히스토리 로드 중 오류:", e);
+        console.error("히스토리 로드 오류:", e);
         showToast("히스토리를 불러오지 못했어.");
       }
     }
@@ -1834,7 +1438,7 @@
     }
 
     function renderHistory() {
-      const list = document.getElementById("historyList");
+      const list = $("historyList");
       if (!list) return;
       list.innerHTML = "";
 
@@ -1852,9 +1456,7 @@
 
         const ts = formatTs(entry.timestamp || 0);
         const device = entry.deviceName || "기기 미지정";
-        const filmLabel =
-          (entry.filmNumber || "") +
-          (entry.productName ? ` (${entry.productName})` : "");
+        const filmLabel = (entry.filmNumber || "") + (entry.productName ? ` (${entry.productName})` : "");
 
         const changesArr = Array.isArray(entry.changes) ? entry.changes : [];
         const noteText = (entry.note || "").trim();
@@ -1869,24 +1471,18 @@
             `<button class="history-pencil" data-id="${entry.id}">✏️</button>` +
           `</div>` +
           `<div class="history-film">${filmLabel || "필름 정보 없음"}</div>` +
-          (changesArr.length
-            ? `<div class="history-changes">변경 항목: ${changesArr.join(", ")}</div>`
-            : "") +
+          (changesArr.length ? `<div class="history-changes">변경 항목: ${changesArr.join(", ")}</div>` : "") +
           (noteText ? `<div class="history-note">${noteText}</div>` : "");
 
         const pencilBtn = row.querySelector(".history-pencil");
-        if (pencilBtn) {
-          pencilBtn.addEventListener("click", () => {
-            openHistoryNoteModal(entry.id);
-          });
-        }
+        if (pencilBtn) pencilBtn.addEventListener("click", () => openHistoryNoteModal(entry.id));
 
         list.appendChild(row);
       });
     }
 
     function openHistoryCard() {
-      const card = document.getElementById("historyCard");
+      const card = $("historyCard");
       const isOpen = card.style.display === "block";
       closeAllPanels();
       if (!isOpen) {
@@ -1895,50 +1491,30 @@
         else renderHistory();
       }
     }
-    function closeHistoryCard() {
-      document.getElementById("historyCard").style.display = "none";
-    }
 
-    /* ====== 필름 메모(슬라이드) ====== */
+    /* ---------- 메모(필름/판) ---------- */
     function openMemoSheet(filmId) {
       const film = films.find((f) => f.id === filmId);
       if (!film) return;
-
       currentMemoFilmId = filmId;
 
-      const title = document.getElementById("memoSheetTitle");
-      const sub = document.getElementById("memoSheetSub");
-      const ta = document.getElementById("memoTextarea");
-      const sheet = document.getElementById("memoSheet");
+      $("memoSheetTitle").textContent = `메모 · ${film.filmNumber || ""}`;
+      $("memoSheetSub").textContent = (film.productName || "") ? film.productName : "필름별 메모";
+      $("memoTextarea").value = film.memo || "";
 
-      if (title) title.textContent = `메모 · ${film.filmNumber || ""}`;
-      if (sub) sub.textContent = (film.productName || "") ? film.productName : "필름별 메모";
-      if (ta) ta.value = film.memo || "";
+      const isAdmin = currentMode === MODE_ADMIN;
+      $("memoTextarea").disabled = !isAdmin;
+      $("memoSheetSaveBtn").style.display = isAdmin ? "inline-block" : "none";
 
-      // 조회 모드면 저장 막기
-      const saveBtn = document.getElementById("memoSheetSaveBtn");
-      if (saveBtn) saveBtn.style.display = (currentMode === MODE_VIEWER) ? "none" : "inline-block";
-
-      sheet.classList.add("show");
+      $("memoSheet").classList.add("show");
     }
-
-    function closeMemoSheet() {
-      const sheet = document.getElementById("memoSheet");
-      sheet.classList.remove("show");
-      currentMemoFilmId = null;
-    }
-
+    function closeMemoSheet() { $("memoSheet").classList.remove("show"); currentMemoFilmId = null; }
     async function saveMemoSheet() {
       if (!currentMemoFilmId) return;
-      if (currentMode !== MODE_ADMIN) return; // 엄격
-      const ta = document.getElementById("memoTextarea");
-      const memo = (ta.value || "").trim();
-
+      if (currentMode !== MODE_ADMIN) return;
+      const memo = ($("memoTextarea").value || "").trim();
       try {
-        await db.collection(FILM_COLLECTION).doc(currentMemoFilmId).set(
-          { memo, updatedAt: Date.now() },
-          { merge: true }
-        );
+        await db.collection(FILM_COLLECTION).doc(currentMemoFilmId).set({ memo, updatedAt: Date.now() }, { merge: true });
         showToast("메모를 저장했어.");
         closeMemoSheet();
       } catch (e) {
@@ -1947,44 +1523,28 @@
       }
     }
 
-    /* ====== 판 메모 ====== */
     function openPlateMemoSheet(plateId) {
       const plate = plates.find((p) => p.id === plateId);
       if (!plate) return;
       currentPlateMemoId = plateId;
 
-      const title = document.getElementById("plateMemoTitle");
-      const sub = document.getElementById("plateMemoSub");
-      const ta = document.getElementById("plateMemoTextarea");
-      const sheet = document.getElementById("plateMemoSheet");
+      $("plateMemoTitle").textContent = `판 메모 · ${plate.plateNumber || ""}`;
+      $("plateMemoSub").textContent = (plate.productName || "") ? plate.productName : "판별 메모";
+      $("plateMemoTextarea").value = plate.memo || "";
 
-      const label = `${plate.plateNumber || ""}`;
-      if (title) title.textContent = `판 메모 · ${label}`;
-      if (sub) sub.textContent = (plate.productName || "") ? plate.productName : "판별 메모";
-      if (ta) ta.value = plate.memo || "";
+      const isAdmin = currentMode === MODE_ADMIN;
+      $("plateMemoTextarea").disabled = !isAdmin;
+      $("plateMemoSaveBtn").style.display = isAdmin ? "inline-block" : "none";
 
-      // 조회 모드면 저장 막기
-      const saveBtn = document.getElementById("plateMemoSaveBtn");
-      if (saveBtn) saveBtn.style.display = (currentMode === MODE_VIEWER) ? "none" : "inline-block";
-
-      sheet.classList.add("show");
+      $("plateMemoSheet").classList.add("show");
     }
-
-    function closePlateMemoSheet() {
-      document.getElementById("plateMemoSheet").classList.remove("show");
-      currentPlateMemoId = null;
-    }
-
+    function closePlateMemoSheet() { $("plateMemoSheet").classList.remove("show"); currentPlateMemoId = null; }
     async function savePlateMemoSheet() {
       if (!currentPlateMemoId) return;
-      if (currentMode !== MODE_ADMIN) return; // 엄격: 메모 수정은 관리자만
-      const ta = document.getElementById("plateMemoTextarea");
-      const memo = (ta.value || "").trim();
+      if (currentMode !== MODE_ADMIN) return;
+      const memo = ($("plateMemoTextarea").value || "").trim();
       try {
-        await db.collection(PLATE_COLLECTION).doc(currentPlateMemoId).set(
-          { memo, updatedAt: Date.now() },
-          { merge: true }
-        );
+        await db.collection(PLATE_COLLECTION).doc(currentPlateMemoId).set({ memo, updatedAt: Date.now() }, { merge: true });
         showToast("판 메모 저장됨.");
         closePlateMemoSheet();
       } catch (e) {
@@ -1993,41 +1553,22 @@
       }
     }
 
-    /* ====== 히스토리 메모(모달) ====== */
+    /* ---------- 히스토리 메모 모달 ---------- */
     function openHistoryNoteModal(historyId) {
       const entry = historyEntries.find((h) => h.id === historyId);
       if (!entry) return;
-
       currentHistoryNoteId = historyId;
-
-      const modal = document.getElementById("historyNoteModal");
-      const ta = document.getElementById("historyNoteTextarea");
-      if (ta) ta.value = entry.note || "";
-
-      modal.classList.add("show");
+      $("historyNoteTextarea").value = entry.note || "";
+      $("historyNoteModal").classList.add("show");
     }
-
-    function closeHistoryNoteModal() {
-      const modal = document.getElementById("historyNoteModal");
-      modal.classList.remove("show");
-      currentHistoryNoteId = null;
-    }
-
+    function closeHistoryNoteModal() { $("historyNoteModal").classList.remove("show"); currentHistoryNoteId = null; }
     async function saveHistoryNoteModal() {
       if (!currentHistoryNoteId) return;
-      if (currentMode !== MODE_ADMIN) return; // 관리자만
-      const ta = document.getElementById("historyNoteTextarea");
-      const note = (ta.value || "").trim();
-
+      const note = ($("historyNoteTextarea").value || "").trim();
       try {
-        await db.collection(HISTORY_COLLECTION).doc(currentHistoryNoteId).set(
-          { note },
-          { merge: true }
-        );
-
+        await db.collection(HISTORY_COLLECTION).doc(currentHistoryNoteId).set({ note }, { merge: true });
         const idx = historyEntries.findIndex((h) => h.id === currentHistoryNoteId);
         if (idx >= 0) historyEntries[idx].note = note;
-
         renderHistory();
         showToast("히스토리 메모 저장됨.");
         closeHistoryNoteModal();
@@ -2037,7 +1578,7 @@
       }
     }
 
-    /* ---------- 제판 방법 토글 ---------- */
+    /* ---------- 제판방법 토글 ---------- */
     function clearPlateInfoForm() {
       document.querySelectorAll(".toggle-btn").forEach((btn) => btn.classList.remove("active"));
     }
@@ -2059,17 +1600,32 @@
       return values.join(" ");
     }
 
+    /* ---------- 이미지 미리보기 & 회전 ---------- */
+    function resetImagePreview() {
+      const wrapper = $("imagePreviewWrapper");
+      const img = $("imagePreview");
+      currentSelectedImageDataUrl = null;
+      currentImageRotation = 0;
+      if (img) { img.src = ""; img.style.transform = "rotate(0deg)"; }
+      if (wrapper) wrapper.style.display = "none";
+    }
+    function applyPreviewRotation() {
+      const img = $("imagePreview");
+      if (!img) return;
+      img.style.transform = "rotate(" + currentImageRotation + "deg)";
+    }
+
     /* ---------- 필름 폼 ---------- */
-    function resetForm() {
-      document.getElementById("filmId").value = "";
-      document.getElementById("productName").value = "";
-      document.getElementById("filmNumber").value = "";
-      document.getElementById("method").value = "";
-      document.getElementById("mesh").value = "";
-      document.getElementById("location").value = "";
-      document.getElementById("requestPrinter").value = "";
-      document.getElementById("lastUsed").value = "";
-      document.getElementById("imageInput").value = "";
+    function resetFilmForm() {
+      $("filmId").value = "";
+      $("productName").value = "";
+      $("filmNumber").value = "";
+      $("method").value = "";
+      $("mesh").value = "";
+      $("location").value = "";
+      $("requestPrinter").value = "";
+      $("lastUsed").value = "";
+      $("imageInput").value = "";
       clearPlateInfoForm();
       resetImagePreview();
     }
@@ -2083,123 +1639,357 @@
       });
     }
 
-    function openFormNew() {
+    function openFilmFormNew() {
       if (currentMode !== MODE_ADMIN) return;
-      resetForm();
+      resetFilmForm();
       const last = getLastFilmForDefaults();
       if (last) {
-        document.getElementById("method").value = last.method || "";
-        document.getElementById("mesh").value = last.mesh || "";
-        document.getElementById("location").value = last.location || "";
-        document.getElementById("requestPrinter").value = last.requestPrinter || "";
+        $("method").value = last.method || "";
+        $("mesh").value = last.mesh || "";
+        $("location").value = last.location || "";
+        $("requestPrinter").value = last.requestPrinter || "";
         setPlateInfoToForm(last.plateInfo || "");
       }
-      document.getElementById("formCard").style.display = "block";
-      document.getElementById("productName").focus();
+      $("formCard").style.display = "block";
+      $("productName").focus();
     }
 
-    function toggleFormNew() {
-      if (currentMode !== MODE_ADMIN) return;
-      const card = document.getElementById("formCard");
-      const isOpen = card.style.display === "block";
-      closeAllPanels();
-      if (!isOpen) openFormNew();
-    }
-
-    function openFormCopyFrom(id) {
-      if (currentMode !== MODE_ADMIN) return;
-      const film = films.find((f) => f.id === id);
-      if (!film) return;
-      resetForm();
-      document.getElementById("productName").value = film.productName || "";
-      document.getElementById("filmNumber").value = "";
-      document.getElementById("method").value = film.method || "";
-      document.getElementById("mesh").value = film.mesh || "";
-      document.getElementById("location").value = film.location || "";
-      document.getElementById("requestPrinter").value = film.requestPrinter || "";
-      document.getElementById("lastUsed").value = "";
-      setPlateInfoToForm(film.plateInfo || "");
-      closeAllPanels();
-      document.getElementById("formCard").style.display = "block";
-      document.getElementById("productName").focus();
-    }
-
-    function openFormForEdit(id) {
+    function openFilmFormForEdit(id) {
       if (currentMode !== MODE_ADMIN) return;
       const film = films.find((f) => f.id === id);
       if (!film) return;
       closeAllPanels();
       resetImagePreview();
-      document.getElementById("filmId").value = film.id;
-      document.getElementById("productName").value = film.productName || "";
-      document.getElementById("filmNumber").value = film.filmNumber || "";
-      document.getElementById("method").value = film.method || "";
-      document.getElementById("mesh").value = film.mesh || "";
-      document.getElementById("location").value = film.location || "";
-      document.getElementById("requestPrinter").value = film.requestPrinter || "";
-      document.getElementById("lastUsed").value = film.lastUsed || "";
-      document.getElementById("imageInput").value = "";
+
+      $("filmId").value = film.id;
+      $("productName").value = film.productName || "";
+      $("filmNumber").value = film.filmNumber || "";
+      $("method").value = film.method || "";
+      $("mesh").value = film.mesh || "";
+      $("location").value = film.location || "";
+      $("requestPrinter").value = film.requestPrinter || "";
+      $("lastUsed").value = film.lastUsed || "";
+      $("imageInput").value = "";
       setPlateInfoToForm(film.plateInfo || "");
-      document.getElementById("formCard").style.display = "block";
-      document.getElementById("productName").focus();
+
+      $("formCard").style.display = "block";
+      $("productName").focus();
     }
 
-    function closeForm() {
-      document.getElementById("formCard").style.display = "none";
-      resetForm();
+    function openFilmFormCopyFrom(id) {
+      if (currentMode !== MODE_ADMIN) return;
+      const film = films.find((f) => f.id === id);
+      if (!film) return;
+      resetFilmForm();
+      $("productName").value = film.productName || "";
+      $("filmNumber").value = "";
+      $("method").value = film.method || "";
+      $("mesh").value = film.mesh || "";
+      $("location").value = film.location || "";
+      $("requestPrinter").value = film.requestPrinter || "";
+      $("lastUsed").value = "";
+      setPlateInfoToForm(film.plateInfo || "");
+      closeAllPanels();
+      $("formCard").style.display = "block";
+      $("productName").focus();
     }
 
-    function updateCountBar(filteredLength, totalLength, hasFilter) {
-      const bar = document.getElementById("countBar");
-      if (!bar) return;
+    function closeFilmForm() {
+      $("formCard").style.display = "none";
+      resetFilmForm();
+    }
 
-      if (currentTab === "films") {
-        if (hasFilter) bar.innerHTML = `검색 결과 <strong>${filteredLength}</strong>개 / 전체 ${totalLength}개`;
-        else bar.innerHTML = `총 <strong>${totalLength}</strong>개 필름`;
-      } else {
-        if (hasFilter) bar.innerHTML = `검색 결과 <strong>${filteredLength}</strong>개 / 전체 ${totalLength}개`;
-        else bar.innerHTML = `총 <strong>${totalLength}</strong>개 판`;
+    /* ---------- 판: 프린터 목록 (Firestore 공유) ---------- */
+    async function loadPrinterList() {
+      try {
+        const ref = db.collection(CONFIG_COLLECTION).doc("printers");
+        const snap = await ref.get();
+        if (!snap.exists) {
+          await ref.set({ names: ["최성규"], updatedAt: Date.now() }, { merge: true });
+          return ["최성규"];
+        }
+        const data = snap.data() || {};
+        const names = Array.isArray(data.names) ? data.names : [];
+        return names.length ? names : ["최성규"];
+      } catch (e) {
+        console.error("인쇄기사 목록 로드 오류:", e);
+        return ["최성규"];
       }
     }
 
-    function applyViewMode() {
-      const list = document.getElementById("list");
-      const btn = document.getElementById("viewToggleBtn");
-      if (!list || !btn) return;
+    async function savePrinterList(names) {
+      const clean = (names || [])
+        .map((s) => String(s || "").trim())
+        .filter(Boolean)
+        .filter((v, i, arr) => arr.indexOf(v) === i);
+      await db.collection(CONFIG_COLLECTION).doc("printers").set(
+        { names: clean, updatedAt: Date.now() },
+        { merge: true }
+      );
+    }
 
-      if (currentViewMode === "gallery") {
-        list.classList.add("gallery");
-        btn.textContent = "리스트";
-      } else {
-        list.classList.remove("gallery");
-        btn.textContent = "갤러리";
+    async function fillPrinterSelect(selectEl) {
+      const names = await loadPrinterList();
+      selectEl.innerHTML = "";
+      names.forEach((n) => {
+        const opt = document.createElement("option");
+        opt.value = n;
+        opt.textContent = n;
+        selectEl.appendChild(opt);
+      });
+    }
+
+    /* ---------- 판 폼 ---------- */
+    function closePlateForm() {
+      $("plateFormCard").style.display = "none";
+      $("plateId").value = "";
+      $("plateFilmId").value = "";
+      $("plateProductName").value = "";
+      $("plateFilmNumber").value = "";
+      $("plateNumber").value = "";
+      $("plateTension").value = "";
+      $("plateLocation").value = "";
+      $("plateMesh").value = "";
+      $("plateMaxQty").value = "";
+    }
+
+    function openPlateFormFromFilm(filmId) {
+      if (currentMode !== MODE_ADMIN) return;
+      const film = films.find((f) => f.id === filmId);
+      if (!film) return;
+
+      closeAllPanels();
+
+      $("plateId").value = "";
+      $("plateFilmId").value = film.id;
+      $("plateProductName").value = film.productName || "";
+      $("plateFilmNumber").value = film.filmNumber || "";
+
+      // 자동 넘버링: 같은 filmNumber 가진 판 개수 + 1
+      const same = plates.filter(p => (p.filmNumber || "") === (film.filmNumber || ""));
+      const nextIdx = same.length + 1;
+      $("plateNumber").value = (film.filmNumber ? `${film.filmNumber}-${nextIdx}` : `-${nextIdx}`);
+
+      $("plateTension").value = "";
+      $("plateLocation").value = "";
+      $("plateMesh").value = film.mesh || "";
+      $("plateMaxQty").value = 5000;
+
+      $("plateFormCard").style.display = "block";
+      $("plateNumber").focus();
+    }
+
+    function openPlateFormForEdit(plateId) {
+      if (currentMode !== MODE_ADMIN) return;
+      const p = plates.find(x => x.id === plateId);
+      if (!p) return;
+      closeAllPanels();
+
+      $("plateId").value = p.id;
+      $("plateFilmId").value = p.filmId || "";
+      $("plateProductName").value = p.productName || "";
+      $("plateFilmNumber").value = p.filmNumber || "";
+      $("plateNumber").value = p.plateNumber || "";
+      $("plateTension").value = p.tension || "";
+      $("plateLocation").value = p.location || "";
+      $("plateMesh").value = p.mesh || "";
+      $("plateMaxQty").value = Number(p.maxQty || 5000);
+
+      $("plateFormCard").style.display = "block";
+      $("plateNumber").focus();
+    }
+
+    async function savePlateFormSubmit(e){
+      e.preventDefault();
+      if (currentMode !== MODE_ADMIN) return;
+
+      const plateId = ($("plateId").value || "").trim();
+      const filmId = ($("plateFilmId").value || "").trim();
+      const productName = ($("plateProductName").value || "").trim();
+      const filmNumber = ($("plateFilmNumber").value || "").trim();
+
+      const plateNumber = ($("plateNumber").value || "").trim();
+      if (!plateNumber) { showToast("판 번호는 필수야."); return; }
+
+      const tension = ($("plateTension").value || "").trim();
+      const location = ($("plateLocation").value || "").trim();
+      const mesh = ($("plateMesh").value || "").trim();
+      const maxQty = Number($("plateMaxQty").value || 5000) || 5000;
+
+      const payload = {
+        filmId,
+        productName,
+        filmNumber,
+        plateNumber,
+        tension,
+        location,
+        mesh,
+        maxQty,
+        updatedAt: Date.now(),
+      };
+
+      try{
+        if (plateId) {
+          await db.collection(PLATE_COLLECTION).doc(plateId).set(payload, { merge:true });
+          showToast("판 수정됨.");
+        } else {
+          payload.createdAt = Date.now();
+          payload.usedTotal = 0;
+          await db.collection(PLATE_COLLECTION).add(payload);
+          showToast("판 등록됨.");
+        }
+        closePlateForm();
+        currentTab = "plates";
+        setActiveTabUI();
+      }catch(err){
+        console.error(err);
+        showToast("판 저장 중 오류.");
       }
     }
 
-    function renderCurrentTab() {
-      if (currentTab === "films") renderList(currentSearchText);
-      else renderPlatesList(currentSearchText);
+    /* ---------- 판 사용등록 ---------- */
+    async function openPlateUseSheet(plateId){
+      if (!(currentMode === MODE_ADMIN || currentMode === MODE_PRINTER)) return;
+
+      const p = plates.find(x => x.id === plateId);
+      if (!p) return;
+
+      currentPlateUseId = plateId;
+
+      $("plateUseMeta").innerHTML = `
+        <div class="usage-chip">📦 ${p.productName || "-"}</div>
+        <div class="usage-chip">🎞 ${p.filmNumber || "-"}</div>
+        <div class="usage-chip">🧩 ${p.plateNumber || "-"}</div>
+        <div class="progress-pill">누적 ${Number(p.usedTotal||0)} / ${Number(p.maxQty||5000)}</div>
+      `;
+
+      await fillPrinterSelect($("plateUseWho"));
+      $("plateUseQty").value = "";
+      $("plateUseMemo").value = "";
+
+      $("plateUseSheet").classList.add("show");
+    }
+    function closePlateUseSheet(){
+      $("plateUseSheet").classList.remove("show");
+      currentPlateUseId = null;
     }
 
-    function renderList(filterText = "") {
-      const listEl = document.getElementById("list");
-      const emptyText = document.getElementById("emptyText");
-      if (!listEl || !emptyText) return;
+    async function savePlateUse(){
+      if (!currentPlateUseId) return;
+      if (!(currentMode === MODE_ADMIN || currentMode === MODE_PRINTER)) return;
 
+      const p = plates.find(x => x.id === currentPlateUseId);
+      if (!p) return;
+
+      const who = ($("plateUseWho").value || "").trim();
+      const qty = Number($("plateUseQty").value || 0);
+      const memo = ($("plateUseMemo").value || "").trim();
+
+      if (!who) { showToast("인쇄기사 선택해줘."); return; }
+      if (!qty || qty <= 0) { showToast("수량을 입력해줘."); return; }
+
+      try{
+        const now = Date.now();
+        const usagePayload = {
+          who,
+          qty,
+          memo,
+          timestamp: now,
+          deviceName: getDeviceLabel() || "",
+          mode: currentMode
+        };
+
+        // usage 기록
+        await db.collection(PLATE_COLLECTION).doc(p.id).collection(PLATE_USAGE_SUB).add(usagePayload);
+
+        // 누적 수량 업데이트 (서버 저장)
+        const newTotal = Number(p.usedTotal || 0) + qty;
+        await db.collection(PLATE_COLLECTION).doc(p.id).set({
+          usedTotal: newTotal,
+          lastUsedTs: now,
+          updatedAt: now
+        }, { merge:true });
+
+        showToast("사용등록 완료.");
+        closePlateUseSheet();
+      }catch(err){
+        console.error(err);
+        showToast("사용등록 중 오류.");
+      }
+    }
+
+    /* ---------- 판 히스토리 ---------- */
+    async function openPlateHistorySheet(plateId){
+      const p = plates.find(x => x.id === plateId);
+      if (!p) return;
+
+      currentPlateHistoryId = plateId;
+
+      $("plateHistoryMeta").innerHTML = `
+        <div class="usage-chip">📦 ${p.productName || "-"}</div>
+        <div class="usage-chip">🎞 ${p.filmNumber || "-"}</div>
+        <div class="usage-chip">🧩 ${p.plateNumber || "-"}</div>
+        <div class="progress-pill">누적 ${Number(p.usedTotal||0)} / ${Number(p.maxQty||5000)}</div>
+      `;
+
+      $("plateUsageList").innerHTML = `<div class="history-empty" style="padding-left:0;">불러오는 중...</div>`;
+      $("plateHistorySheet").classList.add("show");
+
+      try{
+        const snap = await db.collection(PLATE_COLLECTION).doc(p.id)
+          .collection(PLATE_USAGE_SUB)
+          .orderBy("timestamp","desc")
+          .limit(200)
+          .get();
+
+        const rows = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        if (!rows.length){
+          $("plateUsageList").innerHTML = `<div class="history-empty" style="padding-left:0;">아직 사용 기록이 없어.</div>`;
+          return;
+        }
+
+        $("plateUsageList").innerHTML = "";
+        rows.forEach(r=>{
+          const div = document.createElement("div");
+          div.className = "usage-row";
+          div.innerHTML = `
+            <div class="u-top">
+              <div class="u-time">${formatTs(r.timestamp || 0)} ${r.deviceName ? `<span style="color:var(--primary-1); margin-left:6px;">${r.deviceName}</span>` : ""}</div>
+              <div style="display:flex; gap:10px; align-items:baseline;">
+                <div class="u-who">${r.who || "-"}</div>
+                <div class="u-qty">${Number(r.qty||0)}개</div>
+              </div>
+            </div>
+            ${r.memo ? `<div class="u-memo">${r.memo}</div>` : ""}
+          `;
+          $("plateUsageList").appendChild(div);
+        });
+      }catch(err){
+        console.error(err);
+        $("plateUsageList").innerHTML = `<div class="history-empty" style="padding-left:0;">히스토리 로드 오류</div>`;
+      }
+    }
+    function closePlateHistorySheet(){
+      $("plateHistorySheet").classList.remove("show");
+      currentPlateHistoryId = null;
+    }
+
+    /* ---------- 필름 리스트 렌더 ---------- */
+    function renderFilmsList(filterText=""){
+      const listEl = $("list");
+      const emptyText = $("emptyText");
       listEl.innerHTML = "";
       currentSearchText = filterText || "";
 
-      // 인쇄기사 모드: 필름 리스트 아예 안 보임
       if (currentMode === MODE_PRINTER) {
         emptyText.style.display = "block";
         emptyText.innerHTML = "필름 탭은 인쇄기사 모드에서 보이지 않아.";
-        updateCountBar(0, 0, false);
+        updateCountBar(0,0,false);
         return;
       }
 
-      const text = (filterText || "").trim().toLowerCase();
-
-      let filtered = films.filter((f) => {
+      const text = (filterText||"").trim().toLowerCase();
+      let filtered = films.filter(f=>{
         if (!text) return true;
         const combined =
           (f.productName || "") + " " +
@@ -2213,298 +2003,788 @@
       });
 
       const sortOpt = getSortOption();
-      filtered = filtered.slice().sort((a, b) => {
-        if (sortOpt === "name") return (a.productName || "").localeCompare(b.productName || "", "ko");
-        if (sortOpt === "number") return (a.filmNumber || "").localeCompare(b.filmNumber || "", "ko");
-        if (sortOpt === "lastUsed") return (b.lastUsed || "").localeCompare(a.lastUsed || "");
-        const atA = a.updatedAt || a.createdAt || 0;
-        const atB = b.updatedAt || b.createdAt || 0;
-        return atB - atA;
+      filtered = filtered.slice().sort((a,b)=>{
+        if (sortOpt === "name") return (a.productName||"").localeCompare(b.productName||"","ko");
+        if (sortOpt === "number") return (a.filmNumber||"").localeCompare(b.filmNumber||"","ko");
+        if (sortOpt === "lastUsed") return (b.lastUsed||"").localeCompare(a.lastUsed||"", "ko");
+        // 기본: 최근 수정순
+        const at = a.updatedAt || a.createdAt || 0;
+        const bt = b.updatedAt || b.createdAt || 0;
+        return bt - at;
       });
+
+      // 페이징(더보기) 방식 간단 적용: visibleCount까지
+      const visible = filtered.slice(0, visibleCount);
 
       updateCountBar(filtered.length, films.length, !!text);
 
-      let toRender = filtered;
-      if (!text) {
-        visibleCount = Math.min(visibleCount, filtered.length);
-        toRender = filtered.slice(0, visibleCount);
-      }
-
-      if (filtered.length === 0) {
+      if (!visible.length) {
         emptyText.style.display = "block";
-        emptyText.innerHTML = "등록된 필름이 없습니다.<br/>오른쪽 위 <b>+ 새 필름</b> 버튼으로 추가하세요.";
+        emptyText.innerHTML = text ? "검색 결과가 없어." : "아직 등록된 필름이 없어.";
+        return;
+      }
+      emptyText.style.display = "none";
+
+      // 갤러리/리스트 모드 적용
+      applyViewMode();
+
+      visible.forEach((f) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const imgHtml = f.imageDataUrl
+          ? `<img src="${f.imageDataUrl}" alt="film" data-img="${f.imageDataUrl}" />`
+          : `<img src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='100%' height='100%' fill='#eef1ff'/><text x='50%' y='52%' text-anchor='middle' font-size='14' fill='#7f9dff' font-family='Arial'>NO IMAGE</text></svg>`)}" alt="no" />`;
+
+        const plateInfoText = (f.plateInfo || "").trim();
+
+        card.innerHTML = `
+          ${imgHtml}
+          <div class="card-content">
+            <div class="card-row-main">
+              <div class="card-title">
+                ${f.productName || "-"}
+                <span class="card-tag">🎞 ${f.filmNumber || "-"}</span>
+              </div>
+            </div>
+
+            <div class="card-row"><span class="label">제판타입</span>${f.method || "-"}</div>
+            <div class="card-row"><span class="label">MESH</span>${f.mesh || "-"}</div>
+            <div class="card-row"><span class="label">제판방법</span>${plateInfoText || "-"}</div>
+            <div class="card-row"><span class="label">위치</span>${f.location || "-"}</div>
+            <div class="card-row"><span class="label">요청</span>${f.requestPrinter || "-"}</div>
+
+            <div class="card-footer">
+              <div class="last-used">마지막 사용일: ${formatDate(f.lastUsed)}</div>
+              <div class="card-buttons" data-id="${f.id}">
+                <button class="btn btn-ghost btn-small" data-action="memo">📝 메모</button>
+                <button class="btn btn-secondary btn-small" data-action="today">오늘</button>
+                <button class="btn btn-secondary btn-small" data-action="plateAdd">+ 판</button>
+                <button class="btn btn-secondary btn-small" data-action="copy">복사</button>
+                <button class="btn btn-secondary btn-small" data-action="edit">수정</button>
+                <button class="btn btn-danger btn-small" data-action="del">삭제</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // 이미지 클릭 -> 뷰어
+        const img = card.querySelector("img");
+        if (img) {
+          img.addEventListener("click", () => {
+            const src = img.getAttribute("data-img") || img.src;
+            openImageViewer(src);
+          });
+        }
+
+        // 버튼 이벤트
+        const btnWrap = card.querySelector(".card-buttons");
+        if (btnWrap) {
+          btnWrap.addEventListener("click", (e) => {
+            const t = e.target;
+            if (!(t instanceof HTMLElement)) return;
+            const act = t.getAttribute("data-action");
+            if (!act) return;
+
+            const id = btnWrap.getAttribute("data-id");
+            if (!id) return;
+
+            if (currentMode !== MODE_ADMIN) {
+              // 조회 모드는 메모만 보기 허용
+              if (currentMode === MODE_VIEWER && act === "memo") openMemoSheet(id);
+              return;
+            }
+
+            if (act === "edit") openFilmFormForEdit(id);
+            if (act === "copy") openFilmFormCopyFrom(id);
+            if (act === "del") deleteFilm(id);
+            if (act === "today") setFilmToday(id);
+            if (act === "memo") openMemoSheet(id);
+            if (act === "plateAdd") openPlateFormFromFilm(id);
+          });
+        }
+
+        listEl.appendChild(card);
+      });
+
+      // 더보기 (간단히 스크롤 바닥에서 자동 확장)
+      // (원하면 버튼으로 바꿀 수도 있음)
+           }Compare(b.lastUsed||"","ko");
+        // updated(최근 수정순) 기본
+        const ta = (a.updatedAt || a.createdAt || 0);
+        const tb = (b.updatedAt || b.createdAt || 0);
+        return tb - ta;
+      });
+
+      const total = filtered.length;
+      const sliced = filtered.slice(0, visibleCount);
+
+      updateCountBar(sliced.length, total, !!text);
+
+      if (!sliced.length) {
+        emptyText.style.display = "block";
+        emptyText.textContent = text ? "검색 결과가 없어." : "아직 등록된 필름이 없어.";
         return;
       } else {
         emptyText.style.display = "none";
       }
 
-      toRender.forEach((film) => {
-        const card = document.createElement("div");
-        card.className = "card";
+      sliced.forEach(f => listEl.appendChild(createFilmCard(f)));
 
-        // (필름 경고는 지금 요구사항 없음 -> 배지는 유지하되 숨김)
-        applyWarnBadge(card, { show: false, text: "" });
-
-        const img = document.createElement("img");
-        if (film.imageDataUrl) {
-          img.src = film.imageDataUrl;
-          img.addEventListener("click", () => openImageViewer(film.imageDataUrl));
-        } else {
-          img.alt = "이미지 없음";
-        }
-        card.appendChild(img);
-
-        const content = document.createElement("div");
-        content.className = "card-content";
-
-        const rowMain = document.createElement("div");
-        rowMain.className = "card-row-main";
-        const title = document.createElement("div");
-        title.className = "card-title";
-        title.textContent = film.productName || "(제품명 없음)";
-
-        const tag = document.createElement("div");
-        tag.className = "card-tag";
-        tag.textContent = film.filmNumber || "번호 없음";
-
-        rowMain.appendChild(title);
-        rowMain.appendChild(tag);
-        content.appendChild(rowMain);
-
-        const rowMethod = document.createElement("div");
-        rowMethod.className = "card-row";
-        rowMethod.innerHTML = '<span class="label">제판 타입</span>' + (film.method || "-");
-        content.appendChild(rowMethod);
-
-        const rowMesh = document.createElement("div");
-        rowMesh.className = "card-row";
-        rowMesh.innerHTML = '<span class="label">MESH</span>' + (film.mesh || "-");
-        content.appendChild(rowMesh);
-
-        const rowPlate = document.createElement("div");
-        rowPlate.className = "card-row";
-        rowPlate.innerHTML = '<span class="label">제판 방법</span>' + (film.plateInfo || "-");
-        content.appendChild(rowPlate);
-
-        const rowLoc = document.createElement("div");
-        rowLoc.className = "card-row";
-        rowLoc.innerHTML = '<span class="label">필름 위치</span>' + (film.location || "-");
-        content.appendChild(rowLoc);
-
-        const rowReq = document.createElement("div");
-        rowReq.className = "card-row";
-        rowReq.innerHTML = '<span class="label">요청 인쇄자</span>' + (film.requestPrinter || "-");
-        content.appendChild(rowReq);
-
-        const footer = document.createElement("div");
-        footer.className = "card-footer";
-
-        const lastUsed = document.createElement("div");
-        lastUsed.className = "last-used";
-        lastUsed.textContent = "마지막 사용일: " + formatDate(film.lastUsed || "");
-        footer.appendChild(lastUsed);
-
-        const btnWrap = document.createElement("div");
-        btnWrap.className = "card-buttons";
-
-        const canEditFilms = (currentMode === MODE_ADMIN);
-        const canViewOnly = (currentMode === MODE_VIEWER);
-
-        if (canEditFilms) {
-          const useTodayBtn = document.createElement("button");
-          useTodayBtn.className = "btn btn-secondary btn-small";
-          useTodayBtn.textContent = "오늘 사용";
-          useTodayBtn.addEventListener("click", async () => {
-            const today = new Date().toISOString().slice(0, 10);
-            try {
-              await db.collection(FILM_COLLECTION).doc(film.id).set(
-                { lastUsed: today, updatedAt: Date.now() },
-                { merge: true }
-              );
-              await addHistory("오늘 사용", { ...film, lastUsed: today }, ["마지막 사용일"]);
-              showToast("오늘 사용으로 기록했어.");
-            } catch (e) {
-              console.error(e);
-              showToast("오늘 사용 기록 중 오류가 났어.");
-            }
-          });
-          btnWrap.appendChild(useTodayBtn);
-
-          const editBtn = document.createElement("button");
-          editBtn.className = "btn btn-secondary btn-small";
-          editBtn.textContent = "수정";
-          editBtn.addEventListener("click", () => openFormForEdit(film.id));
-          btnWrap.appendChild(editBtn);
-
-          const deleteBtn = document.createElement("button");
-deleteBtn.className = "btn btn-danger btn-small";
-deleteBtn.textContent = "삭제";
-deleteBtn.addEventListener("click", async () => {
-  if (!confirm("이 필름을 삭제할까?")) return;
-  try {
-    await db.collection(FILM_COLLECTION).doc(film.id).delete();
-    await addHistory("삭제", film, ["필름 삭제"]);
-    showToast("삭제 완료");
-  } catch (e) {
-    console.error(e);
-    showToast("삭제 중 오류");
-  }
-});
-btnWrap.appendChild(deleteBtn);
-}
-
-if (!canViewOnly) {
-  const memoBtn = document.createElement("button");
-  memoBtn.className = "btn btn-secondary btn-small";
-  memoBtn.textContent = "메모";
-  memoBtn.addEventListener("click", () => openMemoSheet(film.id));
-  btnWrap.appendChild(memoBtn);
-}
-
-footer.appendChild(btnWrap);
-content.appendChild(footer);
-card.appendChild(content);
-listEl.appendChild(card);
-});
-}
-
-function renderPlatesList(filterText = "") {
-  const listEl = document.getElementById("list");
-  const emptyText = document.getElementById("emptyText");
-  listEl.innerHTML = "";
-  currentSearchText = filterText || "";
-
-  let filtered = plates.filter(p => {
-    if (!filterText) return true;
-    const t = filterText.toLowerCase();
-    return (
-      (p.productName || "") +
-      (p.filmNumber || "") +
-      (p.plateNumber || "") +
-      (p.mesh || "") +
-      (p.tension || "") +
-      (p.location || "")
-    ).toLowerCase().includes(t);
-  });
-
-  updateCountBar(filtered.length, plates.length, !!filterText);
-
-  if (!filtered.length) {
-    emptyText.style.display = "block";
-    emptyText.textContent = "등록된 판이 없습니다.";
-    return;
-  } else emptyText.style.display = "none";
-
-  filtered.forEach(plate => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    // ✅ 경고 배지 적용
-    const warnState = getPlateWarnState(plate);
-    applyWarnBadge(card, warnState);
-
-    const img = document.createElement("img");
-    img.src = plate.imageDataUrl || "";
-    card.appendChild(img);
-
-    const content = document.createElement("div");
-    content.className = "card-content";
-
-    content.innerHTML = `
-      <div class="card-row-main">
-        <div class="card-title">${plate.productName || "-"}</div>
-        <div class="card-tag">${plate.plateNumber || "-"}</div>
-      </div>
-      <div class="card-row"><span class="label">필름</span>${plate.filmNumber || "-"}</div>
-      <div class="card-row"><span class="label">MESH</span>${plate.mesh || "-"}</div>
-      <div class="card-row"><span class="label">텐션</span>${plate.tension || "-"}</div>
-      <div class="card-row"><span class="label">누적 사용</span>${plate.usedQtyTotal || 0} / ${plate.maxQty || 5000}</div>
-    `;
-
-    const footer = document.createElement("div");
-    footer.className = "card-footer";
-
-    const btnWrap = document.createElement("div");
-    btnWrap.className = "card-buttons";
-
-    if (currentMode !== MODE_VIEWER) {
-      const useBtn = document.createElement("button");
-      useBtn.className = "btn btn-primary btn-small";
-      useBtn.textContent = "사용 등록";
-      useBtn.onclick = () => openPlateUseSheet(plate.id);
-      btnWrap.appendChild(useBtn);
+      // 더보기(스크롤) 대비
+      if (visibleCount < total) {
+        // 아래로 스크롤하면 더 로드 (간단)
+        // (원하면 버튼형 더보기로 바꿔줄 수도 있음)
+      }
     }
 
-    const histBtn = document.createElement("button");
-    histBtn.className = "btn btn-secondary btn-small";
-    histBtn.textContent = "히스토리";
-    histBtn.onclick = () => openPlateHistorySheet(plate.id);
-    btnWrap.appendChild(histBtn);
+    function createFilmCard(f) {
+      const card = document.createElement("div");
+      card.className = "card";
 
-    footer.appendChild(btnWrap);
-    content.appendChild(footer);
-    card.appendChild(content);
-    listEl.appendChild(card);
-  });
-}
+      const imgSrc = f.imageDataUrl || "";
+      const plateInfoText = f.plateInfo ? `${f.plateInfo}` : "-";
 
-/* ====== 판 사용 등록 ====== */
-async function savePlateUse() {
-  if (!currentPlateUseId) return;
-  const qty = Number(document.getElementById("plateUseQty").value || 0);
-  if (qty <= 0) return showToast("수량을 입력해줘");
+      const isAdmin = currentMode === MODE_ADMIN;
+      const isViewer = currentMode === MODE_VIEWER;
 
-  const who = document.getElementById("plateUseWho").value || "";
-  const memo = document.getElementById("plateUseMemo").value || "";
+      card.innerHTML = `
+        ${imgSrc ? `<img src="${imgSrc}" alt="film" />` : `<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHZpZXdCb3g9IjAgMCA3MCA3MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHJ4PSIxMiIgZmlsbD0iI2VlZjFmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjM1ZW0iIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM4MDg1YjQiPk5PIElNQUdFPC90ZXh0Pjwvc3ZnPg=="/>`}
+        <div class="card-content">
+          <div class="card-row-main">
+            <div class="card-title">
+              ${escapeHtml(f.productName || "-")}
+              <span class="card-tag">${escapeHtml(f.filmNumber || "-")}</span>
+            </div>
+          </div>
 
-  const plateRef = db.collection(PLATE_COLLECTION).doc(currentPlateUseId);
+          <div class="card-row"><span class="label">제판타입</span>${escapeHtml(f.method || "-")}</div>
+          <div class="card-row"><span class="label">MESH</span>${escapeHtml(f.mesh || "-")}</div>
+          <div class="card-row"><span class="label">제판방법</span>${escapeHtml(plateInfoText)}</div>
+          <div class="card-row"><span class="label">위치</span>${escapeHtml(f.location || "-")}</div>
+          <div class="card-row"><span class="label">요청</span>${escapeHtml(f.requestPrinter || "-")}</div>
 
-  try {
-    await plateRef.collection(PLATE_USAGE_SUB).add({
-      qty,
-      who,
-      memo,
-      device: getDeviceLabel(),
-      createdAt: Date.now()
-    });
+          <div class="card-footer">
+            <div class="last-used">마지막 사용일: ${escapeHtml(formatDate(f.lastUsed))}</div>
+            <div class="card-buttons">
+              <button class="btn btn-ghost btn-small" data-act="memo">📝 메모</button>
+              ${isAdmin ? `<button class="btn btn-secondary btn-small" data-act="today">오늘</button>` : ""}
+              ${isAdmin ? `<button class="btn btn-secondary btn-small" data-act="plateNew">+ 판</button>` : ""}
+              ${isAdmin ? `<button class="btn btn-secondary btn-small" data-act="edit">수정</button>` : ""}
+              ${isAdmin ? `<button class="btn btn-ghost btn-small" data-act="copy">복사</button>` : ""}
+              ${isAdmin ? `<button class="btn btn-danger btn-small" data-act="del">삭제</button>` : ""}
+              ${isViewer ? `<button class="btn btn-secondary btn-small" data-act="toPlates">판 보기</button>` : ""}
+            </div>
+          </div>
+        </div>
+      `;
 
-    await plateRef.set({
-      usedQtyTotal: firebase.firestore.FieldValue.increment(qty),
-      updatedAt: Date.now()
-    }, { merge: true });
+      const img = card.querySelector("img");
+      if (img && imgSrc) img.addEventListener("click", () => openImageViewer(imgSrc));
 
-    showToast("사용 등록 완료");
-    closePlateUseSheet();
-  } catch (e) {
-    console.error(e);
-    showToast("사용 등록 실패");
-  }
-}
+      card.querySelectorAll("button[data-act]").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const act = e.currentTarget.dataset.act;
+          if (act === "memo") return openMemoSheet(f.id);
+          if (act === "today") return setFilmToday(f);
+          if (act === "plateNew") return openPlateFormFromFilm(f.id);
+          if (act === "edit") return openFilmFormForEdit(f.id);
+          if (act === "copy") return openFilmFormCopyFrom(f.id);
+          if (act === "del") return deleteFilm(f.id);
+          if (act === "toPlates") {
+            currentTab = "plates";
+            setActiveTabUI();
+            $("searchInput").value = f.filmNumber || "";
+            currentSearchText = (f.filmNumber || "");
+            renderPlatesList(currentSearchText);
+          }
+        });
+      });
 
-/* ====== 초기 실행 ====== */
-window.addEventListener("DOMContentLoaded", async () => {
-  setTheme(getTheme());
-  setDeviceLabel(getDeviceLabel());
+      return card;
+    }
 
-  await loadAuthConfig();
+    async function setFilmToday(film) {
+      if (currentMode !== MODE_ADMIN) return;
+      try {
+        const iso = todayISO();
+        await db.collection(FILM_COLLECTION).doc(film.id).set({ lastUsed: iso, updatedAt: Date.now() }, { merge: true });
+        await addHistory("오늘 사용", { ...film, lastUsed: iso }, ["마지막 사용일"]);
+        showToast("오늘로 기록했어.");
+      } catch (e) {
+        console.error(e);
+        showToast("오늘 기록 중 오류.");
+      }
+    }
 
-  document.getElementById("passwordBtn").onclick = () => {
-    const pw = document.getElementById("passwordInput").value;
-    const mode = detectModeByPassword(pw);
-    if (!mode) return showToast("비밀번호 오류");
+    async function deleteFilm(id) {
+      if (currentMode !== MODE_ADMIN) return;
+      const film = films.find(x => x.id === id);
+      if (!film) return;
+      if (!confirm("정말 삭제할까?")) return;
 
-    currentMode = mode;
-    localStorage.setItem(UNLOCK_KEY, "1");
-    localStorage.setItem(UNLOCK_MODE_KEY, mode);
+      try {
+        await db.collection(FILM_COLLECTION).doc(id).delete();
+        await addHistory("삭제", film, []);
+        showToast("삭제했어.");
+      } catch (e) {
+        console.error(e);
+        showToast("삭제 중 오류.");
+      }
+    }
 
-    document.getElementById("lockScreen").style.display = "none";
-    document.getElementById("appContainer").style.display = "block";
+    /* ---------- 판 리스트 렌더 ---------- */
+    function renderPlatesList(filterText="") {
+      const listEl = $("list");
+      const emptyText = $("emptyText");
+      listEl.innerHTML = "";
+      currentSearchText = filterText || "";
 
-    applyModeUI();
-    startFilmsListener();
-    startPlatesListener();
-  };
-});
-</script>
+      const text = (filterText||"").trim().toLowerCase();
+      let filtered = plates.filter(p => {
+        if (!text) return true;
+        const combined =
+          (p.productName || "") + " " +
+          (p.filmNumber || "") + " " +
+          (p.plateNumber || "") + " " +
+          (p.tension || "") + " " +
+          (p.location || "") + " " +
+          (p.mesh || "");
+        return combined.toLowerCase().includes(text);
+      });
+
+      // 판은 기본 최근 수정순
+      filtered = filtered.slice().sort((a,b)=>{
+        const ta = (a.updatedAt || a.createdAt || 0);
+        const tb = (b.updatedAt || b.createdAt || 0);
+        return tb - ta;
+      });
+
+      const total = filtered.length;
+      const sliced = filtered.slice(0, visibleCount);
+
+      updateCountBar(sliced.length, total, !!text);
+
+      if (!sliced.length) {
+        emptyText.style.display = "block";
+        emptyText.textContent = text ? "검색 결과가 없어." : "아직 등록된 판이 없어.";
+        return;
+      } else {
+        emptyText.style.display = "none";
+      }
+
+      sliced.forEach(p => listEl.appendChild(createPlateCard(p)));
+    }
+
+    function createPlateCard(p) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const isAdmin = currentMode === MODE_ADMIN;
+      const isPrinter = currentMode === MODE_PRINTER;
+      const isViewer = currentMode === MODE_VIEWER;
+
+      const used = Number(p.usedTotal || 0);
+      const max = Number(p.maxQty || 5000);
+
+      card.innerHTML = `
+        <div style="width:70px; height:70px; border-radius:12px; background: var(--primary-soft); display:flex; align-items:center; justify-content:center; font-weight:800; color: var(--text-main);">
+          🧩
+        </div>
+        <div class="card-content">
+          <div class="card-row-main">
+            <div class="card-title">
+              ${escapeHtml(p.productName || "-")}
+              <span class="card-tag">${escapeHtml(p.plateNumber || "-")}</span>
+            </div>
+          </div>
+
+          <div class="card-row"><span class="label">필름</span>${escapeHtml(p.filmNumber || "-")}</div>
+          <div class="card-row"><span class="label">텐션</span>${escapeHtml(p.tension || "-")}</div>
+          <div class="card-row"><span class="label">위치</span>${escapeHtml(p.location || "-")}</div>
+          <div class="card-row"><span class="label">MESH</span>${escapeHtml(p.mesh || "-")}</div>
+
+          <div class="card-footer">
+            <div class="last-used">누적 사용: <strong style="color:var(--primary-1)">${used}</strong> / ${max}</div>
+            <div class="card-buttons">
+              <button class="btn btn-ghost btn-small" data-act="pmemo">📝 메모</button>
+              <button class="btn btn-primary btn-small" data-act="use">사용등록</button>
+              <button class="btn btn-secondary btn-small" data-act="phist">히스토리</button>
+              ${isAdmin ? `<button class="btn btn-secondary btn-small" data-act="pedit">수정</button>` : ""}
+              ${isAdmin ? `<button class="btn btn-danger btn-small" data-act="pdel">삭제</button>` : ""}
+            </div>
+          </div>
+        </div>
+      `;
+
+      card.querySelectorAll("button[data-act]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const act = e.currentTarget.dataset.act;
+          if (act === "pmemo") return openPlateMemoSheet(p.id);
+          if (act === "use") return openPlateUseSheet(p.id);
+          if (act === "phist") return openPlateHistorySheet(p.id);
+          if (act === "pedit") return openPlateFormForEdit(p.id);
+          if (act === "pdel") return deletePlate(p.id);
+        });
+      });
+
+      // 인쇄기사/조회 모드에서 메모는 읽기만 가능 (save버튼/disabled는 openPlateMemoSheet에서 처리됨)
+      if (isPrinter || isViewer) {
+        // 버튼은 남겨둠 (보기용)
+      }
+
+      return card;
+    }
+
+    async function deletePlate(plateId){
+      if (currentMode !== MODE_ADMIN) return;
+      const p = plates.find(x=>x.id===plateId);
+      if (!p) return;
+      if (!confirm("이 판을 삭제할까?")) return;
+      try{
+        await db.collection(PLATE_COLLECTION).doc(plateId).delete();
+        showToast("판 삭제됨.");
+      }catch(e){
+        console.error(e);
+        showToast("판 삭제 중 오류.");
+      }
+    }
+
+    /* ---------- escape ---------- */
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    /* ---------- 저장(필름) ---------- */
+    async function saveFilmFormSubmit(e){
+      e.preventDefault();
+      if (currentMode !== MODE_ADMIN) return;
+
+      const id = ($("filmId").value || "").trim();
+      const productName = ($("productName").value || "").trim();
+      const filmNumber = ($("filmNumber").value || "").trim();
+      if (!productName || !filmNumber) { showToast("제품 이름/필름 번호는 필수야."); return; }
+
+      const method = ($("method").value || "").trim();
+      const mesh = ($("mesh").value || "").trim();
+      const location = ($("location").value || "").trim();
+      const requestPrinter = ($("requestPrinter").value || "").trim();
+      const lastUsed = ($("lastUsed").value || "").trim();
+      const plateInfo = getPlateInfoFromForm();
+
+      const payload = {
+        productName, filmNumber, method, mesh, location, requestPrinter, lastUsed, plateInfo,
+        updatedAt: Date.now(),
+      };
+
+      // 이미지: 새로 선택된 게 있으면 그걸 저장, 아니면 기존 유지
+      if (currentSelectedImageDataUrl) {
+        payload.imageDataUrl = currentSelectedImageDataUrl;
+      }
+
+      try{
+        if (id) {
+          await db.collection(FILM_COLLECTION).doc(id).set(payload, { merge:true });
+          await addHistory("수정", { id, ...payload }, detectFilmChanges(id, payload));
+          showToast("수정했어.");
+        } else {
+          payload.createdAt = Date.now();
+          const ref = await db.collection(FILM_COLLECTION).add(payload);
+          await addHistory("등록", { id: ref.id, ...payload }, ["신규 등록"]);
+          showToast("등록했어.");
+        }
+        closeFilmForm();
+      }catch(err){
+        console.error(err);
+        showToast("저장 중 오류.");
+      }
+    }
+
+    function detectFilmChanges(id, newPayload){
+      const old = films.find(f=>f.id===id) || {};
+      const changes = [];
+      const keys = ["productName","filmNumber","method","mesh","location","requestPrinter","lastUsed","plateInfo"];
+      keys.forEach(k=>{
+        const a = String(old[k] ?? "");
+        const b = String(newPayload[k] ?? "");
+        if (a !== b) changes.push(k);
+      });
+      if (newPayload.imageDataUrl && newPayload.imageDataUrl !== (old.imageDataUrl || "")) changes.push("사진");
+      return changes;
+    }
+
+    /* ---------- 이미지 선택 처리 ---------- */
+    function handleImageInputChange(file){
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        currentSelectedImageDataUrl = reader.result;
+        currentImageRotation = 0;
+        const wrapper = $("imagePreviewWrapper");
+        const img = $("imagePreview");
+        if (img) img.src = currentSelectedImageDataUrl;
+        if (img) img.style.transform = "rotate(0deg)";
+        if (wrapper) wrapper.style.display = "flex";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function rotateImage(direction){
+      if (!currentSelectedImageDataUrl) return;
+      currentImageRotation = (currentImageRotation + (direction === "left" ? -90 : 90) + 360) % 360;
+      applyPreviewRotation();
+
+      // 실제 저장될 DataURL도 회전 반영 (캔버스)
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const rad = currentImageRotation * Math.PI / 180;
+        const w = img.width, h = img.height;
+
+        if (currentImageRotation % 180 !== 0) {
+          canvas.width = h;
+          canvas.height = w;
+        } else {
+          canvas.width = w;
+          canvas.height = h;
+        }
+
+        ctx.translate(canvas.width/2, canvas.height/2);
+        ctx.rotate(rad);
+        ctx.drawImage(img, -w/2, -h/2);
+
+        currentSelectedImageDataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        const preview = $("imagePreview");
+        if (preview) preview.src = currentSelectedImageDataUrl;
+      };
+      img.src = currentSelectedImageDataUrl;
+    }
+
+    /* ---------- 프린터 목록 추가/삭제 ---------- */
+    async function addPrinterName(){
+      if (currentMode !== MODE_ADMIN) { showToast("관리자만 가능"); return; }
+      const name = prompt("추가할 인쇄기사 이름");
+      if (!name) return;
+      const names = await loadPrinterList();
+      names.push(name.trim());
+      await savePrinterList(names);
+      await fillPrinterSelect($("plateUseWho"));
+      showToast("추가했어.");
+    }
+
+    async function delPrinterName(){
+      if (currentMode !== MODE_ADMIN) { showToast("관리자만 가능"); return; }
+      const target = ($("plateUseWho").value || "").trim();
+      if (!target) return;
+      if (!confirm(`"${target}" 삭제할까?`)) return;
+      const names = await loadPrinterList();
+      const next = names.filter(n => n !== target);
+      await savePrinterList(next);
+      await fillPrinterSelect($("plateUseWho"));
+      showToast("삭제했어.");
+    }
+
+    /* ---------- 내보내기/불러오기 ---------- */
+    function exportData(){
+      if (currentMode !== MODE_ADMIN) return;
+      const payload = {
+        exportedAt: Date.now(),
+        films,
+        plates
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `filmfind_export_${todayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("내보내기 완료.");
+    }
+
+    async function importDataFile(file){
+      if (currentMode !== MODE_ADMIN) return;
+      if (!file) return;
+      try{
+        const text = await file.text();
+        const data = JSON.parse(text);
+        const inFilms = Array.isArray(data.films) ? data.films : [];
+        const inPlates = Array.isArray(data.plates) ? data.plates : [];
+
+        // 문서 id가 있는 것만 upsert
+        const batch = db.batch();
+
+        inFilms.forEach(f=>{
+          if (!f.id) return;
+          const ref = db.collection(FILM_COLLECTION).doc(f.id);
+          batch.set(ref, { ...f, updatedAt: Date.now() }, { merge:true });
+        });
+        inPlates.forEach(p=>{
+          if (!p.id) return;
+          const ref = db.collection(PLATE_COLLECTION).doc(p.id);
+          batch.set(ref, { ...p, updatedAt: Date.now() }, { merge:true });
+        });
+
+        await batch.commit();
+        showToast("불러오기 완료.");
+      }catch(e){
+        console.error(e);
+        showToast("불러오기 실패.");
+      }
+    }
+
+    /* ---------- 설정 저장 ---------- */
+    async function saveSettings(){
+      const deviceName = ($("deviceNameInput").value || "").trim();
+      setDeviceLabel(deviceName);
+
+      const sortOpt = ($("sortOptionSelect").value || "updated");
+      setSortOption(sortOpt);
+
+      const theme = ($("themeSelect").value || "default");
+      setTheme(theme);
+
+      // 관리자만 비번 변경
+      if (currentMode === MODE_ADMIN) {
+        const newAdmin = ($("pwAdminNew").value || "").trim() || authConfig.adminPw;
+        const newPrinter = ($("pwPrinterNew").value || "").trim() || authConfig.printerPw;
+        const newViewer = ($("pwViewerNew").value || "").trim() || authConfig.viewerPw;
+        const curAdmin = ($("pwAdminCurrent").value || "").trim();
+
+        // 비번 입력이 하나라도 바뀌는 경우에만 현재 관리자 비번 확인
+        const wantsChange = (newAdmin !== authConfig.adminPw) || (newPrinter !== authConfig.printerPw) || (newViewer !== authConfig.viewerPw);
+        if (wantsChange) {
+          if (!curAdmin || curAdmin !== authConfig.adminPw) {
+            showToast("현재 관리자 비밀번호가 맞아야 변경돼.");
+            return;
+          }
+          await saveAuthConfig(newAdmin, newPrinter, newViewer);
+          showToast("비밀번호 변경 완료.");
+          $("pwAdminNew").value = "";
+          $("pwPrinterNew").value = "";
+          $("pwViewerNew").value = "";
+          $("pwAdminCurrent").value = "";
+        }
+      }
+
+      showToast("설정 저장됨.");
+      closeAllPanels();
+      renderCurrentTab();
+    }
+
+    /* ---------- 로그인/잠금 ---------- */
+    async function unlockWithPassword(pw){
+      await loadAuthConfig();
+      const mode = detectModeByPassword(pw);
+      if (!mode) {
+        showToast("비밀번호가 맞지 않아.");
+        return;
+      }
+      currentMode = mode;
+      localStorage.setItem(UNLOCK_KEY, "1");
+      localStorage.setItem(UNLOCK_MODE_KEY, mode);
+
+      $("lockScreen").style.display = "none";
+      $("appContainer").style.display = "block";
+
+      // 테마/기기명 적용
+      setTheme(getTheme());
+      setDeviceLabel(getDeviceLabel());
+
+      // 모드 UI 적용 + 리스너 시작
+      applyModeUI();
+      applyViewMode();
+
+      startFilmsListener();
+      startPlatesListener();
+
+      // 인쇄기사 모드면 판 탭으로 강제
+      if (currentMode === MODE_PRINTER) {
+        currentTab = "plates";
+        setActiveTabUI();
+      } else {
+        setActiveTabUI();
+      }
+    }
+
+    async function tryAutoUnlock(){
+      const unlocked = localStorage.getItem(UNLOCK_KEY) === "1";
+      if (!unlocked) return;
+
+      await loadAuthConfig();
+      const mode = localStorage.getItem(UNLOCK_MODE_KEY);
+      if (![MODE_ADMIN, MODE_PRINTER, MODE_VIEWER].includes(mode)) {
+        localStorage.removeItem(UNLOCK_KEY);
+        localStorage.removeItem(UNLOCK_MODE_KEY);
+        return;
+      }
+      currentMode = mode;
+
+      $("lockScreen").style.display = "none";
+      $("appContainer").style.display = "block";
+
+      setTheme(getTheme());
+      setDeviceLabel(getDeviceLabel());
+
+      applyModeUI();
+      applyViewMode();
+
+      startFilmsListener();
+      startPlatesListener();
+
+      if (currentMode === MODE_PRINTER) currentTab = "plates";
+      setActiveTabUI();
+    }
+
+    /* ---------- 초기화 & 이벤트 연결 ---------- */
+    function bindEvents(){
+      // 잠금
+      $("passwordBtn").addEventListener("click", () => unlockWithPassword(($("passwordInput").value || "").trim()));
+      $("passwordInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") unlockWithPassword(($("passwordInput").value || "").trim());
+      });
+
+      // 탭
+      $("tabFilmsBtn").addEventListener("click", () => switchToTab("films"));
+      $("tabPlatesBtn").addEventListener("click", () => switchToTab("plates"));
+
+      // 검색
+      $("searchInput").addEventListener("input", (e) => {
+        currentSearchText = e.target.value || "";
+        visibleCount = VISIBLE_STEP;
+        renderCurrentTab();
+      });
+
+      // 뷰 토글
+      $("viewToggleBtn").addEventListener("click", () => {
+        setViewMode(currentViewMode === "list" ? "gallery" : "list");
+      });
+
+      // 새 필름
+      $("newFilmBtn").addEventListener("click", openFilmFormNew);
+
+      // 설정
+      $("settingsBtn").addEventListener("click", () => {
+        const card = $("settingsCard");
+        const isOpen = card.style.display === "block";
+        closeAllPanels();
+        if (!isOpen) {
+          card.style.display = "block";
+          $("deviceNameInput").value = getDeviceLabel();
+          $("sortOptionSelect").value = getSortOption();
+          $("themeSelect").value = getTheme();
+        }
+      });
+      $("closeSettingsBtn").addEventListener("click", closeAllPanels);
+      $("saveSettingsBtn").addEventListener("click", saveSettings);
+
+      // 히스토리
+      $("historyBtn").addEventListener("click", openHistoryCard);
+      $("closeHistoryBtn").addEventListener("click", closeAllPanels);
+
+      // 내보내기/불러오기
+      $("exportBtn").addEventListener("click", exportData);
+      $("importBtn").addEventListener("click", () => $("importFile").click());
+      $("importFile").addEventListener("change", (e) => importDataFile(e.target.files?.[0]));
+
+      // 필름 폼
+      $("filmForm").addEventListener("submit", saveFilmFormSubmit);
+      $("cancelBtn").addEventListener("click", closeFilmForm);
+      $("setTodayBtn").addEventListener("click", () => $("lastUsed").value = todayISO());
+      $("imageInput").addEventListener("change", (e) => handleImageInputChange(e.target.files?.[0]));
+      $("rotateLeftBtn").addEventListener("click", () => rotateImage("left"));
+      $("rotateRightBtn").addEventListener("click", () => rotateImage("right"));
+
+      // 판 폼
+      $("plateForm").addEventListener("submit", savePlateFormSubmit);
+      $("plateCancelBtn").addEventListener("click", closePlateForm);
+
+      // 메모 시트(필름)
+      $("memoSheetBackdrop").addEventListener("click", closeMemoSheet);
+      $("memoSheetCloseBtn").addEventListener("click", closeMemoSheet);
+      $("memoSheetCancelBtn").addEventListener("click", closeMemoSheet);
+      $("memoSheetSaveBtn").addEventListener("click", saveMemoSheet);
+
+      // 메모 시트(판)
+      $("plateMemoBackdrop").addEventListener("click", closePlateMemoSheet);
+      $("plateMemoCloseBtn").addEventListener("click", closePlateMemoSheet);
+      $("plateMemoCancelBtn").addEventListener("click", closePlateMemoSheet);
+      $("plateMemoSaveBtn").addEventListener("click", savePlateMemoSheet);
+
+      // 이미지 뷰어
+      $("viewerBackdrop").addEventListener("click", closeImageViewer);
+      $("closeViewerBtn").addEventListener("click", closeImageViewer);
+
+      // 히스토리 메모 모달
+      $("historyNoteCancelBtn").addEventListener("click", closeHistoryNoteModal);
+      $("historyNoteSaveBtn").addEventListener("click", saveHistoryNoteModal);
+      $("historyNoteModal").addEventListener("click", (e) => {
+        if (e.target === $("historyNoteModal")) closeHistoryNoteModal();
+      });
+
+      // 판 사용 시트
+      $("plateUseBackdrop").addEventListener("click", closePlateUseSheet);
+      $("plateUseCloseBtn").addEventListener("click", closePlateUseSheet);
+      $("plateUseCancelBtn").addEventListener("click", closePlateUseSheet);
+      $("plateUseSaveBtn").addEventListener("click", savePlateUse);
+
+      // 인쇄기사 목록 추가/삭제 (관리자만)
+      $("printerAddBtn").addEventListener("click", addPrinterName);
+      $("printerDelBtn").addEventListener("click", delPrinterName);
+
+      // 판 히스토리 시트
+      $("plateHistoryBackdrop").addEventListener("click", closePlateHistorySheet);
+      $("plateHistoryCloseBtn").addEventListener("click", closePlateHistorySheet);
+      $("plateHistoryCloseBtn2").addEventListener("click", closePlateHistorySheet);
+
+      // 스크롤탑
+      const scrollBtn = $("scrollTopBtn");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 400) scrollBtn.classList.add("show");
+        else scrollBtn.classList.remove("show");
+      });
+      scrollBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    }
+
+    async function init(){
+      bindEvents();
+
+      // 테마/기기
+      setTheme(getTheme());
+      setDeviceLabel(getDeviceLabel());
+
+      // 기기 이름 모달(선택) - 현재는 안내만, 저장은 설정에서
+      if (!getDeviceLabel()) {
+        // 굳이 강제하지 않고 한 번만 띄움
+        const modal = $("deviceModal");
+        modal.style.display = "flex";
+        $("deviceModalSkip").onclick = () => { modal.style.display = "none"; };
+        $("deviceModalSave").onclick = () => {
+          const v = ($("deviceModalInput").value || "").trim();
+          setDeviceLabel(v);
+          modal.style.display = "none";
+          showToast("기기 이름 저장됨.");
+        };
+      }
+
+      // 자동 로그인
+      await tryAutoUnlock();
+
+      // 자동 로그인 아니면 잠금 화면 유지
+      if ($("lockScreen").style.display !== "none") {
+        $("passwordInput").focus();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
 </body>
 </html>
