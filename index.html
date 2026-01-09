@@ -2301,7 +2301,7 @@
                 { lastUsed: today, updatedAt: Date.now() },
                 { merge: true }
               );
-              await addHistory("오늘 사용", { ...film, lastUsed: today }, ["마지막 사용일"]);
+              await addHistory("오늘 사용", { ...film, lastUsed: today }, ["마지막 사용일"])
               showToast("오늘 사용으로 기록했어.");
             } catch (e) {
               console.error(e);
