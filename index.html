@@ -2357,6 +2357,31 @@ function getUsageBadgeInfo(plate){
 
         const content = document.createElement("div");
         content.className = "card-content";
+        // ✅ 판 카드에 필름 이미지 표시
+const film =
+  films.find(f => f.id === plate.filmId) ||
+  films.find(f => String(f.filmNumber) === String(plate.filmNumber));
+
+const img = document.createElement("img");
+img.style.width = "70px";
+img.style.height = "70px";
+img.style.objectFit = "cover";
+img.style.borderRadius = "12px";
+img.style.background = "#eef1ff";
+img.style.flexShrink = "0";
+img.style.cursor = "pointer";
+
+if (film && film.imageDataUrl) {
+  img.src = film.imageDataUrl;
+  img.addEventListener("click", () => openImageViewer(film.imageDataUrl));
+} else {
+  // 이미지 없으면 아예 숨기고 싶으면 display:none 해도 됨
+  img.alt = "이미지 없음";
+  img.style.display = "none";
+}
+
+// ✅ “필름 카드”처럼 카드 맨 앞에 붙이려면 card에 append
+content.appendChild(img);
 
         const rowMain = document.createElement("div");
         rowMain.className = "card-row-main";
