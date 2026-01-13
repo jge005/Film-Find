@@ -1634,8 +1634,42 @@
         img.src = dataUrl;
       });
     }
+        /* ---------- [추가] 이미지 리사이징(압축) 함수 ---------- */
+    function compressImage(file, maxWidth, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
 
-    async function saveFilm(e){
+            // 가로 크기가 maxWidth보다 크면 줄이기 (비율 유지)
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // JPG로 변환 및 압축 (quality: 0.1 ~ 1.0)
+            // 0.7 정도면 화질은 좋고 용량은 확 줄어듦
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = (err) => reject(err);
+        };
+        reader.onerror = (err) => reject(err);
+      });
+    }
+
+
+        async function saveFilm(e){
       e.preventDefault();
       if (currentMode !== MODE_ADMIN) return;
 
@@ -1656,13 +1690,25 @@
 
       let imageDataUrl = "";
       const file = document.getElementById("imageInput").files?.[0];
+      
+      // ✅ [수정된 부분] 사진이 있으면 압축 먼저 진행!
       if (file){
-        imageDataUrl = await readFileAsDataURL(file);
-        // 회전 상태 반영
-        let rot = ((currentImageRotation % 360) + 360) % 360;
-        if (rot === 90) imageDataUrl = await rotateDataURL90(imageDataUrl, "right");
-        if (rot === 180){ imageDataUrl = await rotateDataURL90(await rotateDataURL90(imageDataUrl, "right"), "right"); }
-        if (rot === 270) imageDataUrl = await rotateDataURL90(imageDataUrl, "left");
+        try {
+          // 1. 압축 실행 (가로 최대 1000px, 퀄리티 0.7)
+          // 1000px이면 폰카 원본보다 훨씬 작아져서 파이어베이스에 잘 들어감
+          imageDataUrl = await compressImage(file, 1000, 0.7);
+
+          // 2. 회전 상태 반영 (압축된 이미지로 회전)
+          let rot = ((currentImageRotation % 360) + 360) % 360;
+          if (rot === 90) imageDataUrl = await rotateDataURL90(imageDataUrl, "right");
+          if (rot === 180){ imageDataUrl = await rotateDataURL90(await rotateDataURL90(imageDataUrl, "right"), "right"); }
+          if (rot === 270) imageDataUrl = await rotateDataURL90(imageDataUrl, "left");
+          
+        } catch(err) {
+          console.error("이미지 처리 중 오류:", err);
+          alert("사진 처리 오류: " + err.message); // 오류 내용 폰에 띄우기
+          return;
+        }
       }
 
       const payload = {
@@ -1670,6 +1716,8 @@
         updatedAt: Date.now(),
       };
       if (!id) payload.createdAt = Date.now();
+      
+      // 파일이 선택되었을 때만 이미지 데이터 업데이트
       if (file) payload.imageDataUrl = imageDataUrl;
 
       try{
@@ -1685,6 +1733,8 @@
         closeForm();
       } catch(e){
         console.error(e);
+        // 저장 실패 시 메시지 (보통 용량 문제)
+        alert("저장 실패: " + e.message);
         showToast("저장 중 오류가 났어.");
       }
     }
