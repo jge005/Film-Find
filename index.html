@@ -2789,6 +2789,17 @@ content.appendChild(img);
 
     /* ---------- 이벤트 바인딩 ---------- */
     function bindEvents(){
+      // 제판 방법(전면/배면, 좌/우, 상/하) 토글 버튼 클릭 이벤트 추가
+document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    // 같은 그룹 내의 다른 버튼들의 active 클래스를 제거 (라디오 버튼 방식)
+    const group = this.closest('.toggle-group');
+    group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    
+    // 클릭한 버튼에만 active 클래스 추가
+    this.classList.add('active');
+  });
+});
       // 로그인
       document.getElementById("passwordBtn").addEventListener("click", handleLogin);
       document.getElementById("passwordInput").addEventListener("keydown", (e) => {
