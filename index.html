@@ -473,36 +473,41 @@
     .usage-row .u-qty{ font-weight:700; color: var(--primary-1); }
     .usage-row .u-memo{ margin-top:6px; color: var(--text-main); opacity:0.9; }
 
-      /* [NEW] 제스처 뷰어 스타일 */
+          /* [최종] 모바일 전용 강력 고정 스타일 */
     .image-viewer { 
       position: fixed; inset: 0; display: none; 
       align-items: center; justify-content: center; 
       z-index: 1500; overflow: hidden;
+      background: #000; /* 배경 검게 */
+      touch-action: none; /* 브라우저 터치 개입 차단 */
     }
-    .image-viewer-backdrop { position: absolute; inset: 0; background: #000; }
     
     .image-viewer-container {
       position: relative;
       width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
-      /* ★중요★ 브라우저 기본 스크롤/확대를 막아야 제스처가 먹힘 */
-      touch-action: none; 
+      touch-action: none; /* 여기도 차단 */
+      display: flex; align-items: center; justify-content: center;
     }
 
     #viewerImage { 
-      max-width: 100%; max-height: 100%; 
+      /* 이미지 크기 제한 해제 (확대 위해) */
+      max-width: 100%; max-height: 100%;
       object-fit: contain; 
-      transform-origin: center center; /* 확대 중심점 */
       will-change: transform; 
-      cursor: grab;
+      transform-origin: center center;
+      
+      /* 이미지가 터치 이벤트를 뺏어가지 않게 설정 */
+      pointer-events: none; 
+      user-select: none; 
+      -webkit-user-drag: none; 
     }
 
     .viewer-close-btn { 
       position: absolute; top: 20px; right: 20px; 
-      border-radius: 50%; border: none; width: 40px; height: 40px;
-      font-size: 20px; cursor: pointer; 
-      background: rgba(0,0,0,0.5); color: #fff; 
+      border-radius: 50%; border: none; width: 45px; height: 45px;
+      font-size: 22px; cursor: pointer; 
+      background: rgba(50, 50, 50, 0.6); color: #fff; 
       z-index: 1520; display: flex; align-items: center; justify-content: center;
     }
   </style>
