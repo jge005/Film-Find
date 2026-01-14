@@ -3161,19 +3161,57 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
 
       // ✅ (선택) 페이지가 살아있을 때만 유지 / 창 완전 종료면 sessionStorage 자동 초기화
       // (추가 삭제 없음)
-          // ★ 제스처 이벤트 연결 함수 (수정됨: 버벅임 해결) ★
+              /* ---------- [최종] 모바일 강제 적용 로직 ---------- */
+    // 상태 변수들
+    let vScale = 1;
+    let vPointX = 0, vPointY = 0;
+    let vStartX = 0, vStartY = 0;
+    let vStartDist = 0;
+    let vStartScale = 1;
+    let vIsDragging = false;
+
+    // 화면 그리기
+    function updateViewerTransform() {
+      const img = document.getElementById("viewerImage");
+      if (img) {
+        img.style.transform = `translate(${vPointX}px, ${vPointY}px) scale(${vScale})`;
+      }
+    }
+
+    // 뷰어 열기
+    function openImageViewer(src) {
+      const viewer = document.getElementById("imageViewer");
+      const img = document.getElementById("viewerImage");
+      if (!viewer || !img) return;
+
+      img.src = src || "";
+      viewer.style.display = "flex";
+
+      // 초기화
+      vScale = 1; vPointX = 0; vPointY = 0;
+      updateViewerTransform();
+    }
+
+    // 뷰어 닫기
+    function closeImageViewer() {
+      const viewer = document.getElementById("imageViewer");
+      if (viewer) viewer.style.display = "none";
+      const img = document.getElementById("viewerImage");
+      if (img) img.src = "";
+    }
+
+    // ★ 여기가 제일 중요합니다 ★
     function bindViewerEvents() {
       const container = document.getElementById("viewerContainer");
-      const img = document.getElementById("viewerImage");
-      if (!container || !img) return;
+      const closeBtn = document.getElementById("closeViewerBtn");
+      
+      if (!container) return;
 
-      // 1. 터치 시작
+      // 1. 터치 시작 (손가락 댔을 때)
       container.addEventListener("touchstart", (e) => {
-        // ★ 중요: 손가락을 댔을 때는 애니메이션을 꺼야 즉시 따라옵니다.
-        img.style.transition = "none";
-
+        // 손가락 개수에 따라 모드 변경
         if (e.touches.length === 2) {
-          // 손가락 2개 (확대 준비)
+          // 핀치 줌 시작
           vIsDragging = false;
           vStartDist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
@@ -3181,58 +3219,65 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
           );
           vStartScale = vScale;
         } else if (e.touches.length === 1) {
-          // 손가락 1개 (이동 준비)
+          // 드래그 시작
           vIsDragging = true;
           vStartX = e.touches[0].clientX - vPointX;
           vStartY = e.touches[0].clientY - vPointY;
         }
-      }, { passive: false });
+      }, { passive: false }); // ★ 중요: 브라우저 기본 동작 차단 준비
 
-      // 2. 터치 이동 (쓱쓱 움직일 때)
+      // 2. 터치 이동 (움직일 때)
       container.addEventListener("touchmove", (e) => {
-        e.preventDefault(); // 화면 스크롤 방지
+        // ★ 핵심: 브라우저가 화면을 스크롤하거나 새로고침하지 못하게 막음
+        if (e.cancelable) e.preventDefault(); 
 
         if (e.touches.length === 2) {
-          // 핀치 줌
+          // [확대/축소]
           const dist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           );
           if (vStartDist > 0) {
             const newScale = vStartScale * (dist / vStartDist);
-            vScale = Math.min(Math.max(1, newScale), 5); // 1배~5배 제한
+            vScale = Math.min(Math.max(1, newScale), 5); // 1~5배
             updateViewerTransform();
           }
         } else if (e.touches.length === 1 && vIsDragging) {
-          // 드래그 이동
-          vPointX = e.touches[0].clientX - vStartX;
-          vPointY = e.touches[0].clientY - vStartY;
-          updateViewerTransform();
+          // [이동]
+          // 이미지가 확대된 상태에서만 이동 가능하게 하려면 아래 if문 주석 해제
+          // if (vScale > 1) {
+            vPointX = e.touches[0].clientX - vStartX;
+            vPointY = e.touches[0].clientY - vStartY;
+            updateViewerTransform();
+          // }
         }
-      }, { passive: false });
+      }, { passive: false }); // ★ 중요: 이걸 넣어야 preventDefault가 먹힘
 
       // 3. 터치 끝
       container.addEventListener("touchend", (e) => {
         vIsDragging = false;
-        
-        // 만약 1배보다 작게 축소됐으면 원래대로 튕겨져 복귀
+        // 손 뗐을 때 1배보다 작으면 복구
         if (vScale < 1) {
           vScale = 1; vPointX = 0; vPointY = 0;
-          // 이때는 부드럽게 돌아와야 하므로 애니메이션 켬
-          img.style.transition = "transform 0.3s ease-out";
-          updateViewerTransform();
+          const img = document.getElementById("viewerImage");
+          if(img) {
+             img.style.transition = "transform 0.2s";
+             updateViewerTransform();
+             setTimeout(() => { img.style.transition = "none"; }, 200);
+          }
         }
       });
-      
+
       // 닫기 버튼 연결
-      const closeBtn = document.getElementById("closeViewerBtn");
       if(closeBtn) closeBtn.addEventListener("click", closeImageViewer);
       
-      // 배경 클릭 시 닫기
-      const backdrop = document.getElementById("viewerBackdrop");
-      if(backdrop) backdrop.addEventListener("click", closeImageViewer);
-    }
-
+      // 혹시 모르니 클릭으로 닫기도 추가 (배경 클릭)
+      container.addEventListener("click", (e) => {
+        // 이미지가 아니라 배경을 짧게 눌렀을 때만 닫기 (드래그 아닐 때)
+        if(e.target === container && !vIsDragging) {
+           // closeImageViewer(); // 원하면 주석 해제 (배경 터치시 닫힘)
+        }
+      });
     }
 
     /* ---------- 초기화 ---------- */
