@@ -473,6 +473,38 @@
     .usage-row .u-qty{ font-weight:700; color: var(--primary-1); }
     .usage-row .u-memo{ margin-top:6px; color: var(--text-main); opacity:0.9; }
 
+      /* [NEW] 제스처 뷰어 스타일 */
+    .image-viewer { 
+      position: fixed; inset: 0; display: none; 
+      align-items: center; justify-content: center; 
+      z-index: 1500; overflow: hidden;
+    }
+    .image-viewer-backdrop { position: absolute; inset: 0; background: #000; }
+    
+    .image-viewer-container {
+      position: relative;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      /* ★중요★ 브라우저 기본 스크롤/확대를 막아야 제스처가 먹힘 */
+      touch-action: none; 
+    }
+
+    #viewerImage { 
+      max-width: 100%; max-height: 100%; 
+      object-fit: contain; 
+      transform-origin: center center; /* 확대 중심점 */
+      will-change: transform; 
+      cursor: grab;
+    }
+
+    .viewer-close-btn { 
+      position: absolute; top: 20px; right: 20px; 
+      border-radius: 50%; border: none; width: 40px; height: 40px;
+      font-size: 20px; cursor: pointer; 
+      background: rgba(0,0,0,0.5); color: #fff; 
+      z-index: 1520; display: flex; align-items: center; justify-content: center;
+    }
   </style>
 </head>
 
@@ -504,12 +536,14 @@
   </div>
 
   <!-- 이미지 전체보기 -->
-  <div id="imageViewer" class="image-viewer">
+    <div id="imageViewer" class="image-viewer">
     <div class="image-viewer-backdrop" id="viewerBackdrop"></div>
-    <div class="image-viewer-inner">
+    
+    <div class="image-viewer-container" id="viewerContainer">
       <img id="viewerImage" src="" alt="이미지" />
-      <button id="closeViewerBtn" class="viewer-close-btn">✕</button>
     </div>
+
+    <button id="closeViewerBtn" class="viewer-close-btn">✕</button>
   </div>
 
   <!-- 토스트 -->
@@ -1054,21 +1088,111 @@
     }
 
     /* ---------- 이미지 뷰어 ---------- */
-    function openImageViewer(src){
+        /* ---------- [NEW] 제스처(핀치줌/드래그) 뷰어 로직 ---------- */
+    let vScale = 1;
+    let vPointX = 0, vPointY = 0;
+    let vStartX = 0, vStartY = 0;
+    let vIsDragging = false;
+    let vStartDist = 0;
+    let vStartScale = 1;
+
+    // 화면 갱신 함수
+    function updateViewerTransform() {
+      const img = document.getElementById("viewerImage");
+      if (img) {
+        img.style.transform = `translate(${vPointX}px, ${vPointY}px) scale(${vScale})`;
+      }
+    }
+
+    // 뷰어 열기
+    function openImageViewer(src) {
       const viewer = document.getElementById("imageViewer");
       const img = document.getElementById("viewerImage");
       if (!viewer || !img) return;
+
       img.src = src || "";
-      img.style.transform = "scale(1)";
       viewer.style.display = "flex";
+
+      // 초기화
+      vScale = 1; vPointX = 0; vPointY = 0;
+      updateViewerTransform();
     }
-    function closeImageViewer(){
+
+    // 뷰어 닫기
+    function closeImageViewer() {
       const viewer = document.getElementById("imageViewer");
+      if (viewer) viewer.style.display = "none";
       const img = document.getElementById("viewerImage");
-      if (!viewer || !img) return;
-      viewer.style.display = "none";
-      img.src = "";
+      if (img) img.src = "";
     }
+
+    // ★ 제스처 이벤트 연결 함수 ★
+    function bindViewerEvents() {
+      const container = document.getElementById("viewerContainer");
+      if (!container) return;
+
+      // 터치 시작
+      container.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+          // 손가락 2개: 확대/축소 준비
+          vIsDragging = false;
+          vStartDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          vStartScale = vScale;
+        } else if (e.touches.length === 1) {
+          // 손가락 1개: 이동 준비
+          vIsDragging = true;
+          vStartX = e.touches[0].clientX - vPointX;
+          vStartY = e.touches[0].clientY - vPointY;
+        }
+      }, { passive: false });
+
+      // 터치 움직임
+      container.addEventListener("touchmove", (e) => {
+        e.preventDefault(); // 화면 스크롤 방지
+
+        if (e.touches.length === 2) {
+          // 핀치 줌 (확대/축소)
+          const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          if (vStartDist > 0) {
+            const newScale = vStartScale * (dist / vStartDist);
+            vScale = Math.min(Math.max(1, newScale), 5); // 1배~5배 제한
+            updateViewerTransform();
+          }
+        } else if (e.touches.length === 1 && vIsDragging) {
+          // 드래그 (이동)
+          // 확대된 상태일 때만 이동하고 싶으면: if (vScale > 1) 조건 추가
+          vPointX = e.touches[0].clientX - vStartX;
+          vPointY = e.touches[0].clientY - vStartY;
+          updateViewerTransform();
+        }
+      }, { passive: false });
+
+      // 터치 끝
+      container.addEventListener("touchend", (e) => {
+        vIsDragging = false;
+        // 손 뗐을 때 1배보다 작으면 원래대로 복귀
+        if (vScale < 1) {
+          vScale = 1; vPointX = 0; vPointY = 0;
+          const img = document.getElementById("viewerImage");
+          if(img) img.style.transition = "transform 0.2s";
+          updateViewerTransform();
+          setTimeout(() => { if(img) img.style.transition = ""; }, 200);
+        }
+      });
+      
+      // 닫기 버튼 등 연결
+      const closeBtn = document.getElementById("closeViewerBtn");
+      if(closeBtn) closeBtn.addEventListener("click", closeImageViewer);
+      const backdrop = document.getElementById("viewerBackdrop");
+      if(backdrop) backdrop.addEventListener("click", closeImageViewer);
+    }
+
 
     /* ---------- 검색 placeholder ---------- */
     function updateSearchPlaceholder(){
@@ -3058,6 +3182,7 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
       setDeviceLabel(getDeviceLabel());
 
       // 인쇄기사 목록 관리자 UI는 설정 열 때 갱신됨
+      bindViewerEvents();
     }
 
     init().catch(console.error);
