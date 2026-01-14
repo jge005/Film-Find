@@ -473,6 +473,61 @@
     .usage-row .u-qty{ font-weight:700; color: var(--primary-1); }
     .usage-row .u-memo{ margin-top:6px; color: var(--text-main); opacity:0.9; }
 
+      /* [수정] 이미지 전체보기 (줌/이동 기능 추가) */
+    .image-viewer{ 
+      position:fixed; inset:0; display:none; 
+      align-items:center; justify-content:center; 
+      z-index:1500; overflow:hidden; 
+    }
+    .image-viewer-backdrop{ position:absolute; inset:0; background: rgba(0, 0, 0, 0.85); }
+    
+    /* 이미지를 담는 영역 */
+    .image-viewer-container {
+      position: relative;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      touch-action: none; 
+    }
+
+    /* 이미지 자체 */
+    #viewerImage{ 
+      max-width:100%; max-height:100%; 
+      object-fit:contain; 
+      transform-origin: center center;
+      transition: transform 0.1s ease-out; 
+      cursor: grab;
+    }
+    #viewerImage:active { cursor: grabbing; }
+
+    /* 하단 줌 컨트롤 버튼 */
+    .viewer-controls {
+      position: absolute; bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      padding: 8px 16px; border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      z-index: 1510;
+    }
+    .viewer-controls button {
+      background: rgba(255,255,255,0.9);
+      color: #333; font-weight:bold;
+      width: 32px; height: 32px; padding:0; 
+      border:none; border-radius:50%; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+    }
+    
+    /* 닫기 버튼 */
+    .viewer-close-btn{ 
+      position:absolute; top:20px; right:20px; 
+      border-radius:999px; border:none; width:36px; height:36px;
+      font-size:18px; cursor:pointer; 
+      background: rgba(255,255,255,0.2); color:#fff; 
+      z-index:1520; display:flex; align-items:center; justify-content:center;
+    }
+
   </style>
 </head>
 
@@ -504,12 +559,21 @@
   </div>
 
   <!-- 이미지 전체보기 -->
-  <div id="imageViewer" class="image-viewer">
+    <div id="imageViewer" class="image-viewer">
     <div class="image-viewer-backdrop" id="viewerBackdrop"></div>
-    <div class="image-viewer-inner">
+    
+    <div class="image-viewer-container" id="viewerContainer">
       <img id="viewerImage" src="" alt="이미지" />
-      <button id="closeViewerBtn" class="viewer-close-btn">✕</button>
     </div>
+
+    <div class="viewer-controls">
+      <button class="btn btn-secondary btn-small" id="btnZoomOut">－</button>
+      <span id="zoomLevelDisplay" style="font-size:12px; color:#fff; font-weight:600; min-width:40px; text-align:center;">100%</span>
+      <button class="btn btn-secondary btn-small" id="btnZoomIn">＋</button>
+      <button class="btn btn-secondary btn-small" id="btnZoomReset" style="margin-left:8px;">초기화</button>
+    </div>
+
+    <button id="closeViewerBtn" class="viewer-close-btn">✕</button>
   </div>
 
   <!-- 토스트 -->
@@ -1053,22 +1117,124 @@
       });
     }
 
-    /* ---------- 이미지 뷰어 ---------- */
+        /* ---------- [NEW] 이미지 뷰어 줌/팬 로직 ---------- */
+    let vScale = 1;
+    let vPnX = 0, vPnY = 0;
+    let vIsDragging = false;
+    let vStartX = 0, vStartY = 0;
+    
+    // 모바일 핀치 줌 변수
+    let vInitialDist = 0;
+    let vInitialScale = 1;
+
+    // 변수 미리 확보 (요소들이 로드된 후 사용)
+    function getViewerElems() {
+      return {
+        con: document.getElementById("viewerContainer"),
+        img: document.getElementById("viewerImage"),
+        disp: document.getElementById("zoomLevelDisplay"),
+        viewer: document.getElementById("imageViewer")
+      };
+    }
+
+    function updateViewerTransform() {
+      const { img, disp } = getViewerElems();
+      if(!img) return;
+      img.style.transform = `translate(${vPnX}px, ${vPnY}px) scale(${vScale})`;
+      if(disp) disp.textContent = Math.round(vScale * 100) + "%";
+    }
+
     function openImageViewer(src){
-      const viewer = document.getElementById("imageViewer");
-      const img = document.getElementById("viewerImage");
+      const { viewer, img } = getViewerElems();
       if (!viewer || !img) return;
+      
       img.src = src || "";
-      img.style.transform = "scale(1)";
-      viewer.style.display = "flex";
+      viewer.style.display = "flex"; 
+
+      // 초기화
+      vScale = 1; vPnX = 0; vPnY = 0;
+      updateViewerTransform();
     }
+
     function closeImageViewer(){
-      const viewer = document.getElementById("imageViewer");
-      const img = document.getElementById("viewerImage");
-      if (!viewer || !img) return;
-      viewer.style.display = "none";
-      img.src = "";
+      const { viewer, img } = getViewerElems();
+      if (viewer) viewer.style.display = "none";
+      if (img) img.src = "";
     }
+
+    /* 이벤트 등록 함수 */
+    function bindViewerEvents() {
+      const { con, img } = getViewerElems();
+      if(!con || !img) return;
+
+      // 1. 마우스 휠
+      con.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const delta = e.deltaY * -0.001; 
+        const newScale = Math.min(Math.max(0.5, vScale + delta), 5);
+        vScale = newScale;
+        updateViewerTransform();
+      }, { passive: false });
+
+      // 2. 드래그 로직
+      const startDrag = (x, y) => {
+        vIsDragging = true;
+        vStartX = x - vPnX;
+        vStartY = y - vPnY;
+        img.style.transition = "none";
+      };
+      const moveDrag = (x, y) => {
+        if (!vIsDragging) return;
+        vPnX = x - vStartX;
+        vPnY = y - vStartY;
+        img.style.transform = `translate(${vPnX}px, ${vPnY}px) scale(${vScale})`;
+      };
+      const endDrag = () => {
+        vIsDragging = false;
+        img.style.transition = "transform 0.1s ease-out";
+      };
+
+      // PC 마우스
+      con.addEventListener("mousedown", (e) => startDrag(e.clientX, e.clientY));
+      window.addEventListener("mousemove", (e) => { if(vIsDragging) moveDrag(e.clientX, e.clientY); });
+      window.addEventListener("mouseup", endDrag);
+
+      // 모바일 터치
+      con.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+          vIsDragging = false;
+          vInitialDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          vInitialScale = vScale;
+        } else if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: false });
+
+      con.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          if (vInitialDist > 0) {
+            const newScale = vInitialScale * (dist / vInitialDist);
+            vScale = Math.min(Math.max(0.5, newScale), 5);
+            updateViewerTransform();
+          }
+        } else if (e.touches.length === 1 && vIsDragging) {
+           e.preventDefault(); // 스크롤 방지
+           moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      con.addEventListener("touchend", endDrag);
+
+      // 버튼 연결
+      const btnIn = document.getElementById("btnZoomIn");
+      const btnOut = document.getElementById("btnZoomOut");
+      const btnReset = document.getElementById("btnZoomReset");
+      
+      if(btnIn) btnIn.addEventListener("click", () => { vScale = Math.min(vScale + 0.5, 5); updateViewerTransform(); });
+      if(btnOut) btnOut.addEventListener("click", () => { vScale = Math.max(vScale - 0.5, 0.5); updateViewerTransform(); });
+      if(btnReset) btnReset.addEventListener("click", () => { vScale = 1; vPnX = 0; vPnY = 0; updateViewerTransform(); });
+    }
+
 
     /* ---------- 검색 placeholder ---------- */
     function updateSearchPlaceholder(){
