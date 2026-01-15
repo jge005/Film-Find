@@ -481,24 +481,31 @@
     }
     .image-viewer-backdrop{ position:absolute; inset:0; background: rgba(0, 0, 0, 0.85); }
     
-    /* 이미지를 담는 영역 */
-    .image-viewer-container {
-      position: relative;
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      touch-action: none; 
-    }
+    /* [수정] 이미지 뷰어 컨테이너 */
+.image-viewer-container {
+  position: relative;
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; 
+  /* 터치 동작이 브라우저 스크롤로 가지 않도록 방지 */
+  touch-action: none; 
+}
 
-    /* 이미지 자체 */
-    #viewerImage{ 
-      max-width:100%; max-height:100%; 
-      object-fit:contain; 
-      transform-origin: center center;
-      transition: transform 0.1s ease-out; 
-      cursor: grab;
-    }
-    #viewerImage:active { cursor: grabbing; }
+/* [수정] 이미지 자체 */
+#viewerImage { 
+  max-width: 100%; max-height: 100%; 
+  object-fit: contain; 
+  
+  /* 줌/이동의 기준점을 중앙으로 설정 */
+  transform-origin: center center;
+  
+  /* 성능 최적화 */
+  will-change: transform;
+  
+  /* 드래그 시 마우스 커서 변경 */
+  cursor: grab;
+}
+#viewerImage:active { cursor: grabbing; }
 
     /* 하단 줌 컨트롤 버튼 */
     .viewer-controls {
@@ -1120,14 +1127,23 @@
     }
 
     /* ---------- 이미지 뷰어 ---------- */
+        /* [수정] 이미지 뷰어 열기 (초기화 로직 추가됨) */
     function openImageViewer(src){
       const viewer = document.getElementById("imageViewer");
       const img = document.getElementById("viewerImage");
       if (!viewer || !img) return;
+      
       img.src = src || "";
-      img.style.transform = "scale(1)";
+      
+      // ★ 뷰어 열 때 위치/배율 초기화 ★
+      viewerState.scale = 1;
+      viewerState.pointX = 0;
+      viewerState.pointY = 0;
+      updateViewerTransform(); 
+      
       viewer.style.display = "flex";
     }
+
     function closeImageViewer(){
       const viewer = document.getElementById("imageViewer");
       const img = document.getElementById("viewerImage");
@@ -3098,8 +3114,93 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
 
       // ✅ (선택) 페이지가 살아있을 때만 유지 / 창 완전 종료면 sessionStorage 자동 초기화
       // (추가 삭제 없음)
- bindViewerEvents(); 
+ bindViewerGestures(); 
      }
+    /* =========================================
+   [추가] 이미지 뷰어 줌/이동(Pan & Zoom) 로직
+   ========================================= */
+
+// 1. 상태 변수
+let viewerState = {
+  scale: 1,       // 현재 배율
+  panning: false, // 드래그 중인지 여부
+  pointX: 0,      // 현재 X 위치
+  pointY: 0,      // 현재 Y 위치
+  startX: 0,      // 터치 시작 X 좌표
+  startY: 0,      // 터치 시작 Y 좌표
+  startDist: 0    // 두 손가락 사이 거리
+};
+
+// 2. 화면 업데이트 함수
+function updateViewerTransform() {
+  const img = document.getElementById("viewerImage");
+  const display = document.getElementById("zoomLevelDisplay");
+  if (!img) return;
+  
+  // 위치 이동(X,Y)과 확대(Scale) 적용
+  img.style.transform = `translate(${viewerState.pointX}px, ${viewerState.pointY}px) scale(${viewerState.scale})`;
+  
+  // 화면 하단에 줌 레벨 표시 (예: 150%)
+  if (display) display.textContent = Math.round(viewerState.scale * 100) + "%";
+}
+
+// 3. 두 손가락 거리 계산 함수
+function getDistance(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.hypot(dx, dy); 
+}
+
+// 4. 터치 이벤트 연결 함수
+function bindViewerGestures() {
+  const container = document.getElementById("viewerContainer"); 
+  const img = document.getElementById("viewerImage");
+  
+  if (!container || !img) return;
+
+  // (1) 터치 시작
+  container.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 2) {
+      // 두 손가락 -> 줌 시작
+      viewerState.panning = false;
+      viewerState.startDist = getDistance(e.touches);
+    } else if (e.touches.length === 1) {
+      // 한 손가락 -> 이동 준비
+      viewerState.panning = true;
+      viewerState.startX = e.touches[0].clientX - viewerState.pointX;
+      viewerState.startY = e.touches[0].clientY - viewerState.pointY;
+    }
+  }, { passive: false });
+
+  // (2) 터치 이동
+  container.addEventListener("touchmove", (e) => {
+    e.preventDefault(); // 화면 스크롤 방지
+
+    if (e.touches.length === 2) {
+      // 두 손가락 -> 핀치 줌
+      const newDist = getDistance(e.touches);
+      const ratio = newDist / viewerState.startDist;
+      
+      // 배율 제한 (0.5배 ~ 5배)
+      viewerState.scale = Math.max(0.5, Math.min(5, viewerState.scale * ratio));
+      viewerState.startDist = newDist;
+      
+      updateViewerTransform();
+
+    } else if (e.touches.length === 1 && viewerState.panning) {
+      // 한 손가락 -> 이미지 이동
+      viewerState.pointX = e.touches[0].clientX - viewerState.startX;
+      viewerState.pointY = e.touches[0].clientY - viewerState.startY;
+      updateViewerTransform();
+    }
+  }, { passive: false });
+
+  // (3) 터치 끝
+  container.addEventListener("touchend", () => {
+    viewerState.panning = false;
+  });
+}
+
 
     /* ---------- 초기화 ---------- */
     async function init(){
