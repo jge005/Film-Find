@@ -693,6 +693,12 @@
         <button class="tab-btn active" id="tabFilmsBtn">필름</button>
         <button class="tab-btn" id="tabPlatesBtn">판</button>
       </div>
+          <div id="plateFilters" style="display:none; gap:6px; overflow-x:auto; margin-bottom:10px; padding-bottom:4px;">
+      <button type="button" class="filter-chip active" data-filter="all" style="border:1px solid #ddd; background:#fff; padding:5px 10px; border-radius:20px; font-size:12px; cursor:pointer;">전체</button>
+      <button type="button" class="filter-chip" data-filter="occupied" style="border:1px solid #ddd; background:#fff; padding:5px 10px; border-radius:20px; font-size:12px; cursor:pointer;">사용 중</button>
+      <button type="button" class="filter-chip" data-filter="empty" style="border:1px solid #ddd; background:#fff; padding:5px 10px; border-radius:20px; font-size:12px; cursor:pointer;">빈 판 (공판)</button>
+    </div>
+
 
       <div class="tools-bar">
         <button class="btn btn-secondary btn-small" id="settingsBtn">⚙ 설정</button>
@@ -876,51 +882,51 @@
       </div>
 
       <!-- ====== 판 입력 폼 ====== -->
-      <div class="form-card" id="plateFormCard" style="display:none;">
+            <div class="form-card" id="plateFormCard" style="display:none;">
         <form id="plateForm">
           <input type="hidden" id="plateId" />
           <input type="hidden" id="plateFilmId" />
-          <div class="settings-section-title">판 등록/수정</div>
-          <div class="settings-help">필름에서 상속된 정보는 자동 입력됨 (사진/제품명/필름번호/메쉬)</div>
+          
+          <div class="settings-section-title">판(프레임) 등록/수정</div>
+          <div class="settings-help">판 번호가 메인입니다. 탈막 시에도 이력은 유지됩니다.</div>
 
           <div class="form-row">
-            <label>제품 이름</label>
-            <input type="text" id="plateProductName" readonly />
-          </div>
-          <div class="form-row">
-            <label>필름 번호</label>
-            <input type="text" id="plateFilmNumber" readonly />
+            <label>MESH (입력 시 번호 자동추천)</label>
+            <input type="text" id="plateMesh" placeholder="예: 300" />
           </div>
 
           <div class="form-row">
-            <label>판 번호 *</label>
-            <input type="text" id="plateNumber" required />
-            <small style="font-size:11px; color:var(--text-sub); margin-top:6px;">
-              기본: 필름번호-1, 필름번호-2 ... (자동 넘버링, 수정 가능)
-            </small>
+            <label>판 번호 (프레임 ID) *</label>
+            <input type="text" id="plateNumber" required placeholder="예: 300-1" style="font-weight:700; color:var(--primary-1);" />
           </div>
 
           <div class="form-row">
-            <label>텐션</label>
-            <input type="text" id="plateTension" placeholder="예: 23~25" />
+            <label>연결된 제품 (자동)</label>
+            <input type="text" id="plateProductName" readonly placeholder="빈 판 (미할당)" style="background:#f1f5f9; color:#64748b;" />
+            <input type="text" id="plateFilmNumber" readonly placeholder="필름번호" style="margin-top:4px; background:#f1f5f9; color:#64748b;" />
           </div>
 
           <div class="form-row">
-            <label>판 위치</label>
-            <input type="text" id="plateLocation" placeholder="예: 3층 판랙 2번" />
+            <label>텐션 / 위치</label>
+            <input type="text" id="plateTension" placeholder="텐션" style="margin-bottom:4px;" />
+            <input type="text" id="plateLocation" placeholder="위치" />
           </div>
 
-          <div class="form-row">
-            <label>MESH (수정 가능)</label>
-            <input type="text" id="plateMesh" placeholder="예: 180T, 200메쉬" />
-          </div>
-
-          <div class="form-row">
-            <label>판 최대 사용 수량</label>
-            <input type="number" id="plateMaxQty" min="1" step="1" />
-            <small style="font-size:11px; color:var(--text-sub); margin-top:6px;">
-              기본값 5000
-            </small>
+          <div class="form-row" style="background:#f8fafc; padding:8px; border-radius:8px;">
+             <div style="display:flex; gap:8px;">
+               <div style="flex:1;">
+                 <label>현재 작업량 (탈막시 리셋)</label>
+                 <input type="number" id="plateUsedQty" value="0" />
+               </div>
+               <div style="flex:1;">
+                 <label>누적 총수명 (유지됨)</label>
+                 <input type="number" id="plateTotalQty" value="0" />
+               </div>
+             </div>
+             <div style="margin-top:6px;">
+               <label>최대 수명 (참고용)</label>
+               <input type="number" id="plateMaxQty" value="5000" />
+             </div>
           </div>
 
           <div class="form-actions">
@@ -2032,7 +2038,7 @@
           const plateNewBtn = document.createElement("button");
           plateNewBtn.className = "btn btn-primary btn-small";
           plateNewBtn.textContent = "판 등록";
-          plateNewBtn.addEventListener("click", () => openPlateFormFromFilm(film.id));
+          plateNewBtn.addEventListener("click", () => linkPlate(film.id));
           btnWrap.appendChild(plateNewBtn);
 
           const delBtn = document.createElement("button");
@@ -2202,6 +2208,7 @@
       document.getElementById("plateMaxQty").value = 5000;
     }
 
+        /* [수정됨] 판 저장 로직 (카운터 2개 저장) */
     async function savePlate(e){
       e.preventDefault();
       if (currentMode !== MODE_ADMIN) return;
@@ -2209,19 +2216,124 @@
       const id = safeStr(document.getElementById("plateId").value);
       const filmId = safeStr(document.getElementById("plateFilmId").value);
 
-      const productName = safeStr(document.getElementById("plateProductName").value);
-      const filmNumber = safeStr(document.getElementById("plateFilmNumber").value);
+      const payload = {
+        plateNumber: safeStr(document.getElementById("plateNumber").value),
+        mesh: safeStr(document.getElementById("plateMesh").value),
+        tension: safeStr(document.getElementById("plateTension").value),
+        location: safeStr(document.getElementById("plateLocation").value),
+        // [중요] 카운터 2개 분리 저장
+        currentQty: Number(document.getElementById("plateUsedQty").value || 0),
+        totalQty: Number(document.getElementById("plateTotalQty").value || 0),
+        maxQty: Number(document.getElementById("plateMaxQty").value || 5000),
+        updatedAt: Date.now(),
+      };
 
-      const plateNumber = safeStr(document.getElementById("plateNumber").value);
-      const tension = safeStr(document.getElementById("plateTension").value);
-      const location = safeStr(document.getElementById("plateLocation").value);
-      const mesh = safeStr(document.getElementById("plateMesh").value);
-      const maxQty = Number(document.getElementById("plateMaxQty").value || 5000);
-
-      if (!plateNumber){
-        showToast("판 번호는 필수야.");
-        return;
+      if (!id) {
+        // 신규 생성
+        payload.createdAt = Date.now();
+        if(filmId) { // 제판(필름연결)
+            const f = films.find(x=>x.id===filmId);
+            payload.status = "occupied";
+            payload.filmId = f.id;
+            payload.productName = f.productName;
+            payload.filmNumber = f.filmNumber;
+            payload.imageDataUrl = f.imageDataUrl;
+            await addHistory("제판(신규)", f.productName);
+        } else { // 공판 등록
+            payload.status = "empty";
+            payload.productName = null;
+            payload.filmId = null;
+            await addHistory("공판등록", payload.plateNumber);
+        }
+        await db.collection(PLATE_COLLECTION).add(payload);
+        showToast("판 등록됨.");
+      } else {
+        // 수정
+        await db.collection(PLATE_COLLECTION).doc(id).set(payload, { merge:true });
+        await addHistory("판수정", payload.plateNumber);
+        showToast("판 수정됨.");
       }
+      closePlateForm();
+    }
+
+    /* [신규 기능] 탈막 (Reclaim) */
+    async function reclaimPlate(id) {
+       if(!confirm("정말 탈막(초기화) 하시겠습니까?\n\n- 제품 정보는 삭제됩니다.\n- 판 번호와 누적 수명은 유지됩니다.")) return;
+       
+       const p = plates.find(x=>x.id===id);
+       await db.collection(PLATE_COLLECTION).doc(id).update({
+          status: "empty",       
+          filmId: null,
+          productName: null,
+          filmNumber: null,
+          imageDataUrl: null,
+          currentQty: 0,         // 현재 작업량 리셋
+          // totalQty(누적수명)는 건드리지 않음
+          updatedAt: Date.now()
+       });
+       await addHistory("탈막", p ? p.plateNumber : "");
+       showToast("탈막 완료. 빈 판이 되었습니다.");
+    }
+
+    /* [신규 기능] 빈 판 연결 로직 */
+    // 필름 리스트에서 [판 등록] 눌렀을 때 호출됨
+    function linkPlate(filmId) {
+       const emptyList = plates.filter(p => p.status === "empty");
+       const listDiv = document.getElementById("emptyPlateList");
+       listDiv.innerHTML = "";
+       // 모달에 filmId 저장 (새 판 만들기로 넘어갈 때 씀)
+       document.getElementById("emptyPlateModal").dataset.filmId = filmId;
+
+       if(emptyList.length === 0) {
+          listDiv.innerHTML = "<div style='padding:20px; text-align:center; color:#999; font-size:13px;'>사용 가능한 빈 판이 없습니다.<br>아래 버튼을 눌러 새 판을 만드세요.</div>";
+       } else {
+          emptyList.forEach(p => {
+             const row = document.createElement("div");
+             row.className = "empty-plate-item"; // CSS 적용됨
+             row.style.cssText = "padding:10px; border-bottom:1px solid #eee; cursor:pointer; display:flex; justify-content:space-between; align-items:center;";
+             
+             row.innerHTML = `
+                <div>
+                    <div style="font-weight:bold; color:#333;">${p.plateNumber}</div>
+                    <div style="font-size:11px; color:#888;">${p.mesh} / 텐션 ${p.tension||'-'}</div>
+                </div>
+                <button class='btn btn-small btn-primary' style='pointer-events:none;'>선택</button>
+             `;
+             row.onclick = () => doLink(p.id, filmId);
+             listDiv.appendChild(row);
+          });
+       }
+       document.getElementById("emptyPlateModal").style.display="flex";
+    }
+
+    async function doLink(plateId, filmId) {
+       if(!confirm("이 판에 제판하시겠습니까?")) return;
+       const f = films.find(x=>x.id===filmId);
+       
+       await db.collection(PLATE_COLLECTION).doc(plateId).update({
+          status: "occupied",
+          filmId: f.id,
+          productName: f.productName,
+          filmNumber: f.filmNumber,
+          imageDataUrl: f.imageDataUrl,
+          currentQty: 0, // 새 작업 시작이므로 현재량 0으로
+          updatedAt: Date.now()
+       });
+       document.getElementById("emptyPlateModal").style.display="none";
+       showToast("제판 완료! (빈 판 -> 사용 중)");
+       
+       // 판 탭으로 이동해서 보여주기
+       currentTab = "plates";
+       setActiveTabUI();
+    }
+
+    function deletePlate(id) {
+       if(confirm("정말 이 프레임 자체를 폐기(삭제) 합니까?\n누적 기록도 모두 사라집니다.")) {
+          db.collection(PLATE_COLLECTION).doc(id).delete();
+          showToast("폐기되었습니다.");
+       }
+    }
+
 
       const payload = {
         filmId,
@@ -2470,27 +2582,107 @@ function getUsageBadgeInfo(plate){
     }
 
     /* ---------- 판 리스트 ---------- */
+        // [수정됨] 판 리스트 렌더링 (판 번호 중심 + 탈막 버튼 + 필터)
     function renderPlatesList(filterText = ""){
       const listEl = document.getElementById("list");
       const emptyText = document.getElementById("emptyText");
-      if (!listEl || !emptyText) return;
+      
+      // 판 탭일 때만 필터 보이기
+      const filterBar = document.getElementById("plateFilters");
+      if(filterBar) filterBar.style.display = "flex";
 
       listEl.innerHTML = "";
       currentSearchText = filterText || "";
-
       const text = safeStr(filterText).toLowerCase();
 
+      // 현재 선택된 필터 확인 (기본 all)
+      const activeChip = document.querySelector(".filter-chip.active");
+      const filterMode = activeChip ? activeChip.dataset.filter : "all";
+
       let filtered = plates.filter(p => {
+        // 1. 상태 필터링
+        if(filterMode === "occupied" && p.status === "empty") return false;
+        if(filterMode === "empty" && p.status !== "empty") return false;
+
+        // 2. 검색어 필터링
         if (!text) return true;
-        const combined =
-          (p.productName || "") + " " +
-          (p.filmNumber || "") + " " +
-          (p.plateNumber || "") + " " +
-          (p.tension || "") + " " +
-          (p.location || "") + " " +
-          (p.mesh || "");
-        return combined.toLowerCase().includes(text);
+        const combined = (p.plateNumber + (p.productName||"") + (p.filmNumber||"") + (p.mesh||"")).toLowerCase();
+        return combined.includes(text);
       });
+
+      filtered.sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+      updateCountBar(filtered.length, plates.length, !!text);
+
+      if (filtered.length === 0){
+        emptyText.style.display = "block";
+        emptyText.innerHTML = "조건에 맞는 판이 없습니다.";
+        return;
+      }
+      emptyText.style.display = "none";
+
+      filtered.forEach((plate) => {
+        const isEmpty = (plate.status === "empty");
+        const card = document.createElement("div");
+        card.className = "card";
+        // 빈 판이면 배경을 회색으로
+        if(isEmpty) card.style.background = "#f4f4f5"; 
+
+        // [핵심] 제목=판번호, 서브=제품명
+        const title = plate.plateNumber;
+        const sub = isEmpty ? "빈 판 (사용 가능)" : (plate.productName || "제품명 없음");
+        
+        // 이미지 (판에 없으면 필름 이미지 씀 - 여기선 일단 판 이미지)
+        const imgTag = plate.imageDataUrl 
+            ? `<img src="${plate.imageDataUrl}" onclick="openImageViewer('${plate.imageDataUrl}')">` 
+            : `<div style="width:70px; height:70px; background:#e2e8f0; border-radius:12px; flex-shrink:0;"></div>`;
+
+        // 버튼 구성
+        let btns = "";
+        if(currentMode === MODE_ADMIN) {
+            if(isEmpty) {
+                // 빈 판: 수정, 폐기
+                btns += `<button class="btn btn-secondary btn-small" onclick="openPlateFormForEdit('${plate.id}')">수정</button>`;
+                btns += `<button class="btn btn-danger btn-small" onclick="deletePlate('${plate.id}')">폐기</button>`;
+            } else {
+                // 사용 중: 사용, 수정, 탈막
+                btns += `<button class="btn btn-primary btn-small" onclick="openPlateUseSheet('${plate.id}')">사용</button>`;
+                btns += `<button class="btn btn-secondary btn-small" onclick="openPlateFormForEdit('${plate.id}')">수정</button>`;
+                btns += `<button class="btn btn-danger btn-small" onclick="reclaimPlate('${plate.id}')">탈막</button>`;
+            }
+        } else {
+            // 인쇄기사 등
+            if(!isEmpty) btns += `<button class="btn btn-primary btn-small" onclick="openPlateUseSheet('${plate.id}')">사용등록</button>`;
+            btns += `<button class="btn btn-secondary btn-small" onclick="openPlateHistorySheet('${plate.id}')">히스토리</button>`;
+        }
+
+        card.innerHTML = `
+            ${imgTag}
+            <div class="card-content">
+                <div class="card-row-main" style="margin-bottom:2px;">
+                    <div class="card-title" style="font-size:16px;">${title}</div>
+                    ${isEmpty ? '<span style="font-size:11px; color:#999;">(공판)</span>' : ''}
+                </div>
+                <div class="card-sub" style="color:${isEmpty?'#888':'var(--text-sub)'};">${sub}</div>
+                
+                <div class="card-row">
+                   <span class="label">MESH</span>${plate.mesh||"-"} 
+                   <span class="label" style="margin-left:8px;">텐션</span>${plate.tension||"-"}
+                </div>
+                
+                <div style="font-size:11px; background:rgba(0,0,0,0.05); padding:3px 8px; border-radius:6px; display:inline-block; margin-top:6px; color:#555;">
+                    현재: <b>${plate.currentQty||0}</b> &nbsp;|&nbsp; 누적: ${plate.totalQty||0}
+                </div>
+
+                <div class="card-footer">
+                    <div class="last-used">${isEmpty ? '' : (plate.filmNumber || '')}</div>
+                    <div class="card-buttons">${btns}</div>
+                </div>
+            </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
 
       // 정렬 옵션은 그대로 사용(필름과 동일 정책)
       const sortOpt = getSortOption();
@@ -3149,6 +3341,45 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
           }, 500);
         }
       });
+            // [4번 추가 코드] 필터, 모달, 자동완성 이벤트 연결
+      
+      // 1. 필터 칩 클릭 시
+      document.querySelectorAll(".filter-chip").forEach(chip => {
+          chip.addEventListener("click", function(){
+              document.querySelectorAll(".filter-chip").forEach(c=>c.classList.remove("active"));
+              this.classList.add("active");
+              renderPlatesList(); // 화면 갱신
+          });
+      });
+      
+      // 2. 빈 판 모달 닫기 / 새 판 만들기 버튼
+      document.getElementById("closeEmptyModalBtn").addEventListener("click", () => {
+          document.getElementById("emptyPlateModal").style.display="none";
+      });
+      
+      document.getElementById("createNewPlateInsteadBtn").addEventListener("click", () => {
+          const fid = document.getElementById("emptyPlateModal").dataset.filmId;
+          document.getElementById("emptyPlateModal").style.display="none";
+          openPlateFormFromFilm(fid); // 기존 폼 열기
+      });
+
+      // 3. MESH 입력 시 판번호 자동완성 (예: 300 -> 300-1)
+      document.getElementById("plateMesh").addEventListener("input", function() {
+           if(document.getElementById("plateId").value) return; // 수정 땐 작동 X
+           const val = this.value.trim();
+           if(!val) return;
+           
+           const prefix = val + "-";
+           let max = 0;
+           plates.forEach(p => {
+               if(p.plateNumber && p.plateNumber.startsWith(prefix)) {
+                   const n = parseInt(p.plateNumber.split("-")[1]);
+                   if(!isNaN(n) && n > max) max = n;
+               }
+           });
+           document.getElementById("plateNumber").value = prefix + (max + 1);
+      });
+
 
       // 맨 위로 가기 버튼 클릭 이벤트
       if (scrollBtn) {
