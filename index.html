@@ -3244,41 +3244,7 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
           }
         } else if (e.touches.length === 1 && vIsDragging) {
           // [이동]
-          // 이미지가 확대된 상태에서만 이동 가능하게 하려면 아래 if문 주석 해제
-          // if (vScale > 1) {
-            vPointX = e.touches[0].clientX - vStartX;
-            vPointY = e.touches[0].clientY - vStartY;
-            updateViewerTransform();
-          // }
-        }
-      }, { passive: false }); // ★ 중요: 이걸 넣어야 preventDefault가 먹힘
 
-      // 3. 터치 끝
-      container.addEventListener("touchend", (e) => {
-        vIsDragging = false;
-        // 손 뗐을 때 1배보다 작으면 복구
-        if (vScale < 1) {
-          vScale = 1; vPointX = 0; vPointY = 0;
-          const img = document.getElementById("viewerImage");
-          if(img) {
-             img.style.transition = "transform 0.2s";
-             updateViewerTransform();
-             setTimeout(() => { img.style.transition = "none"; }, 200);
-          }
-        }
-      });
-
-      // 닫기 버튼 연결
-      if(closeBtn) closeBtn.addEventListener("click", closeImageViewer);
-      
-      // 혹시 모르니 클릭으로 닫기도 추가 (배경 클릭)
-      container.addEventListener("click", (e) => {
-        // 이미지가 아니라 배경을 짧게 눌렀을 때만 닫기 (드래그 아닐 때)
-        if(e.target === container && !vIsDragging) {
-           // closeImageViewer(); // 원하면 주석 해제 (배경 터치시 닫힘)
-        }
-      });
-    }
 
     /* ---------- 초기화 ---------- */
     async function init(){
