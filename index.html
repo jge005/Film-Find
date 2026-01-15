@@ -3090,23 +3090,7 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
       document.getElementById("plateMemoCloseBtn").addEventListener("click", closePlateMemoSheet);
       document.getElementById("plateMemoCancelBtn").addEventListener("click", closePlateMemoSheet);
       document.getElementById("plateMemoSaveBtn").addEventListener("click", savePlateMemoSheet);
-
-      // 판 사용등록
-      document.getElementById("plateUseBackdrop").addEventListener("click", closePlateUseSheet);
-      document.getElementById("plateUseCloseBtn").addEventListener("click", closePlateUseSheet);
-      document.getElementById("plateUseCancelBtn").addEventListener("click", closePlateUseSheet);
-      document.getElementById("plateUseSaveBtn").addEventListener("click", savePlateUse);
-
-      // 판 히스토리
-      document.getElementById("plateHistoryBackdrop").addEventListener("click", closePlateHistorySheet);
-      document.getElementById("plateHistoryCloseBtn").addEventListener("click", closePlateHistorySheet);
-      document.getElementById("plateHistoryCloseBtn2").addEventListener("click", closePlateHistorySheet);
-
-      // 히스토리 메모 모달
-      document.getElementById("historyNoteCancelBtn").addEventListener("click", closeHistoryNoteModal);
-      document.getElementById("historyNoteSaveBtn").addEventListener("click", saveHistoryNoteModal);
-
-                  // 스크롤 이벤트 (맨 위로 버튼 + 무한 스크롤 - 강력한 버전)
+            // 스크롤 이벤트 (맨 위로 버튼 + 무한 스크롤 - 강력한 버전)
       const scrollBtn = document.getElementById("scrollTopBtn");
       const spinner = document.getElementById("loadingSpinner");
 
@@ -3118,31 +3102,28 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
         }
 
         // 2. 무한 스크롤 (바닥 감지)
-        if (loadingMore) return; // 이미 로딩 중이면 실행 안 함
+        if (loadingMore) return; 
 
         // [수정] 모바일/PC 모든 브라우저 호환성을 위한 높이 계산
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
         const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
         const docHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
 
-        // 바닥에서 100px 정도 남았을 때 미리 로딩 (감도 높임)
+        // 바닥에서 100px 정도 남았을 때 미리 로딩
         if (scrollTop + windowHeight >= docHeight - 100) {
           
-          // 현재 탭에 맞는 전체 데이터 개수 확인
           let totalLen = 0;
           if (currentTab === "films") totalLen = films.length;
           else totalLen = plates.length;
 
-          // 검색 중이 아닐 때, 이미 다 보여줬으면 중단
           if (visibleCount >= totalLen && currentSearchText === "") return;
 
           loadingMore = true;
           if (spinner) spinner.classList.add("show");
 
-          // 스피너 보여주기 (0.5초 딜레이)
           setTimeout(() => {
-            visibleCount += VISIBLE_STEP; // 개수 늘리기
-            renderCurrentTab(); // 화면 갱신
+            visibleCount += VISIBLE_STEP; 
+            renderCurrentTab(); 
             
             if (spinner) spinner.classList.remove("show");
             loadingMore = false;
@@ -3156,99 +3137,12 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
       }
-
-
-
-      // ✅ (선택) 페이지가 살아있을 때만 유지 / 창 완전 종료면 sessionStorage 자동 초기화
-      // (추가 삭제 없음)
-              /* ---------- [최종] 모바일 강제 적용 로직 ---------- */
-    // 상태 변수들
-    let vScale = 1;
-    let vPointX = 0, vPointY = 0;
-    let vStartX = 0, vStartY = 0;
-    let vStartDist = 0;
-    let vStartScale = 1;
-    let vIsDragging = false;
-
-    // 화면 그리기
-    function updateViewerTransform() {
-      const img = document.getElementById("viewerImage");
-      if (img) {
-        img.style.transform = `translate(${vPointX}px, ${vPointY}px) scale(${vScale})`;
-      }
-    }
-
-    // 뷰어 열기
-    function openImageViewer(src) {
-      const viewer = document.getElementById("imageViewer");
-      const img = document.getElementById("viewerImage");
-      if (!viewer || !img) return;
-
-      img.src = src || "";
-      viewer.style.display = "flex";
-
-      // 초기화
-      vScale = 1; vPointX = 0; vPointY = 0;
-      updateViewerTransform();
-    }
-
-    // 뷰어 닫기
-    function closeImageViewer() {
-      const viewer = document.getElementById("imageViewer");
-      if (viewer) viewer.style.display = "none";
-      const img = document.getElementById("viewerImage");
-      if (img) img.src = "";
-    }
-
-    // ★ 여기가 제일 중요합니다 ★
-    function bindViewerEvents() {
-      const container = document.getElementById("viewerContainer");
-      const closeBtn = document.getElementById("closeViewerBtn");
-      
-      if (!container) return;
-
-      // 1. 터치 시작 (손가락 댔을 때)
-      container.addEventListener("touchstart", (e) => {
-        // 손가락 개수에 따라 모드 변경
-        if (e.touches.length === 2) {
-          // 핀치 줌 시작
-          vIsDragging = false;
-          vStartDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          vStartScale = vScale;
-        } else if (e.touches.length === 1) {
-          // 드래그 시작
-          vIsDragging = true;
-          vStartX = e.touches[0].clientX - vPointX;
-          vStartY = e.touches[0].clientY - vPointY;
-        }
-      }, { passive: false }); // ★ 중요: 브라우저 기본 동작 차단 준비
-
-      // 2. 터치 이동 (움직일 때)
-      container.addEventListener("touchmove", (e) => {
-        // ★ 핵심: 브라우저가 화면을 스크롤하거나 새로고침하지 못하게 막음
-        if (e.cancelable) e.preventDefault(); 
-
-        if (e.touches.length === 2) {
-          // [확대/축소]
-          const dist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          if (vStartDist > 0) {
-            const newScale = vStartScale * (dist / vStartDist);
-            vScale = Math.min(Math.max(1, newScale), 5); // 1~5배
-            updateViewerTransform();
-          }
-        } else if (e.touches.length === 1 && vIsDragging) {
-          // [이동]
-
+    } // [중요] bindEvents 함수 닫기
 
     /* ---------- 초기화 ---------- */
     async function init(){
       bindEvents();
+      bindViewerEvents(); // [중요] 사진 확대 기능 연결!
       setTheme(getTheme());
       applyViewMode();
 
@@ -3268,12 +3162,29 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
 
       // 기기 배지
       setDeviceLabel(getDeviceLabel());
-
-      // 인쇄기사 목록 관리자 UI는 설정 열 때 갱신됨
     }
 
     init().catch(console.error);
 
   </script>
 </body>
-  </html>
+</html>
+
+
+      // 판 사용등록
+      document.getElementById("plateUseBackdrop").addEventListener("click", closePlateUseSheet);
+      document.getElementById("plateUseCloseBtn").addEventListener("click", closePlateUseSheet);
+      document.getElementById("plateUseCancelBtn").addEventListener("click", closePlateUseSheet);
+      document.getElementById("plateUseSaveBtn").addEventListener("click", savePlateUse);
+
+      // 판 히스토리
+      document.getElementById("plateHistoryBackdrop").addEventListener("click", closePlateHistorySheet);
+      document.getElementById("plateHistoryCloseBtn").addEventListener("click", closePlateHistorySheet);
+      document.getElementById("plateHistoryCloseBtn2").addEventListener("click", closePlateHistorySheet);
+
+      // 히스토리 메모 모달
+      document.getElementById("historyNoteCancelBtn").addEventListener("click", closeHistoryNoteModal);
+      document.getElementById("historyNoteSaveBtn").addEventListener("click", saveHistoryNoteModal);
+
+                  
+     
