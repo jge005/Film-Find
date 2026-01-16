@@ -2470,7 +2470,7 @@
 
     /* ---------- 판 리스트 ---------- */
     /* [수정 5단계] 판 리스트 렌더링 (판 번호 메인 + 탈막/폐기 + 총누적) */
-    function renderPlatesList(filterText = ""){
+   function renderPlatesList(filterText = ""){
       const listEl = document.getElementById("list");
       const emptyText = document.getElementById("emptyText");
       if (!listEl || !emptyText) return;
@@ -2492,7 +2492,6 @@
         return combined.toLowerCase().includes(text);
       });
 
-      // 정렬: 판 번호순 우선
       const sortOpt = getSortOption();
       filtered = filtered.slice().sort((a,b) => {
         if (sortOpt === "name") return (a.productName || "").localeCompare(b.productName || "", "ko");
@@ -2521,9 +2520,9 @@
         card.className = "card";
         
         const isEmpty = (plate.status === 'empty');
-        const r = getPlateUsedRatio(plate); // 현재 수량 기준 비율
+        const r = getPlateUsedRatio(plate); 
 
-        // 1. 배지 (현재 작업 기준)
+        // 1. 뱃지
         const badge = document.createElement("div");
         if(isEmpty) {
              badge.className = "warn-badge ok show";
@@ -2536,23 +2535,34 @@
         }
         card.appendChild(badge);
 
-        // 2. 이미지 (사용 중일 때만 표시)
+        // 2. 이미지 & 콘텐츠 준비
         const content = document.createElement("div");
         content.className = "card-content";
+        
         let film = null;
         if (!isEmpty) {
              film = films.find(f => f.id === plate.filmId) || films.find(f => f.filmNumber && f.filmNumber === plate.filmNumber);
         }
+
+        // [수정된 부분] insertBefore 대신 순서대로 appendChild 사용 (에러 해결!)
         if (film && film.imageDataUrl) {
           const img = document.createElement("img");
           img.src = film.imageDataUrl;
-          img.style.width = "70px"; img.style.height = "70px"; img.style.objectFit = "cover"; img.style.borderRadius = "12px"; img.style.flexShrink = "0"; img.style.marginRight="10px"; img.style.cursor = "pointer"; img.style.background = "#eef1ff";
+          img.style.width = "70px"; img.style.height = "70px"; 
+          img.style.objectFit = "cover"; img.style.borderRadius = "12px"; 
+          img.style.flexShrink = "0"; img.style.marginRight="10px"; 
+          img.style.cursor = "pointer"; img.style.background = "#eef1ff";
+          
           img.addEventListener("click", () => openImageViewer(film.imageDataUrl));
-          card.insertBefore(img, content); 
-        } 
+          
+          // 이미지를 먼저 붙임
+          card.appendChild(img);
+        }
+        
+        // 그 다음에 내용을 붙임
         card.appendChild(content);
 
-        // 3. 메인 정보 (판 번호 강조)
+        // 3. 메인 정보
         const rowMain = document.createElement("div");
         rowMain.className = "card-row-main";
         const title = document.createElement("div");
@@ -2566,29 +2576,28 @@
         rowMain.appendChild(tag);
         content.appendChild(rowMain);
 
-        // 상세 정보
         const mkRow = (label, val) => `<div class="card-row"><span class="label">${label}</span>${val}</div>`;
         content.innerHTML += mkRow("MESH", plate.mesh || "-");
         
         if(!isEmpty){
             content.innerHTML += mkRow("필름번호", plate.filmNumber || "-");
-            // 현재 작업량 강조
             content.innerHTML += mkRow("현재작업", `<strong style="color:var(--primary-1)">${(plate.usedQty || 0).toLocaleString()}장</strong>`);
             content.innerHTML += mkRow("텐션", plate.tension || "-");
             content.innerHTML += mkRow("위치", plate.location || "-");
         } else {
-            content.innerHTML += mkRow("상태", "<span style='color:#9ca3af'>대기 중 (필름 없음)</span>");
+            content.innerHTML += mkRow("상태", "<span style='color:#9ca3af'>대기 중 (작업 가능)</span>");
         }
 
-        // 4. 푸터 (총 누적 사용량 표시)
+        // 4. 푸터
         const footer = document.createElement("div");
         footer.className = "card-footer";
         const usageDiv = document.createElement("div");
         usageDiv.className = "last-used";
         usageDiv.style.color = "#6b7280"; usageDiv.style.fontWeight = "500";
-        // 평생 누적 수량 (없으면 현재수량으로 대체)
+        
         const totalQty = (plate.totalUsedQty !== undefined) ? plate.totalUsedQty : (plate.usedQty || 0);
         usageDiv.innerHTML = `총 누적: <span style="color:${currentMode==='night'?'#fff':'#374151'}">${Number(totalQty).toLocaleString()}</span> / ${r.max}`;
+        
         footer.appendChild(usageDiv);
 
         const btnWrap = document.createElement("div");
@@ -2629,7 +2638,6 @@
           const editBtn = document.createElement("button"); editBtn.className = "btn btn-ghost btn-small"; editBtn.textContent = "수정";
           editBtn.addEventListener("click", () => openPlateFormForEdit(plate.id)); btnWrap.appendChild(editBtn);
           
-          // ★ 폐기 버튼
           const delBtn = document.createElement("button"); delBtn.className = "btn btn-danger btn-small"; delBtn.textContent = "폐기";
           delBtn.addEventListener("click", async () => {
             if (!confirm(`[주의] ${plate.plateNumber} 판을 완전히 폐기할까?\n이 작업은 되돌릴 수 없어.`)) return;
@@ -2650,7 +2658,6 @@
 
       applyViewMode();
     }
-
     function renderCurrentTab(){
       if (currentTab === "films") renderList(currentSearchText);
       else renderPlatesList(currentSearchText);
