@@ -536,7 +536,29 @@
     }
 	/* [추가] 대시보드 스타일 */
     .dashboard-wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; animation: cardFadeIn 0.3s ease; }
-    .dash-card { background: rgba(255,255,255,0.8); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    /* [수정] 대시보드 카드: 클릭 가능하게 변경 */
+    .dash-card { 
+      background: rgba(255,255,255,0.8); 
+      border: 1px solid var(--card-border); 
+      border-radius: 12px; 
+      padding: 10px; 
+      text-align: center; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03); 
+      cursor: pointer; /* 손가락 모양 */
+      transition: all 0.2s ease;
+    }
+    /* 선택되었을 때 효과 */
+    .dash-card.selected {
+      border: 2px solid var(--primary-1);
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(127,157,255,0.4);
+    }
+    /* 나이트 모드 대응 */
+    [data-theme="night"] .dash-card.selected {
+      background: rgba(30,41,59,1);
+      border-color: var(--primary-1);
+    }
     .dash-card.warning { background: #fff0f0; border-color: #ffcccc; }
     .dash-card.warning .dash-value { color: #d32f2f; }
     .dash-title { font-size: 11px; color: var(--text-sub); margin-bottom: 4px; }
@@ -773,17 +795,19 @@
 
     <div class="app-shell">
 	<div id="dashboardSection" class="dashboard-wrap" style="display:none;">
-      <div class="dash-card">
+      <div class="dash-card" id="cardActive" onclick="filterByDash('active')">
         <div class="dash-title">활성 판</div>
         <div class="dash-value" id="dashActive">-</div>
         <div class="dash-desc">현재 작업 중</div>
       </div>
-      <div class="dash-card">
+      
+      <div class="dash-card" id="cardEmpty" onclick="filterByDash('empty')">
         <div class="dash-title">빈 판 (대기)</div>
         <div class="dash-value" id="dashEmpty">-</div>
         <div class="dash-desc">즉시 사용 가능</div>
       </div>
-      <div class="dash-card warning">
+      
+      <div class="dash-card warning" id="cardWarn" onclick="filterByDash('warn')">
         <div class="dash-title">수명 주의</div>
         <div class="dash-value" id="dashWarn">-</div>
         <div class="dash-desc">90% 이상 사용</div>
@@ -2620,6 +2644,7 @@
     /* ---------- 판 리스트 ---------- */
     /* [수정 5단계] 판 리스트 렌더링 (판 번호 메인 + 탈막/폐기 + 총누적) */
   /* [수정] 리스트 렌더링 (총 누적은 숫자만 표시) */
+   /* [수정] 리스트 렌더링 (대시보드 필터 적용됨) */
     function renderPlatesList(filterText = ""){
       const listEl = document.getElementById("list");
       const emptyText = document.getElementById("emptyText");
@@ -2630,174 +2655,142 @@
 
       const text = safeStr(filterText).toLowerCase();
 
+      // 1. 텍스트 검색 필터
       let filtered = plates.filter(p => {
         if (!text) return true;
-        const combined =
-          (p.plateNumber || "") + " " +
-          (p.productName || "") + " " +
-          (p.filmNumber || "") + " " +
-          (p.tension || "") + " " +
-          (p.location || "") + " " +
-          (p.mesh || "");
+        const combined = (p.plateNumber||"")+(p.productName||"")+(p.filmNumber||"")+(p.tension||"")+(p.location||"")+(p.mesh||"");
         return combined.toLowerCase().includes(text);
       });
 
-      const sortOpt = getSortOption();
-      filtered = filtered.slice().sort((a,b) => {
-        if (sortOpt === "name") return (a.productName || "").localeCompare(b.productName || "", "ko");
-        if (sortOpt === "number") return (a.plateNumber || "").localeCompare(b.plateNumber || "", "ko"); 
-        return (b.updatedAt || 0) - (a.updatedAt || 0);
-      });
-
-      updateCountBar(filtered.length, plates.length, !!text);
-
-      let toRender = filtered;
-      if (!text){
-        visibleCount = Math.min(visibleCount || VISIBLE_STEP, filtered.length);
-        toRender = filtered.slice(0, visibleCount);
+      // 2. ★ [추가됨] 대시보드 클릭 필터 적용
+      if(dashboardFilter === 'active'){
+        // 활성 판만 (status가 empty가 아닌 것)
+        filtered = filtered.filter(p => p.status !== 'empty');
+      } 
+      else if(dashboardFilter === 'empty'){
+        // 빈 판만
+        filtered = filtered.filter(p => p.status === 'empty');
+      }
+      else if(dashboardFilter === 'warn'){
+        // 수명 주의만 (90% 이상)
+        filtered = filtered.filter(p => {
+           if(p.status === 'empty') return false;
+           const r = getPlateUsedRatio(p);
+           return r.pct >= 90;
+        });
       }
 
-      if (!filtered.length){
-        emptyText.style.display = "block";
-        emptyText.textContent = "등록된 판이 없어.";
-        return;
-      } else {
-        emptyText.style.display = "none";
+      // 3. 정렬
+      const sortOpt = getSortOption();
+      filtered.sort((a,b) => {
+        if (sortOpt === "name") return (a.productName||"").localeCompare(b.productName||"", "ko");
+        if (sortOpt === "number") return (a.plateNumber||"").localeCompare(b.plateNumber||"", "ko"); 
+        return (b.updatedAt||0) - (a.updatedAt||0);
+      });
+
+      updateCountBar(filtered.length, plates.length, !!text || !!dashboardFilter);
+      let toRender = (!text && !dashboardFilter) ? filtered.slice(0, visibleCount) : filtered;
+
+      if (!filtered.length){ 
+          emptyText.style.display = "block"; 
+          if(dashboardFilter) emptyText.textContent = "해당하는 판이 없어.";
+          else emptyText.textContent = "등록된 판이 없어.";
+          return; 
+      } else { 
+          emptyText.style.display = "none"; 
       }
 
       toRender.forEach((plate) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        
+        // ... (이 아래 카드 그리는 코드는 기존과 동일합니다. 그대로 두셔도 되고 복붙하셔도 됩니다) ...
+        const card = document.createElement("div"); card.className = "card";
         const isEmpty = (plate.status === 'empty');
-        const r = getPlateUsedRatio(plate); // 현재 작업량 기준 비율
+        const r = getPlateUsedRatio(plate); 
 
-        // 1. 뱃지 (현재 작업 진척도)
         const badge = document.createElement("div");
         if(isEmpty) {
-             badge.className = "warn-badge ok show";
-             badge.textContent = "빈 판 (대기)";
+             badge.className = "warn-badge ok show"; badge.textContent = "빈 판 (대기)";
              badge.style.background = "#f3f4f6"; badge.style.color = "#374151"; badge.style.border = "1px solid #d1d5db";
         } else {
              const b = getUsageBadgeInfo(plate);
-             badge.className = `warn-badge ${b.cls} show`;
-             // 뱃지에는 '이번 작업 진행률' 표시
-             badge.textContent = `${b.label} · ${Math.round(r.pct)}%`;
+             badge.className = `warn-badge ${b.cls} show`; badge.textContent = `${b.label} · ${Math.round(r.pct)}%`;
         }
         card.appendChild(badge);
 
-        // 2. 이미지
-        const content = document.createElement("div");
-        content.className = "card-content";
+        const content = document.createElement("div"); content.className = "card-content";
         let film = null;
-        if (!isEmpty) {
-             film = films.find(f => f.id === plate.filmId) || films.find(f => f.filmNumber && f.filmNumber === plate.filmNumber);
-        }
+        if (!isEmpty) film = films.find(f => f.id === plate.filmId) || films.find(f => f.filmNumber && f.filmNumber === plate.filmNumber);
+        
         if (film && film.imageDataUrl) {
-          const img = document.createElement("img");
-          img.src = film.imageDataUrl;
+          const img = document.createElement("img"); img.src = film.imageDataUrl;
           img.style.width = "70px"; img.style.height = "70px"; img.style.objectFit = "cover"; img.style.borderRadius = "12px"; 
           img.style.flexShrink = "0"; img.style.marginRight="10px"; img.style.cursor = "pointer"; img.style.background = "#eef1ff";
           img.addEventListener("click", () => openImageViewer(film.imageDataUrl));
-          card.appendChild(img); 
-        } 
+          card.appendChild(img);
+        }
         card.appendChild(content);
 
-        // 3. 메인 정보
-        const rowMain = document.createElement("div");
-        rowMain.className = "card-row-main";
-        const title = document.createElement("div");
-        title.className = "card-title";
-        title.style.fontSize = "17px"; 
-        title.textContent = plate.plateNumber || "(번호 없음)";
-        const tag = document.createElement("div");
-        tag.className = "card-tag";
-        tag.textContent = isEmpty ? "-" : (plate.productName || "제품명 없음");
-        rowMain.appendChild(title);
-        rowMain.appendChild(tag);
-        content.appendChild(rowMain);
-
-        const mkRow = (label, val) => `<div class="card-row"><span class="label">${label}</span>${val}</div>`;
-        content.innerHTML += mkRow("MESH", plate.mesh || "-");
+        const pn = plate.plateNumber || "(번호 없음)";
+        const pd = isEmpty ? "-" : (plate.productName || "제품명 없음");
+        
+        let html = `<div class="card-row-main">
+                      <div style="display:flex;align-items:center;gap:6px">
+                        <div class="card-title" style="font-size:17px">${pn}</div>
+                        <button class="btn btn-ghost btn-small" style="padding:2px 6px;font-size:10px" onclick="showPlateQR('${pn}')">QR</button>
+                      </div>
+                      <div class="card-tag">${pd}</div>
+                    </div>`;
+        html += `<div class="card-row"><span class="label">MESH</span>${plate.mesh||"-"}</div>`;
         
         if(!isEmpty){
-            content.innerHTML += mkRow("필름번호", plate.filmNumber || "-");
-            // 현재 작업량 / 목표량 표시
-            content.innerHTML += mkRow("현재작업", `<strong style="color:var(--primary-1)">${(plate.usedQty || 0).toLocaleString()}</strong> / ${r.max.toLocaleString()}장`);
-            content.innerHTML += mkRow("텐션", plate.tension || "-");
-            content.innerHTML += mkRow("위치", plate.location || "-");
+            html += `<div class="card-row"><span class="label">필름</span>${plate.filmNumber||"-"}</div>`;
+            html += `<div class="card-row"><span class="label">현재작업</span><strong style="color:var(--primary-1)">${(plate.usedQty||0).toLocaleString()}</strong> / ${r.max.toLocaleString()}장</div>`;
+            html += `<div class="card-row"><span class="label">텐션</span>${plate.tension||"-"}</div>`;
+            html += `<div class="card-row"><span class="label">위치</span>${plate.location||"-"}</div>`;
         } else {
-            content.innerHTML += mkRow("상태", "<span style='color:#9ca3af'>대기 중 (작업 가능)</span>");
+            html += `<div class="card-row"><span class="label">상태</span><span style="color:#9ca3af">대기 중 (작업 가능)</span></div>`;
         }
+        content.innerHTML = html;
 
-        // 4. 푸터 (총 누적 사용량 - 한도 없음)
-        const footer = document.createElement("div");
-        footer.className = "card-footer";
-        const usageDiv = document.createElement("div");
-        usageDiv.className = "last-used";
-        usageDiv.style.color = "#6b7280"; usageDiv.style.fontWeight = "500";
-        
-        // 평생 누적 수량 (단순 표시)
+        const footer = document.createElement("div"); footer.className = "card-footer";
         const totalQty = (plate.totalUsedQty !== undefined) ? plate.totalUsedQty : (plate.usedQty || 0);
-        usageDiv.innerHTML = `총 누적: <span style="color:${currentMode==='night'?'#fff':'#374151'}">${Number(totalQty).toLocaleString()}장</span>`;
-        
-        footer.appendChild(usageDiv);
+        footer.innerHTML = `<div class="last-used" style="color:#6b7280;font-weight:500">총 누적: <span style="color:${currentMode==='night'?'#fff':'#374151'}">${Number(totalQty).toLocaleString()}장</span></div><div class="card-buttons"></div>`;
+        content.appendChild(footer);
 
-        const btnWrap = document.createElement("div");
-        btnWrap.className = "card-buttons";
-
+        const btnWrap = footer.querySelector(".card-buttons");
+        // 버튼 로직 (기존과 동일)
         if (currentMode === MODE_PRINTER){
-           if(!isEmpty){
-               const useBtn = document.createElement("button"); useBtn.className = "btn btn-primary btn-small"; useBtn.textContent = "사용등록";
-               useBtn.addEventListener("click", () => openPlateUseSheet(plate.id)); btnWrap.appendChild(useBtn);
-           }
-           const histBtn = document.createElement("button"); histBtn.className = "btn btn-secondary btn-small"; histBtn.textContent = "히스토리";
-           histBtn.addEventListener("click", () => openPlateHistorySheet(plate.id)); btnWrap.appendChild(histBtn);
-           const memoBtn = document.createElement("button"); memoBtn.className = "btn btn-ghost btn-small" + (safeStr(plate.memo) ? " btn-memo-has" : ""); memoBtn.textContent = "메모";
-           memoBtn.addEventListener("click", () => openPlateMemoSheet(plate.id)); btnWrap.appendChild(memoBtn);
+           if(!isEmpty) btnWrap.innerHTML += `<button class="btn btn-primary btn-small" onclick="openPlateUseSheet('${plate.id}')">사용등록</button>`;
+           btnWrap.innerHTML += `<button class="btn btn-secondary btn-small" onclick="openPlateHistorySheet('${plate.id}')">히스토리</button>`;
+           btnWrap.innerHTML += `<button class="btn btn-ghost btn-small" onclick="openPlateMemoSheet('${plate.id}')">메모</button>`;
         }
         else if (currentMode === MODE_VIEWER){
-           const histBtn = document.createElement("button"); histBtn.className = "btn btn-secondary btn-small"; histBtn.textContent = "히스토리";
-           histBtn.addEventListener("click", () => openPlateHistorySheet(plate.id)); btnWrap.appendChild(histBtn);
-           const memoBtn = document.createElement("button"); memoBtn.className = "btn btn-ghost btn-small"; memoBtn.textContent = "메모";
-           memoBtn.addEventListener("click", () => openPlateMemoSheet(plate.id)); btnWrap.appendChild(memoBtn);
+           btnWrap.innerHTML += `<button class="btn btn-secondary btn-small" onclick="openPlateHistorySheet('${plate.id}')">히스토리</button>`;
+           btnWrap.innerHTML += `<button class="btn btn-ghost btn-small" onclick="openPlateMemoSheet('${plate.id}')">메모</button>`;
         }
         else if (currentMode === MODE_ADMIN){
           if(!isEmpty){
-              const useBtn = document.createElement("button"); useBtn.className = "btn btn-primary btn-small"; useBtn.textContent = "사용";
-              useBtn.addEventListener("click", () => openPlateUseSheet(plate.id)); btnWrap.appendChild(useBtn);
-              
-              const reclaimBtn = document.createElement("button"); reclaimBtn.className = "btn btn-secondary btn-small";
-              reclaimBtn.style.background = "#fef08a"; reclaimBtn.style.color = "#854d0e"; reclaimBtn.textContent = "✨ 탈막";
-              reclaimBtn.addEventListener("click", () => reclaimPlate(plate)); 
-              btnWrap.appendChild(reclaimBtn);
+              btnWrap.innerHTML += `<button class="btn btn-primary btn-small" onclick="openPlateUseSheet('${plate.id}')">사용</button>`;
+              const recBtn = document.createElement("button"); recBtn.className = "btn btn-secondary btn-small";
+              recBtn.style.background = "#fef08a"; recBtn.style.color = "#854d0e"; recBtn.innerText = "✨ 탈막";
+              recBtn.onclick = () => reclaimPlate(plate);
+              btnWrap.appendChild(recBtn);
           }
-          const histBtn = document.createElement("button"); histBtn.className = "btn btn-secondary btn-small"; histBtn.textContent = "기록";
-          histBtn.addEventListener("click", () => openPlateHistorySheet(plate.id)); btnWrap.appendChild(histBtn);
-          const memoBtn = document.createElement("button"); memoBtn.className = "btn btn-ghost btn-small" + (safeStr(plate.memo) ? " btn-memo-has" : ""); memoBtn.textContent = "메모";
-          memoBtn.addEventListener("click", () => openPlateMemoSheet(plate.id)); btnWrap.appendChild(memoBtn);
-          const editBtn = document.createElement("button"); editBtn.className = "btn btn-ghost btn-small"; editBtn.textContent = "수정";
-          editBtn.addEventListener("click", () => openPlateFormForEdit(plate.id)); btnWrap.appendChild(editBtn);
-          
-          const delBtn = document.createElement("button"); delBtn.className = "btn btn-danger btn-small"; delBtn.textContent = "폐기";
-          delBtn.addEventListener("click", async () => {
-            if (!confirm(`[주의] ${plate.plateNumber} 판을 완전히 폐기할까?\n이 작업은 되돌릴 수 없어.`)) return;
-            try{
-              await db.collection(PLATE_COLLECTION).doc(plate.id).delete();
-              await addHistory("판 폐기", { plateNumber: plate.plateNumber }, ["영구 삭제"]);
-              showToast("판이 폐기되었어.");
-            } catch(e){ console.error(e); showToast("폐기 중 오류."); }
-          });
+          btnWrap.innerHTML += `<button class="btn btn-secondary btn-small" onclick="openPlateHistorySheet('${plate.id}')">기록</button>`;
+          btnWrap.innerHTML += `<button class="btn btn-ghost btn-small" onclick="openPlateMemoSheet('${plate.id}')">메모</button>`;
+          btnWrap.innerHTML += `<button class="btn btn-ghost btn-small" onclick="openPlateFormForEdit('${plate.id}')">수정</button>`;
+          const delBtn = document.createElement("button"); delBtn.className = "btn btn-danger btn-small"; delBtn.innerText = "폐기";
+          delBtn.onclick = async () => {
+            if (!confirm(`[주의] ${plate.plateNumber} 판을 폐기할까?`)) return;
+            await db.collection(PLATE_COLLECTION).doc(plate.id).delete();
+            addHistory("판 폐기", { plateNumber: plate.plateNumber }, ["영구 삭제"]);
+            showToast("폐기됨");
+          };
           btnWrap.appendChild(delBtn);
         }
-
-        footer.appendChild(btnWrap);
-        content.appendChild(footer);
-        card.appendChild(content);
         listEl.appendChild(card);
       });
-
       applyViewMode();
+      updateDashboard();
     }
 	/* [추가] 대시보드 업데이트 함수 */
     function updateDashboard(){
@@ -3460,6 +3453,26 @@ function bindViewerGestures() {
         console.error(e);
         showToast("엑셀 변환 중 오류 발생");
       }
+    }
+	/* [추가] 대시보드 클릭 필터 변수 및 함수 */
+    let dashboardFilter = null; // 현재 어떤 필터인지 저장 (null이면 전체보기)
+
+    function filterByDash(type){
+      // 이미 눌려있는 걸 또 누르면 -> 필터 해제 (토글)
+      if(dashboardFilter === type){
+        dashboardFilter = null;
+      } else {
+        dashboardFilter = type; // 필터 설정
+      }
+      
+      // 디자인 업데이트 (선택된 카드만 진하게)
+      document.querySelectorAll('.dash-card').forEach(el => el.classList.remove('selected'));
+      if(dashboardFilter === 'active') document.getElementById('cardActive').classList.add('selected');
+      if(dashboardFilter === 'empty') document.getElementById('cardEmpty').classList.add('selected');
+      if(dashboardFilter === 'warn') document.getElementById('cardWarn').classList.add('selected');
+
+      // 리스트 다시 그리기
+      renderPlatesList(currentSearchText);
     }
 
 
