@@ -587,6 +587,21 @@
 
   <!-- 토스트 -->
   <div id="toast" class="toast"></div>
+  
+  <div id="emptyPlateModal" class="device-modal">
+  <div class="device-modal-card" style="max-width:400px">
+    <div class="device-modal-title">빈 판 가져오기</div>
+    <div class="device-modal-text">현재 대기 중인 빈 판 목록이야. 사용할 판을 선택해.</div>
+    
+    <div id="emptyPlateList" style="max-height:200px; overflow-y:auto; margin-bottom:10px; border:1px solid #eee; border-radius:8px; padding:4px;">
+      </div>
+
+    <div class="device-modal-actions" style="justify-content:space-between">
+      <button class="btn btn-secondary btn-small" id="btnMakeNewPlate">➕ 새 판 만들기</button>
+      <button class="btn btn-ghost btn-small" onclick="document.getElementById('emptyPlateModal').style.display='none'">취소</button>
+    </div>
+  </div>
+</div>
 
   <!-- ====== 필름 메모 슬라이드 ====== -->
   <div id="memoSheet" class="memo-sheet">
@@ -2093,14 +2108,66 @@
     }
 
     /* ---------- 판 폼 ---------- */
-    /* [수정 1단계] 필름에서 판 등록 시 기본값 (MESH-1 제안) */
+    /* ---------- 판 폼 (재활용 로직 포함) ---------- */
+    
+    /* [수정] 판 등록 버튼 클릭 시 (빈 판 선택 로직 + MESH 자동제안) */
     function openPlateFormFromFilm(filmId){
       if (currentMode !== MODE_ADMIN) return;
       const film = films.find(f => f.id === filmId);
       if (!film) return;
 
-      closeAllPanels();
+      // 빈 판(status == 'empty') 검색
+      const emptyPlates = plates.filter(p => p.status === 'empty');
 
+      if (emptyPlates.length === 0) {
+        openNewPlateForm(film); // 없으면 바로 새 등록
+      } else {
+        showEmptyPlatePicker(film, emptyPlates); // 있으면 목록 보여주기
+      }
+    }
+
+    /* [추가] 빈 판 선택 모달 표시 */
+    function showEmptyPlatePicker(film, emptyList) {
+      const modal = document.getElementById("emptyPlateModal");
+      const listEl = document.getElementById("emptyPlateList");
+      const newBtn = document.getElementById("btnMakeNewPlate");
+
+      listEl.innerHTML = "";
+      emptyList.forEach(p => {
+        const row = document.createElement("div");
+        row.style.padding = "8px"; row.style.borderBottom = "1px solid #f0f0f0"; row.style.cursor = "pointer";
+        row.style.fontSize = "13px"; row.style.display = "flex"; row.style.justifyContent = "space-between";
+        
+        const isSameMesh = (p.mesh == film.mesh);
+        const meshStyle = isSameMesh ? "color:var(--primary-1);font-weight:bold" : "color:#999";
+        
+        row.innerHTML = `<div><strong>${p.plateNumber}</strong> <span style="${meshStyle}">(${p.mesh||"-"}목)</span></div><div style="font-size:11px;color:#777">누적: ${(p.totalUsedQty||0).toLocaleString()}</div>`;
+        row.onclick = () => assignFilmToPlate(film, p);
+        listEl.appendChild(row);
+      });
+
+      newBtn.onclick = () => { modal.style.display = "none"; openNewPlateForm(film); };
+      closeAllPanels();
+      modal.style.display = "flex";
+    }
+
+    /* [추가] 기존 빈 판에 필름 할당 (재활용) */
+    async function assignFilmToPlate(film, plate) {
+      if(!confirm(`[${plate.plateNumber}] 판에\n[${film.productName}] 작업을 세팅할까?`)) return;
+      try {
+        await db.collection(PLATE_COLLECTION).doc(plate.id).set({
+          status: 'active', filmId: film.id, productName: film.productName, filmNumber: film.filmNumber,
+          usedQty: 0, updatedAt: Date.now()
+        }, { merge: true });
+        
+        await addHistory("재사용", { id: plate.id, plateNumber: plate.plateNumber, productName: film.productName }, ["빈 판에 새 필름 할당"]);
+        document.getElementById("emptyPlateModal").style.display = "none";
+        showToast("판 세팅 완료!");
+      } catch(e) { console.error(e); showToast("오류 발생"); }
+    }
+
+    /* [추가] 새 판 등록 폼 열기 (기존 로직) */
+    function openNewPlateForm(film) {
       document.getElementById("plateId").value = "";
       document.getElementById("plateFilmId").value = film.id;
       document.getElementById("plateProductName").value = film.productName || "";
@@ -2108,36 +2175,7 @@
       
       const meshVal = film.mesh || "";
       document.getElementById("plateMesh").value = meshVal;
-
-      // ★ 판 번호 자동 제안: "MESH값-1" (예: 300-1)
-      const defaultNum = meshVal ? `${meshVal}-1` : `PLATE-1`;
-      document.getElementById("plateNumber").value = defaultNum;
-
-      document.getElementById("plateTension").value = "";
-      document.getElementById("plateLocation").value = "";
-      document.getElementById("plateMaxQty").value = 5000;
-
-      document.getElementById("plateFormCard").style.display = "block";
-      document.getElementById("plateNumber").focus();
-    }/* [수정 1단계] 필름에서 판 등록 시 기본값 (MESH-1 제안) */
-    function openPlateFormFromFilm(filmId){
-      if (currentMode !== MODE_ADMIN) return;
-      const film = films.find(f => f.id === filmId);
-      if (!film) return;
-
-      closeAllPanels();
-
-      document.getElementById("plateId").value = "";
-      document.getElementById("plateFilmId").value = film.id;
-      document.getElementById("plateProductName").value = film.productName || "";
-      document.getElementById("plateFilmNumber").value = film.filmNumber || "";
-      
-      const meshVal = film.mesh || "";
-      document.getElementById("plateMesh").value = meshVal;
-
-      // ★ 판 번호 자동 제안: "MESH값-1" (예: 300-1)
-      const defaultNum = meshVal ? `${meshVal}-1` : `PLATE-1`;
-      document.getElementById("plateNumber").value = defaultNum;
+      document.getElementById("plateNumber").value = meshVal ? `${meshVal}-1` : `PLATE-1`; 
 
       document.getElementById("plateTension").value = "";
       document.getElementById("plateLocation").value = "";
@@ -2147,51 +2185,40 @@
       document.getElementById("plateNumber").focus();
     }
 
+    /* 기존 폼 제어 함수들 */
     function openPlateFormForEdit(plateId){
       if (currentMode !== MODE_ADMIN) return;
       const plate = plates.find(p => p.id === plateId);
       if (!plate) return;
-
       closeAllPanels();
-
       document.getElementById("plateId").value = plate.id;
       document.getElementById("plateFilmId").value = plate.filmId || "";
-
-      document.getElementById("plateProductName").value = plate.productName || "";
       document.getElementById("plateProductName").value = plate.productName || "";
       document.getElementById("plateFilmNumber").value = plate.filmNumber || "";
-      document.getElementById("plateNumber").value = plate.plateNumber || "";
+      document.getElementById("plateNumber").value = plate.plateNumber;
       document.getElementById("plateTension").value = plate.tension || "";
       document.getElementById("plateLocation").value = plate.location || "";
       document.getElementById("plateMesh").value = plate.mesh || "";
       document.getElementById("plateMaxQty").value = Number(plate.maxQty || 5000);
-
       document.getElementById("plateFormCard").style.display = "block";
       document.getElementById("plateNumber").focus();
     }
 
     function closePlateForm(){
-      const card = document.getElementById("plateFormCard");
-      if (card) card.style.display = "none";
-      document.getElementById("plateId").value = "";
-      document.getElementById("plateFilmId").value = "";
-      document.getElementById("plateProductName").value = "";
-      document.getElementById("plateFilmNumber").value = "";
-      document.getElementById("plateNumber").value = "";
-      document.getElementById("plateTension").value = "";
-      document.getElementById("plateLocation").value = "";
-      document.getElementById("plateMesh").value = "";
+      document.getElementById("plateFormCard").style.display = "none";
+      ["plateId","plateFilmId","plateProductName","plateFilmNumber","plateNumber","plateTension","plateLocation","plateMesh"].forEach(id => document.getElementById(id).value = "");
       document.getElementById("plateMaxQty").value = 5000;
     }
 
+    /* [수정] 판 저장 (평생 누적 변수 초기화 포함) */
     async function savePlate(e){
       e.preventDefault();
       if (currentMode !== MODE_ADMIN) return;
 
       const id = safeStr(document.getElementById("plateId").value);
       const filmId = safeStr(document.getElementById("plateFilmId").value);
-      const productName = safeStr(document.getElementById("plateProductName").value);
-      const filmNumber = safeStr(document.getElementById("plateFilmNumber").value);
+      const pn = safeStr(document.getElementById("plateProductName").value);
+      const fn = safeStr(document.getElementById("plateFilmNumber").value);
       const plateNumber = safeStr(document.getElementById("plateNumber").value);
       const tension = safeStr(document.getElementById("plateTension").value);
       const location = safeStr(document.getElementById("plateLocation").value);
@@ -2201,35 +2228,30 @@
       if (!plateNumber){ showToast("판 번호는 필수야."); return; }
 
       const payload = {
-        filmId, productName, filmNumber, plateNumber,
-        tension, location, mesh,
-        maxQty: maxQty > 0 ? maxQty : 5000,
+        filmId, productName: pn, filmNumber: fn, plateNumber,
+        tension, location, mesh, maxQty: maxQty > 0 ? maxQty : 5000,
         updatedAt: Date.now(),
       };
       
-      // 신규 등록일 때 초기값 설정 (평생 누적용 변수 추가)
       if (!id) {
         payload.createdAt = Date.now();
-        payload.usedQty = 0;      // 현재 작업용 (탈막 시 0됨)
-        payload.totalUsedQty = 0; // 평생 누적용 (계속 쌓임)
-        payload.status = payload.productName ? 'active' : 'empty';
+        payload.usedQty = 0;      
+        payload.totalUsedQty = 0; 
+        payload.status = pn ? 'active' : 'empty';
       }
 
       try{
         if (id){
           await db.collection(PLATE_COLLECTION).doc(id).set(payload, { merge:true });
-          await addHistory("판 수정", { id, productName, filmNumber, plateNumber }, ["판 수정"]);
-          showToast("판 수정 저장됨.");
+          await addHistory("판 수정", { id, productName: pn, filmNumber: fn, plateNumber }, ["판 수정"]);
+          showToast("수정 저장됨.");
         } else {
           const ref = await db.collection(PLATE_COLLECTION).add(payload);
-          await addHistory("판 등록", { id: ref.id, productName, filmNumber, plateNumber }, ["판 등록"]);
-          showToast("판 등록됨.");
+          await addHistory("판 등록", { id: ref.id, productName: pn, filmNumber: fn, plateNumber }, ["판 등록"]);
+          showToast("등록됨.");
         }
         closePlateForm();
-      } catch(e){
-        console.error(e);
-        showToast("판 저장 중 오류가 났어.");
-      }
+      } catch(e){ console.error(e); showToast("오류 발생"); }
     }
 
     /* ---------- 판 사용등록 / 히스토리 ---------- */
@@ -2354,20 +2376,31 @@
       }
     }
 	/* [추가 4단계] 판 탈막(초기화) 기능 */
+   /* [수정] 탈막 기능 (상세 기록 저장) */
     async function reclaimPlate(plate) {
-      if(!confirm(`[탈막] ${plate.plateNumber} 판을 초기화할까?\n현재 작업 기록은 0이 되지만 총 누적은 유지돼.`)) return;
+      if(!confirm(`[탈막] ${plate.plateNumber} 판을 초기화할까?\n현재 수량은 0이 되지만, 총 누적은 유지돼.`)) return;
       
       try {
-        // 내용은 비우고 상태는 'empty'로 변경
-        const payload = {
+        // 1. 판 상태 초기화
+        await db.collection(PLATE_COLLECTION).doc(plate.id).set({
           status: 'empty',
-          filmId: null,
-          productName: null,
-          filmNumber: null,
-          usedQty: 0, // ★ 이것만 0으로 초기화!
-          updatedAt: Date.now()
-          // totalUsedQty는 언급 안 함 -> 그대로 유지됨 (자산 관리)
-        };
+          filmId: null, productName: null, filmNumber: null,
+          usedQty: 0, updatedAt: Date.now()
+        }, { merge: true });
+        
+        // 2. 히스토리에 상세 정보 기록 (제품명 + 텐션)
+        const info = `[${plate.productName||"-"}] 작업종료 (텐션: ${plate.tension||"-"})`;
+        
+        await addHistory("탈막", { 
+          id: plate.id, plateNumber: plate.plateNumber, productName: plate.productName 
+        }, ["초기화", info]);
+        
+        showToast("탈막 완료! 빈 판이 되었어.");
+      } catch(e) {
+        console.error(e);
+        showToast("오류 발생");
+      }
+    }
         
         await db.collection(PLATE_COLLECTION).doc(plate.id).set(payload, { merge: true });
         
