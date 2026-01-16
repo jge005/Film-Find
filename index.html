@@ -2222,23 +2222,27 @@
     }
 
     /* ---------- 판 사용등록 / 히스토리 ---------- */
+      /* [수정 1단계] 사용량 비율 계산 & 뱃지 정보 */
     function getPlateUsedRatio(plate){
+      // 뱃지와 퍼센트는 '현재 작업 수량(usedQty)'을 기준으로 계산 (탈막하면 0됨)
       const used = Number(plate?.usedQty || 0);
       const max = Number(plate?.maxQty || 5000);
+      
       if (!max) return { pct: 0, used, max };
+      
       const pct = (used / max) * 100;
       return { pct, used, max };
-    }
+          }
 
   // ✅ 4) 사용량 뱃지(적정/유의/주의/경고) + 색 클래스 추가
-function getUsageBadgeInfo(plate){
-  const { pct } = getPlateUsedRatio(plate);
-
-  if (pct > 100) return { label: "초과", show: true, cls: "over" };
-  if (pct >= 90) return { label: "주의", show: true, cls: "danger" };
-  if (pct >= 70) return { label: "유의", show: true, cls: "warn" };
-  return { label: "적정", show: true, cls: "ok" };
-}
+  function getUsageBadgeInfo(plate){
+      const { pct } = getPlateUsedRatio(plate);
+      // 퍼센트에 따라 뱃지 색깔 결정
+      if (pct > 100) return { label: "초과", show: true, cls: "over" };
+      if (pct >= 90) return { label: "주의", show: true, cls: "danger" };
+      if (pct >= 70) return { label: "유의", show: true, cls: "warn" };
+      return { label: "적정", show: true, cls: "ok" };
+        }
 
     function openPlateUseSheet(plateId){
       if (currentMode !== MODE_ADMIN && currentMode !== MODE_PRINTER) return;
