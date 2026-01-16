@@ -572,10 +572,11 @@
 
   </style>
 
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-</head>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script></head>
 
 <body>
   <!-- 잠금 화면 (힌트/문구/설명 없음) -->
@@ -658,6 +659,23 @@
     <div class="device-modal-actions">
       <button class="btn btn-secondary btn-small" onclick="document.getElementById('reuseModal').style.display='none'">취소</button>
       <button class="btn btn-primary btn-small" id="btnConfirmReuse">확인</button>
+    </div>
+  </div>
+</div>
+
+<div id="qrModal" class="device-modal" style="z-index:2200;">
+  <div class="device-modal-card" style="text-align:center;">
+    <div class="device-modal-title">QR 명찰</div>
+    <div class="device-modal-text" id="qrTitleText">-</div>
+    
+    <div id="qrCanvas" style="margin:15px auto; display:flex; justify-content:center;"></div>
+    
+    <div class="device-modal-text" style="font-size:11px; color:#999; margin-top:5px;">
+      이 화면을 캡처하거나<br>라벨 프린터로 인쇄해서 판에 붙이세요.
+    </div>
+
+    <div class="device-modal-actions" style="justify-content:center; margin-top:15px;">
+      <button class="btn btn-secondary btn-small" onclick="document.getElementById('qrModal').style.display='none'">닫기</button>
     </div>
   </div>
 </div>
@@ -3470,6 +3488,28 @@ function bindViewerGestures() {
 
       // 리스트 다시 그리기
       renderPlatesList(currentSearchText);
+    }
+	
+	/* [추가] QR코드 생성 함수 */
+    function showPlateQR(text){
+      const modal = document.getElementById("qrModal");
+      const canvas = document.getElementById("qrCanvas");
+      if(!modal || !canvas) return;
+
+      document.getElementById("qrTitleText").innerText = text;
+      canvas.innerHTML = ""; // 기존 QR 지우기 (초기화)
+      
+      // QR 생성 (외부 라이브러리 사용)
+      new QRCode(canvas, {
+        text: text,
+        width: 128,
+        height: 128,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+      
+      modal.style.display = "flex";
     }
 
 
