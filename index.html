@@ -576,11 +576,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-</head>
-  </head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script></head>
 
 <body>
   <!-- 잠금 화면 (힌트/문구/설명 없음) -->
@@ -680,39 +676,6 @@
 
     <div class="device-modal-actions" style="justify-content:center; margin-top:15px;">
       <button class="btn btn-secondary btn-small" onclick="document.getElementById('qrModal').style.display='none'">닫기</button>
-	  
-	  <div id="scanModal" class="device-modal" style="z-index:2300;">
-  <div class="device-modal-card" style="width:100%; max-width:400px; text-align:center;">
-    <div class="device-modal-title">QR 스캔</div>
-    <div class="device-modal-text">판에 붙은 QR코드를 비춰주세요.</div>
-    
-    <div id="qr-reader" style="width:100%; margin:10px auto;"></div>
-
-    <div class="device-modal-actions" style="justify-content:center; margin-top:15px;">
-      <button class="btn btn-secondary btn-small" onclick="closeQRScanner()">닫기</button>
-    </div>
-  </div>
-</div>
-
-<div id="reclaimModal" class="device-modal" style="z-index:2400;">
-  <div class="device-modal-card">
-    <div class="device-modal-title">탈막(초기화) 사유</div>
-    <div class="device-modal-text">이 판을 왜 초기화해? (데이터 수집용)</div>
-    
-    <div class="form-row">
-      <label>주요 원인 선택</label>
-      <select id="reclaimReason">
-        <option value="작업종료(정상)">✅ 작업 완료 (정상)</option>
-        <option value="텐션저하">📉 텐션 떨어짐 (수명 다함)</option>
-        <option value="판터짐/손상">💥 판 터짐 / 망가짐</option>
-        <option value="인쇄불량">🚫 인쇄 불량 (핀트/번짐)</option>
-        <option value="기타">💬 기타 사유</option>
-      </select>
-    </div>
-
-    <div class="device-modal-actions">
-      <button class="btn btn-secondary btn-small" onclick="document.getElementById('reclaimModal').style.display='none'">취소</button>
-      <button class="btn btn-primary btn-small" id="btnConfirmReclaim">확인 (초기화)</button>
     </div>
   </div>
 </div>
@@ -867,13 +830,8 @@
     </div>
 
       <div class="top-bar">
-       <div class="top-bar">
-  <input type="text" id="searchInput" placeholder="검색" />
-
-  <button class="btn btn-secondary" id="scanBtn" onclick="openQRScanner()" style="padding:8px 12px; font-size:16px; margin-left:4px;">📷</button>
-  
-  <button class="btn btn-primary" id="newFilmBtn">+ 새 필름</button>
-</div>
+        <input type="text" id="searchInput" placeholder="검색" />
+        <button class="btn btn-primary" id="newFilmBtn">+ 새 필름</button>
       </div>
 
       <!-- 탭 -->
@@ -2528,53 +2486,36 @@
 	/* [추가 4단계] 판 탈막(초기화) 기능 */
    /* [수정] 탈막 기능 (상세 기록 저장) */
    /* [수정] 탈막 기능 (전체 히스토리 + 개별 판 히스토리 모두 기록) */
-    /* [수정] 탈막 로직 (사유 선택 기능 추가) */
-    let reclaimTargetId = null; // 지금 탈막하려는 판 번호 기억
-
-    // 1. 탈막 버튼 누르면 -> 사유 선택 팝업 열기
-    function reclaimPlate(id){
-      reclaimTargetId = id;
-      // 팝업 초기화 (항상 '작업종료'가 기본 선택되게)
-      document.getElementById("reclaimReason").value = "작업종료(정상)";
-      document.getElementById("reclaimModal").style.display = "flex";
-    }
-
-    // 2. 팝업에서 [확인] 누르면 -> 진짜 탈막 실행 (사유 저장)
-    async function confirmReclaim(){
-      if(!reclaimTargetId) return;
+    async function reclaimPlate(plate) {
+      if(!confirm(`[탈막] ${plate.plateNumber} 판을 초기화할까?\n현재 수량은 0이 되지만, 총 누적은 유지돼.`)) return;
       
-      const reason = document.getElementById("reclaimReason").value;
-      const p = plates.find(x => x.id === reclaimTargetId);
-      if(!p) return;
-
       try {
-        // 판 상태 초기화
-        await db.collection(PLATE_COLLECTION).doc(reclaimTargetId).set({
-            status: 'empty', 
-            filmId: null, 
-            productName: null, 
-            filmNumber: null, 
-            usedQty: 0, 
-            updatedAt: Date.now()
+        // 1. 기록할 텍스트 만들기 (제품명 + 텐션)
+        const info = `[${plate.productName||"제품없음"}] 작업종료 (텐션: ${plate.tension||"-"})`;
+
+        // 2. 판 상태 초기화 (DB 업데이트)
+        await db.collection(PLATE_COLLECTION).doc(plate.id).set({
+          status: 'empty',
+          filmId: null, productName: null, filmNumber: null,
+          usedQty: 0, updatedAt: Date.now()
         }, { merge: true });
         
-        // ★ 핵심: 로그에 '사유'를 같이 적어서 저장!
-        const msg = `[탈막] ${p.productName || "제품없음"} 종료 (사유: ${reason})`;
-        
-        await db.collection(PLATE_COLLECTION).doc(reclaimTargetId).collection(PLATE_USAGE_SUB).add({
-            who: '시스템', 
-            qty: 0, 
-            memo: msg, // 여기에 "사유: 텐션저하" 같은 게 영원히 남음
-            reason: reason, // 나중을 위해 별도 필드로도 저장 (분석용)
-            timestamp: Date.now()
+        // 3. ★ [추가된 기능] 개별 판 히스토리(Usage)에 '탈막 기록' 남기기
+        // (이게 들어가야 판별 히스토리에서도 보입니다!)
+        await db.collection(PLATE_COLLECTION).doc(plate.id).collection(PLATE_USAGE_SUB).add({
+            who: "시스템(탈막)",  // 누가
+            qty: 0,              // 수량 (0)
+            memo: info,          // 내용 (제품명+텐션)
+            timestamp: Date.now(),
+            deviceName: getDeviceLabel() || ""
         });
 
-        // 전체 히스토리에도 기록
-        await addHistory("탈막", { plateNumber: p.plateNumber, productName: p.productName }, [`사유: ${reason}`]);
-
-        showToast("탈막 완료! 데이터가 기록됐어.");
-        document.getElementById("reclaimModal").style.display = "none";
-      
+        // 4. 전체 히스토리에 기록 (기존 기능)
+        await addHistory("탈막", { 
+          id: plate.id, plateNumber: plate.plateNumber, productName: plate.productName 
+        }, ["초기화", info]);
+        
+        showToast("탈막 완료! 개별 기록에도 저장됐어.");
       } catch(e) {
         console.error(e);
         showToast("오류 발생");
@@ -3373,8 +3314,6 @@ document.getElementById("exportBtn").onclick = downloadExcelReport;
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
       }
-	  
-	  document.getElementById("btnConfirmReclaim").onclick = confirmReclaim;
 
 
 
@@ -3601,69 +3540,6 @@ function bindViewerGestures() {
       });
       
       modal.style.display = "flex";
-    }
-	
-	/* [추가] 인앱 QR 스캐너 로직 */
-    let html5QrcodeScanner = null;
-
-    function openQRScanner() {
-      document.getElementById("scanModal").style.display = "flex";
-
-      // 스캐너가 없으면 새로 생성
-      if (!html5QrcodeScanner) {
-        html5QrcodeScanner = new Html5Qrcode("qr-reader");
-      }
-
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-      
-      // 후면 카메라(environment) 사용
-      html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess)
-      .catch(err => {
-        console.error("카메라 시작 실패", err);
-        showToast("카메라를 켤 수 없어. 권한을 확인해봐.");
-        document.getElementById("scanModal").style.display = "none";
-      });
-    }
-
-    function closeQRScanner() {
-      document.getElementById("scanModal").style.display = "none";
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.stop().then(() => {
-          html5QrcodeScanner.clear();
-        }).catch(err => console.error("카메라 중지 실패", err));
-      }
-    }
-
-    function onScanSuccess(decodedText, decodedResult) {
-      // QR 인식 성공!
-      console.log(`Scan result: ${decodedText}`);
-      
-      // 1. 소리나 진동 효과 (선택사항)
-      if(navigator.vibrate) navigator.vibrate(200);
-
-      // 2. 내용 분석 (주소인지 그냥 텍스트인지)
-      let searchText = decodedText;
-
-      // 만약 우리 앱 주소(?q=...) 형식이면 검색어만 추출
-      if (decodedText.includes("?q=")) {
-        const parts = decodedText.split("?q=");
-        if (parts.length > 1) {
-          searchText = decodeURIComponent(parts[1]);
-        }
-      }
-
-      // 3. 검색 실행
-      const searchInput = document.getElementById("searchInput");
-      if(searchInput) searchInput.value = searchText;
-      currentSearchText = searchText;
-      
-      // 4. 판 탭으로 이동해서 검색
-      currentTab = "plates";
-      setActiveTabUI(); // 탭 UI 갱신 (여기서 리스트 렌더링됨)
-      
-      // 5. 모달 닫기
-      closeQRScanner();
-      showToast(`스캔 완료: ${searchText}`);
     }
 
 
