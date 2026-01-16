@@ -2484,8 +2484,8 @@
     }
         
 
-   /* [수정] 판 히스토리 열기 (그래프 추가 버전) */
-    let myChart = null; // 차트 변수 (전역)
+   /* [수정] 판 히스토리 (수량 막대 + 텐션 꺾은선 그래프 적용) */
+    let myChart = null; // 차트 담을 그릇
 
     async function openPlateHistorySheet(plateId){
       const plate = plates.find(p => p.id === plateId);
@@ -2493,98 +2493,120 @@
       currentPlateHistoryId = plateId;
 
       const sheet = document.getElementById("plateHistorySheet");
-      const title = document.getElementById("plateHistoryTitle");
-      const sub = document.getElementById("plateHistorySub");
-      const meta = document.getElementById("plateHistoryMeta");
       const list = document.getElementById("plateUsageList");
+      const meta = document.getElementById("plateHistoryMeta");
 
-      if (title) title.textContent = `판 히스토리 · ${plate.plateNumber || ""}`;
-      if (sub) sub.textContent = "작업량 추이 및 기록";
-
-      // 1. 상단 요약 칩
-      if (meta){
-        const r = getPlateUsedRatio(plate);
-        const pct = Math.round(r.pct);
-        meta.innerHTML = "";
-        meta.innerHTML += `<div class="usage-chip">제품: ${plate.productName || "-"}</div>`;
-        meta.innerHTML += `<div class="usage-chip">필름: ${plate.filmNumber || "-"}</div>`;
-        meta.innerHTML += `<div class="progress-pill" style="background:${currentMode==='night'?'#333':'#fff'}">누적: ${r.used.toLocaleString()}장</div>`;
+      // 1. 제목 및 상단 정보
+      document.getElementById("plateHistoryTitle").textContent = `판 히스토리 · ${plate.plateNumber}`;
+      
+      if(meta) {
+         const r = getPlateUsedRatio(plate);
+         meta.innerHTML = `<div class="usage-chip">${plate.productName||"-"}</div><div class="progress-pill">현재 텐션: ${plate.tension||"-"}</div>`;
       }
 
-      if (list) list.innerHTML = "<div style='padding:20px;text-align:center'>불러오는 중...</div>";
+      // 2. 그래프 영역 만들기 (없으면 생성, 리스트 위에 삽입)
+      // 기존에 차트 캔버스가 없으면 여기서 강제로 만듭니다.
+      let chartContainer = sheet.querySelector(".chart-container");
+      if(!chartContainer) {
+          chartContainer = document.createElement("div");
+          chartContainer.className = "chart-container";
+          chartContainer.style.cssText = "padding:10px; background:#f8f9fa; border-radius:12px; margin-bottom:10px; border:1px solid #eee;";
+          chartContainer.innerHTML = '<canvas id="plateUsageChart" style="width:100%; height:180px;"></canvas>';
+          // 리스트(plateUsageList) 바로 위에 끼워넣기
+          if(list) list.parentNode.insertBefore(chartContainer, list);
+      }
+
+      if (list) list.innerHTML = "<div style='padding:20px;text-align:center;color:#999'>데이터 로딩 중...</div>";
 
       try {
-        // 2. 데이터 가져오기
+        // 3. 데이터 가져오기 (최근 30개)
         const snap = await db.collection(PLATE_COLLECTION).doc(plate.id)
-          .collection(PLATE_USAGE_SUB)
-          .orderBy("timestamp", "desc")
-          .limit(50) // 최근 50개만 그래프에 표시
-          .get();
-
+          .collection(PLATE_USAGE_SUB).orderBy("timestamp", "desc").limit(30).get();
+        
         const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        // 3. 리스트 그리기
+        // 4. 리스트 그리기
         if (list) list.innerHTML = "";
-        if (!rows.length){
-           if(list) list.innerHTML = "<div class='history-empty'>기록이 없어.</div>";
-        } else {
-           rows.forEach((r) => {
-            const row = document.createElement("div");
-            row.className = "usage-row";
-            const ts = formatTs(r.timestamp || 0);
-            row.innerHTML =
-              `<div class="u-top"><div class="u-who">${safeStr(r.who)}</div><div class="u-time">${ts}</div></div>` +
-              `<div style="margin-top:4px;display:flex;justify-content:space-between">` + 
-                `<span>수량: <strong style="color:var(--primary-1)">${Number(r.qty||0).toLocaleString()}</strong></span>` +
-              `</div>` +
-              (safeStr(r.memo) ? `<div class="u-memo">${safeStr(r.memo)}</div>` : "");
-            list.appendChild(row);
-          });
-        }
+        if (!rows.length && list) list.innerHTML = "<div class='history-empty'>기록이 없어.</div>";
+        
+        rows.forEach(r => {
+            const div = document.createElement("div");
+            div.className = "usage-row";
+            div.innerHTML = `<div class="u-top"><div class="u-who">${r.who||"-"}</div><div class="u-time">${formatTs(r.timestamp)}</div></div>
+                             <div style="margin-top:4px">수량: <b>${(r.qty||0).toLocaleString()}</b> <span style="color:#888;font-size:11px;margin-left:8px">${r.memo||""}</span></div>`;
+            list.appendChild(div);
+        });
 
-        // 4. ★ 그래프 그리기 (Chart.js)
+        // 5. ★ 차트 그리기 (핵심!)
         const ctx = document.getElementById('plateUsageChart');
         if(ctx) {
-          // 기존 차트가 있으면 파괴 (안 그러면 겹쳐 보임)
-          if(myChart) myChart.destroy();
+          if(myChart) myChart.destroy(); // 기존 차트 삭제 (안 하면 겹쳐 보임)
           
-          // 데이터 가공 (날짜별 or 회차별 수량)
-          // 그래프는 시간 순서대로 보여야 하므로 배열을 뒤집음(reverse)
-          const chartData = rows.slice().reverse(); 
-          const labels = chartData.map(d => {
-             const date = new Date(d.timestamp);
-             return `${date.getMonth()+1}/${date.getDate()}`; // 월/일
+          // 시간 순서대로 뒤집기 (과거 -> 현재)
+          const chartData = rows.slice().reverse();
+          
+          const labels = chartData.map(d => { 
+             const dt = new Date(d.timestamp); 
+             return `${dt.getMonth()+1}/${dt.getDate()}`; 
           });
-          const dataPoints = chartData.map(d => d.qty || 0);
+          
+          const qtyData = chartData.map(d => d.qty || 0);
+          
+          // [중요] 메모에서 '텐션: 숫자' 또는 '텐션 숫자'를 찾아서 뽑아냄
+          const tensionData = chartData.map(d => {
+             const txt = d.memo || "";
+             const match = txt.match(/텐션[:\s]*([\d\.]+)/); // "텐션 23" 또는 "텐션: 23.5" 찾기
+             return match ? parseFloat(match[1]) : null;
+          });
 
           myChart = new Chart(ctx, {
-            type: 'bar', // 막대 그래프
+            type: 'bar',
             data: {
               labels: labels,
-              datasets: [{
-                label: '작업 수량',
-                data: dataPoints,
-                backgroundColor: 'rgba(127, 157, 255, 0.6)',
-                borderColor: 'rgba(127, 157, 255, 1)',
-                borderWidth: 1,
-                borderRadius: 4
-              }]
+              datasets: [
+                { 
+                  label: '작업 수량', 
+                  data: qtyData, 
+                  backgroundColor: 'rgba(127, 157, 255, 0.5)', 
+                  yAxisID: 'y', 
+                  order: 2 
+                },
+                { 
+                  type: 'line', 
+                  label: '텐션', 
+                  data: tensionData, 
+                  borderColor: '#ff6b81', // 빨간색 선
+                  backgroundColor: '#ff6b81', 
+                  borderWidth: 2, 
+                  pointRadius: 4, 
+                  spanGaps: true, // 중간에 값 없어도 선 이어주기
+                  yAxisID: 'y1', 
+                  order: 1 
+                }
+              ]
             },
             options: {
-              responsive: true,
+              responsive: true, 
               maintainAspectRatio: false,
-              plugins: { legend: { display: false } }, // 범례 숨김
+              interaction: { mode: 'index', intersect: false },
               scales: {
-                y: { beginAtZero: true, grid: { display:false } },
-                x: { grid: { display:false } }
+                y: { beginAtZero: true, display: false }, // 왼쪽 축(수량) 숨김
+                y1: { 
+                    type: 'linear', 
+                    display: true, 
+                    position: 'right', 
+                    grid: { drawOnChartArea: false }, 
+                    min: 10, // 텐션 그래프 범위 설정 (예쁘게 보이게)
+                    title: { display: true, text: '텐션' } 
+                },
+                x: { grid: { display: false } }
               }
             }
           });
         }
-
         sheet.classList.add("show");
-      } catch(e){
-        console.error(e);
+
+      } catch(e){ console.error(e);
         showToast("히스토리 로드 실패");
       }
     }
