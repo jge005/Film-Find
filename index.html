@@ -3490,23 +3490,23 @@ function bindViewerGestures() {
       renderPlatesList(currentSearchText);
     }
 	
-	/* [추가] QR코드 생성 함수 */
+	/* [수정] QR코드 생성 (스마트 URL 방식) */
     function showPlateQR(text){
       const modal = document.getElementById("qrModal");
       const canvas = document.getElementById("qrCanvas");
       
-      // 혹시라도 모달이나 캔버스가 없으면 중단
-      if(!modal || !canvas) {
-        console.error("QR 모달을 찾을 수 없어."); 
-        return;
-      }
+      if(!modal || !canvas) { console.error("QR 요소 없음"); return; }
 
       document.getElementById("qrTitleText").innerText = text;
-      canvas.innerHTML = ""; // 기존 QR 지우기 (초기화)
+      canvas.innerHTML = "";
       
-      // QR 생성 (외부 도구 사용)
+      // ★ 여기가 핵심! 내 홈페이지 주소 + 검색어(?q=...) 조합하기
+      // 예: https://myapp.com/?q=300mesh-1
+      const currentUrl = window.location.href.split('?')[0]; 
+      const smartUrl = `${currentUrl}?q=${encodeURIComponent(text)}`;
+
       new QRCode(canvas, {
-        text: text,
+        text: smartUrl, // 이제 주소가 들어갑니다!
         width: 128,
         height: 128,
         colorDark : "#000000",
@@ -3523,6 +3523,21 @@ function bindViewerGestures() {
       bindEvents();
       setTheme(getTheme());
       applyViewMode();
+	  
+	  // 👇 [추가] QR로 들어왔을 때 자동 검색 기능
+      const urlParams = new URLSearchParams(window.location.search);
+      const query = urlParams.get('q'); // 주소창에서 ?q=... 찾기
+      
+      if(query){
+          // 검색어가 있으면 입력창에 넣고 검색 변수 업데이트
+          // (데이터 로딩이 끝나면 이 검색어로 리스트가 뜹니다)
+          const decoded = decodeURIComponent(query);
+          const searchInput = document.getElementById("searchInput");
+          if(searchInput) searchInput.value = decoded;
+          currentSearchText = decoded;
+          showToast(`QR 검색: ${decoded}`);
+      }
+      // 👆 여기까지 추가
 
       // mode 복구(세션)
       await loadAuthConfig();
