@@ -1372,6 +1372,7 @@
       unsubscribePlates = db.collection(PLATE_COLLECTION).onSnapshot(
         (snapshot) => {
           plates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+		  updateDashboard();
           if (currentTab === "plates") renderPlatesList(currentSearchText);
         },
         (error) => {
@@ -3279,6 +3280,31 @@ function bindViewerGestures() {
     viewerState.panning = false;
   });
 }
+/* [추가] 대시보드 숫자 계산 함수 */
+    function updateDashboard(){
+      const dashSection = document.getElementById("dashboardSection");
+      if(!dashSection) return;
+
+      // 1. 활성 판
+      const activeCount = plates.filter(p => p.status !== 'empty').length;
+      
+      // 2. 빈 판
+      const emptyCount = plates.filter(p => p.status === 'empty').length;
+      
+      // 3. 수명 주의
+      const warnCount = plates.filter(p => {
+        if(p.status === 'empty') return false;
+        const r = getPlateUsedRatio(p);
+        return r.pct >= 90;
+      }).length;
+
+      document.getElementById("dashActive").textContent = activeCount + "개";
+      document.getElementById("dashEmpty").textContent = emptyCount + "개";
+      document.getElementById("dashWarn").textContent = warnCount + "개";
+      
+      dashSection.style.display = (currentMode === MODE_VIEWER) ? "none" : "grid";
+    }
+// 👆👆👆 여기까지 붙여넣기 👆👆👆
 
 
     /* ---------- 초기화 ---------- */
