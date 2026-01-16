@@ -2954,6 +2954,7 @@
       if (pwInput) pwInput.value = "";
     }
 
+    /* [수정] 잠금 해제 (QR 검색어 유지 기능 추가) */
     function unlock(mode){
       sessionStorage.setItem(UNLOCK_KEY, "1");
       sessionStorage.setItem(UNLOCK_MODE_KEY, mode);
@@ -2969,12 +2970,36 @@
       // 리스너 시작
       startFilmsListener();
       startPlatesListener();
-	  updateDashboard();
+      updateDashboard();
 
-      // 기본 탭
+      // 기본 탭 설정
       if (currentMode === MODE_PRINTER) currentTab = "plates";
       else currentTab = "films";
+      
+      // 화면 초기화 (여기서 검색어가 한번 지워짐)
       setActiveTabUI();
+
+      // ★ [추가] QR로 들어온 경우, 지워진 검색어를 다시 복구하고 검색 실행!
+      const urlParams = new URLSearchParams(window.location.search);
+      const query = urlParams.get('q');
+      
+      if(query){
+          const decoded = decodeURIComponent(query);
+          
+          // QR은 보통 판(Plate)을 찾으므로 탭을 '판'으로 강제 전환
+          currentTab = "plates";
+          document.getElementById("tabFilmsBtn").classList.remove("active");
+          document.getElementById("tabPlatesBtn").classList.add("active");
+          
+          // 검색창에 값 다시 넣기
+          const si = document.getElementById("searchInput");
+          if(si) si.value = decoded;
+          currentSearchText = decoded;
+          
+          // 검색 실행
+          renderPlatesList(decoded);
+          showToast(`QR 자동 검색: ${decoded}`);
+      }
     }
 
     async function handleLogin(){
