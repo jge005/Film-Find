@@ -2621,41 +2621,169 @@ content.appendChild(img);
           memoBtn.textContent = "메모";
           memoBtn.addEventListener("click", () => openPlateMemoSheet(plate.id));
           btnWrap.appendChild(memoBtn);
+    /* [수정 2단계] 판 리스트 렌더링 (판 번호 메인 + 탈막/폐기 + 총누적 표시) */
+    function renderPlatesList(filterText = ""){
+      const listEl = document.getElementById("list");
+      const emptyText = document.getElementById("emptyText");
+      if (!listEl || !emptyText) return;
 
-          const editBtn = document.createElement("button");
-          editBtn.className = "btn btn-ghost btn-small";
-          editBtn.textContent = "수정";
-          editBtn.addEventListener("click", () => openPlateFormForEdit(plate.id));
-          btnWrap.appendChild(editBtn);
+      listEl.innerHTML = "";
+      currentSearchText = filterText || "";
 
-          const delBtn = document.createElement("button");
-          delBtn.className = "btn btn-danger btn-small";
-          delBtn.textContent = "삭제";
+      const text = safeStr(filterText).toLowerCase();
+
+      let filtered = plates.filter(p => {
+        if (!text) return true;
+        const combined = (p.plateNumber || "") + " " + (p.productName || "") + " " + (p.filmNumber || "") + " " + (p.tension || "") + " " + (p.location || "") + " " + (p.mesh || "");
+        return combined.toLowerCase().includes(text);
+      });
+
+      // 정렬: 판 번호순 우선
+      const sortOpt = getSortOption();
+      filtered = filtered.slice().sort((a,b) => {
+        if (sortOpt === "name") return (a.productName || "").localeCompare(b.productName || "", "ko");
+        if (sortOpt === "number") return (a.plateNumber || "").localeCompare(b.plateNumber || "", "ko"); 
+        return (b.updatedAt || 0) - (a.updatedAt || 0);
+      });
+
+      updateCountBar(filtered.length, plates.length, !!text);
+
+      let toRender = filtered;
+      if (!text){
+        visibleCount = Math.min(visibleCount || VISIBLE_STEP, filtered.length);
+        toRender = filtered.slice(0, visibleCount);
+      }
+
+      if (!filtered.length){
+        emptyText.style.display = "block";
+        emptyText.textContent = "등록된 판이 없어.";
+        return;
+      } else {
+        emptyText.style.display = "none";
+      }
+
+      toRender.forEach((plate) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        
+        const isEmpty = (plate.status === 'empty');
+        const r = getPlateUsedRatio(plate); // 현재 수량 기준 비율
+
+        // 1. 뱃지
+        const badge = document.createElement("div");
+        if(isEmpty) {
+             badge.className = "warn-badge ok show";
+             badge.textContent = "빈 판 (대기)";
+             badge.style.background = "#f3f4f6"; badge.style.color = "#374151"; badge.style.border = "1px solid #d1d5db";
+        } else {
+             const b = getUsageBadgeInfo(plate);
+             badge.className = `warn-badge ${b.cls} show`;
+             badge.textContent = `${b.label} · ${Math.round(r.pct)}%`;
+        }
+        card.appendChild(badge);
+
+        // 2. 이미지
+        const content = document.createElement("div");
+        content.className = "card-content";
+        let film = null;
+        if (!isEmpty) {
+             film = films.find(f => f.id === plate.filmId) || films.find(f => f.filmNumber && f.filmNumber === plate.filmNumber);
+        }
+        if (film && film.imageDataUrl) {
+          const img = document.createElement("img");
+          img.src = film.imageDataUrl;
+          img.style.width = "70px"; img.style.height = "70px"; img.style.objectFit = "cover"; img.style.borderRadius = "12px"; img.style.flexShrink = "0"; img.style.marginRight="10px"; img.style.cursor = "pointer"; img.style.background = "#eef1ff";
+          img.addEventListener("click", () => openImageViewer(film.imageDataUrl));
+          card.insertBefore(img, content); 
+        } 
+        card.appendChild(content);
+
+        // 3. 메인 정보
+        const rowMain = document.createElement("div");
+        rowMain.className = "card-row-main";
+        const title = document.createElement("div");
+        title.className = "card-title";
+        title.style.fontSize = "17px"; 
+        title.textContent = plate.plateNumber || "(번호 없음)";
+        const tag = document.createElement("div");
+        tag.className = "card-tag";
+        tag.textContent = isEmpty ? "-" : (plate.productName || "제품명 없음");
+        rowMain.appendChild(title);
+        rowMain.appendChild(tag);
+        content.appendChild(rowMain);
+
+        const mkRow = (label, val) => `<div class="card-row"><span class="label">${label}</span>${val}</div>`;
+        content.innerHTML += mkRow("MESH", plate.mesh || "-");
+        
+        if(!isEmpty){
+            content.innerHTML += mkRow("필름번호", plate.filmNumber || "-");
+            content.innerHTML += mkRow("현재작업", `<strong style="color:var(--primary-1)">${(plate.usedQty || 0).toLocaleString()}장</strong>`);
+            content.innerHTML += mkRow("텐션", plate.tension || "-");
+            content.innerHTML += mkRow("위치", plate.location || "-");
+        } else {
+            content.innerHTML += mkRow("상태", "<span style='color:#9ca3af'>대기 중 (작업 가능)</span>");
+        }
+
+        // 4. 푸터 (총 누적)
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+        const usageDiv = document.createElement("div");
+        usageDiv.className = "last-used";
+        usageDiv.style.color = "#6b7280"; usageDiv.style.fontWeight = "500";
+        // 평생 누적 수량 (없으면 현재수량으로 대체)
+        const totalQty = (plate.totalUsedQty !== undefined) ? plate.totalUsedQty : (plate.usedQty || 0);
+        usageDiv.innerHTML = `총 누적: <span style="color:${currentMode==='night'?'#fff':'#374151'}">${Number(totalQty).toLocaleString()}</span> / ${r.max}`;
+        footer.appendChild(usageDiv);
+
+        const btnWrap = document.createElement("div");
+        btnWrap.className = "card-buttons";
+
+        // 버튼 로직
+        if (currentMode === MODE_PRINTER){
+           if(!isEmpty){
+               const useBtn = document.createElement("button"); useBtn.className = "btn btn-primary btn-small"; useBtn.textContent = "사용등록";
+               useBtn.addEventListener("click", () => openPlateUseSheet(plate.id)); btnWrap.appendChild(useBtn);
+           }
+           const histBtn = document.createElement("button"); histBtn.className = "btn btn-secondary btn-small"; histBtn.textContent = "히스토리";
+           histBtn.addEventListener("click", () => openPlateHistorySheet(plate.id)); btnWrap.appendChild(histBtn);
+           const memoBtn = document.createElement("button"); memoBtn.className = "btn btn-ghost btn-small" + (safeStr(plate.memo) ? " btn-memo-has" : ""); memoBtn.textContent = "메모";
+           memoBtn.addEventListener("click", () => openPlateMemoSheet(plate.id)); btnWrap.appendChild(memoBtn);
+        }
+        else if (currentMode === MODE_VIEWER){
+           const histBtn = document.createElement("button"); histBtn.className = "btn btn-secondary btn-small"; histBtn.textContent = "히스토리";
+           histBtn.addEventListener("click", () => openPlateHistorySheet(plate.id)); btnWrap.appendChild(histBtn);
+           const memoBtn = document.createElement("button"); memoBtn.className = "btn btn-ghost btn-small"; memoBtn.textContent = "메모";
+           memoBtn.addEventListener("click", () => openPlateMemoSheet(plate.id)); btnWrap.appendChild(memoBtn);
+        }
+        else if (currentMode === MODE_ADMIN){
+          if(!isEmpty){
+              const useBtn = document.createElement("button"); useBtn.className = "btn btn-primary btn-small"; useBtn.textContent = "사용";
+              useBtn.addEventListener("click", () => openPlateUseSheet(plate.id)); btnWrap.appendChild(useBtn);
+              // ★ 탈막 버튼
+              const reclaimBtn = document.createElement("button"); reclaimBtn.className = "btn btn-secondary btn-small";
+              reclaimBtn.style.background = "#fef08a"; reclaimBtn.style.color = "#854d0e"; reclaimBtn.textContent = "✨ 탈막";
+              reclaimBtn.addEventListener("click", () => reclaimPlate(plate)); btnWrap.appendChild(reclaimBtn);
+          }
+          const histBtn = document.createElement("button"); histBtn.className = "btn btn-secondary btn-small"; histBtn.textContent = "기록";
+          histBtn.addEventListener("click", () => openPlateHistorySheet(plate.id)); btnWrap.appendChild(histBtn);
+          const memoBtn = document.createElement("button"); memoBtn.className = "btn btn-ghost btn-small" + (safeStr(plate.memo) ? " btn-memo-has" : ""); memoBtn.textContent = "메모";
+          memoBtn.addEventListener("click", () => openPlateMemoSheet(plate.id)); btnWrap.appendChild(memoBtn);
+          const editBtn = document.createElement("button"); editBtn.className = "btn btn-ghost btn-small"; editBtn.textContent = "수정";
+          editBtn.addEventListener("click", () => openPlateFormForEdit(plate.id)); btnWrap.appendChild(editBtn);
+          // ★ 폐기 버튼
+          const delBtn = document.createElement("button"); delBtn.className = "btn btn-danger btn-small"; delBtn.textContent = "폐기";
           delBtn.addEventListener("click", async () => {
-            if (!confirm("이 판을 삭제할까?")) return;
+            if (!confirm(`[주의] ${plate.plateNumber} 판을 완전히 폐기할까?\n이 작업은 되돌릴 수 없어.`)) return;
             try{
               await db.collection(PLATE_COLLECTION).doc(plate.id).delete();
-              await addHistory("판 삭제", {
-                id: plate.id,
-                productName: plate.productName,
-                filmNumber: plate.filmNumber,
-                plateNumber: plate.plateNumber
-              }, ["판 삭제"]);
-              showToast("판 삭제됨.");
-            } catch(e){
-              console.error(e);
-              showToast("판 삭제 중 오류.");
-            }
+              await addHistory("판 폐기", { plateNumber: plate.plateNumber }, ["영구 삭제"]);
+              showToast("판이 폐기되었어.");
+            } catch(e){ console.error(e); showToast("폐기 중 오류."); }
           });
           btnWrap.appendChild(delBtn);
         }
-
-        footer.appendChild(btnWrap);
-        content.appendChild(footer);
-        card.appendChild(content);
-        listEl.appendChild(card);
+        footer.appendChild(btnWrap); content.appendChild(footer); card.appendChild(content); listEl.appendChild(card);
       });
-
       applyViewMode();
     }
 
