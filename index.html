@@ -3494,12 +3494,17 @@ function bindViewerGestures() {
     function showPlateQR(text){
       const modal = document.getElementById("qrModal");
       const canvas = document.getElementById("qrCanvas");
-      if(!modal || !canvas) return;
+      
+      // 혹시라도 모달이나 캔버스가 없으면 중단
+      if(!modal || !canvas) {
+        console.error("QR 모달을 찾을 수 없어."); 
+        return;
+      }
 
       document.getElementById("qrTitleText").innerText = text;
       canvas.innerHTML = ""; // 기존 QR 지우기 (초기화)
       
-      // QR 생성 (외부 라이브러리 사용)
+      // QR 생성 (외부 도구 사용)
       new QRCode(canvas, {
         text: text,
         width: 128,
