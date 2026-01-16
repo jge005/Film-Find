@@ -619,6 +619,27 @@
   </div>
 </div>
 
+<div id="reuseModal" class="device-modal">
+  <div class="device-modal-card">
+    <div class="device-modal-title">재사용 설정</div>
+    <div class="device-modal-text" id="reuseModalTitle">-</div>
+    
+    <div class="form-row">
+      <label>새로 잰 텐션</label>
+      <input type="text" id="reuseTension" placeholder="예: 23.5">
+    </div>
+    <div class="form-row">
+      <label>이번 작업 최대수량</label>
+      <input type="number" id="reuseMaxQty" value="5000">
+    </div>
+
+    <div class="device-modal-actions">
+      <button class="btn btn-secondary btn-small" onclick="document.getElementById('reuseModal').style.display='none'">취소</button>
+      <button class="btn btn-primary btn-small" id="btnConfirmReuse">확인</button>
+    </div>
+  </div>
+</div>
+
   <!-- ====== 필름 메모 슬라이드 ====== -->
   <div id="memoSheet" class="memo-sheet">
     <div id="memoSheetBackdrop" class="memo-sheet-backdrop"></div>
@@ -2148,23 +2169,26 @@
     /* ---------- 판 폼 ---------- */
     /* ---------- 판 폼 (재활용 로직 포함) ---------- */
     
-    /* [수정] 판 등록 버튼 클릭 시 (빈 판 선택 로직 + MESH 자동제안) */
+    /* ---------- 판 폼 (재활용 + 설정 팝업 로직) ---------- */
+    
+    let reuseTarget = null; // 재사용할 대상 임시 저장용
+
+    /* [1] 판 등록 버튼 클릭 */
     function openPlateFormFromFilm(filmId){
       if (currentMode !== MODE_ADMIN) return;
       const film = films.find(f => f.id === filmId);
       if (!film) return;
 
-      // 빈 판(status == 'empty') 검색
       const emptyPlates = plates.filter(p => p.status === 'empty');
 
       if (emptyPlates.length === 0) {
-        openNewPlateForm(film); // 없으면 바로 새 등록
+        openNewPlateForm(film); 
       } else {
-        showEmptyPlatePicker(film, emptyPlates); // 있으면 목록 보여주기
+        showEmptyPlatePicker(film, emptyPlates);
       }
     }
 
-    /* [추가] 빈 판 선택 모달 표시 */
+    /* [2] 빈 판 목록 보여주기 */
     function showEmptyPlatePicker(film, emptyList) {
       const modal = document.getElementById("emptyPlateModal");
       const listEl = document.getElementById("emptyPlateList");
@@ -2180,7 +2204,9 @@
         const meshStyle = isSameMesh ? "color:var(--primary-1);font-weight:bold" : "color:#999";
         
         row.innerHTML = `<div><strong>${p.plateNumber}</strong> <span style="${meshStyle}">(${p.mesh||"-"}목)</span></div><div style="font-size:11px;color:#777">누적: ${(p.totalUsedQty||0).toLocaleString()}</div>`;
-        row.onclick = () => assignFilmToPlate(film, p);
+        
+        // ★ 클릭 시 바로 저장이 아니라 '설정 팝업'을 띄움
+        row.onclick = () => openReuseModal(film, p);
         listEl.appendChild(row);
       });
 
@@ -2189,22 +2215,46 @@
       modal.style.display = "flex";
     }
 
-    /* [추가] 기존 빈 판에 필름 할당 (재활용) */
-    async function assignFilmToPlate(film, plate) {
-      if(!confirm(`[${plate.plateNumber}] 판에\n[${film.productName}] 작업을 세팅할까?`)) return;
-      try {
-        await db.collection(PLATE_COLLECTION).doc(plate.id).set({
-          status: 'active', filmId: film.id, productName: film.productName, filmNumber: film.filmNumber,
-          usedQty: 0, updatedAt: Date.now()
-        }, { merge: true });
-        
-        await addHistory("재사용", { id: plate.id, plateNumber: plate.plateNumber, productName: film.productName }, ["빈 판에 새 필름 할당"]);
-        document.getElementById("emptyPlateModal").style.display = "none";
-        showToast("판 세팅 완료!");
-      } catch(e) { console.error(e); showToast("오류 발생"); }
+    /* [3] 재사용 설정 팝업 열기 (텐션/수량 입력) */
+    function openReuseModal(film, plate) {
+      document.getElementById("emptyPlateModal").style.display = "none"; // 목록 창 닫기
+      
+      reuseTarget = { film, plate }; // 대상 저장
+      
+      document.getElementById("reuseModalTitle").textContent = `${plate.plateNumber} 판을 다시 사용할게.`;
+      document.getElementById("reuseTension").value = ""; // 텐션은 매번 새로 입력
+      document.getElementById("reuseMaxQty").value = "5000"; // 기본값
+      
+      document.getElementById("reuseModal").style.display = "flex"; // 설정 창 열기
     }
 
-    /* [추가] 새 판 등록 폼 열기 (기존 로직) */
+    /* [4] 최종 저장 (설정값 적용) */
+    document.getElementById("btnConfirmReuse").onclick = async () => {
+      if(!reuseTarget) return;
+      const { film, plate } = reuseTarget;
+      const tension = safeStr(document.getElementById("reuseTension").value);
+      const maxQty = Number(document.getElementById("reuseMaxQty").value);
+
+      try {
+        await db.collection(PLATE_COLLECTION).doc(plate.id).set({
+          status: 'active',
+          filmId: film.id, 
+          productName: film.productName, 
+          filmNumber: film.filmNumber,
+          tension: tension,   // ★ 입력한 텐션 적용
+          maxQty: maxQty,     // ★ 입력한 최대수량 적용
+          usedQty: 0, 
+          updatedAt: Date.now()
+        }, { merge: true });
+        
+        await addHistory("재사용", { id: plate.id, plateNumber: plate.plateNumber, productName: film.productName }, ["빈 판 재할당", `텐션: ${tension}`]);
+        
+        document.getElementById("reuseModal").style.display = "none";
+        showToast("판 세팅 완료! 작업 시작해.");
+      } catch(e) { console.error(e); showToast("오류 발생"); }
+    };
+
+    /* [5] 새 판 등록 폼 (기존 유지) */
     function openNewPlateForm(film) {
       document.getElementById("plateId").value = "";
       document.getElementById("plateFilmId").value = film.id;
@@ -2219,25 +2269,6 @@
       document.getElementById("plateLocation").value = "";
       document.getElementById("plateMaxQty").value = 5000;
 
-      document.getElementById("plateFormCard").style.display = "block";
-      document.getElementById("plateNumber").focus();
-    }
-
-    /* 기존 폼 제어 함수들 */
-    function openPlateFormForEdit(plateId){
-      if (currentMode !== MODE_ADMIN) return;
-      const plate = plates.find(p => p.id === plateId);
-      if (!plate) return;
-      closeAllPanels();
-      document.getElementById("plateId").value = plate.id;
-      document.getElementById("plateFilmId").value = plate.filmId || "";
-      document.getElementById("plateProductName").value = plate.productName || "";
-      document.getElementById("plateFilmNumber").value = plate.filmNumber || "";
-      document.getElementById("plateNumber").value = plate.plateNumber;
-      document.getElementById("plateTension").value = plate.tension || "";
-      document.getElementById("plateLocation").value = plate.location || "";
-      document.getElementById("plateMesh").value = plate.mesh || "";
-      document.getElementById("plateMaxQty").value = Number(plate.maxQty || 5000);
       document.getElementById("plateFormCard").style.display = "block";
       document.getElementById("plateNumber").focus();
     }
