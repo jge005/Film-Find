@@ -549,6 +549,8 @@
 
 
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -703,6 +705,11 @@
       </div>
 
       <div class="usage-meta" id="plateHistoryMeta"></div>
+
+    <div style="padding:10px; background:#f8f9fa; border-radius:12px; margin-bottom:10px; border:1px solid #eee;">
+      <canvas id="plateUsageChart" style="width:100%; height:180px;"></canvas>
+    </div>
+    <div id="plateUsageList" class="usage-list"></div>
       <div id="plateUsageList" class="usage-list"></div>
 
       <div class="sheet-actions">
@@ -2447,6 +2454,9 @@
     }
         
 
+   /* [수정] 판 히스토리 열기 (그래프 추가 버전) */
+    let myChart = null; // 차트 변수 (전역)
+
     async function openPlateHistorySheet(plateId){
       const plate = plates.find(p => p.id === plateId);
       if (!plate) return;
@@ -2459,64 +2469,93 @@
       const list = document.getElementById("plateUsageList");
 
       if (title) title.textContent = `판 히스토리 · ${plate.plateNumber || ""}`;
-      if (sub) sub.textContent = "언제 / 누가 / 몇 개 / 메모";
+      if (sub) sub.textContent = "작업량 추이 및 기록";
 
+      // 1. 상단 요약 칩
       if (meta){
         const r = getPlateUsedRatio(plate);
         const pct = Math.round(r.pct);
         meta.innerHTML = "";
-        const chip1 = document.createElement("div");
-        chip1.className = "usage-chip";
-        chip1.textContent = `제품: ${plate.productName || "-"}`;
-        const chip2 = document.createElement("div");
-        chip2.className = "usage-chip";
-        chip2.textContent = `필름: ${plate.filmNumber || "-"}`;
-        const chip3 = document.createElement("div");
-        chip3.className = "progress-pill";
-        chip3.textContent = `사용량: ${r.used}/${r.max} (${isFinite(pct)?pct:0}%)`;
-        meta.appendChild(chip1);
-        meta.appendChild(chip2);
-        meta.appendChild(chip3);
+        meta.innerHTML += `<div class="usage-chip">제품: ${plate.productName || "-"}</div>`;
+        meta.innerHTML += `<div class="usage-chip">필름: ${plate.filmNumber || "-"}</div>`;
+        meta.innerHTML += `<div class="progress-pill" style="background:${currentMode==='night'?'#333':'#fff'}">누적: ${r.used.toLocaleString()}장</div>`;
       }
 
-      if (list) list.innerHTML = "";
+      if (list) list.innerHTML = "<div style='padding:20px;text-align:center'>불러오는 중...</div>";
 
-      try{
+      try {
+        // 2. 데이터 가져오기
         const snap = await db.collection(PLATE_COLLECTION).doc(plate.id)
           .collection(PLATE_USAGE_SUB)
-          .orderBy("timestamp","desc")
-          .limit(200)
+          .orderBy("timestamp", "desc")
+          .limit(50) // 최근 50개만 그래프에 표시
           .get();
 
         const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // 3. 리스트 그리기
+        if (list) list.innerHTML = "";
         if (!rows.length){
-          if (list) {
-            const empty = document.createElement("div");
-            empty.className = "history-empty";
-            empty.style.paddingLeft = "0";
-            empty.textContent = "아직 사용 기록이 없어.";
-            list.appendChild(empty);
-          }
+           if(list) list.innerHTML = "<div class='history-empty'>기록이 없어.</div>";
         } else {
-          rows.forEach((r) => {
+           rows.forEach((r) => {
             const row = document.createElement("div");
             row.className = "usage-row";
             const ts = formatTs(r.timestamp || 0);
             row.innerHTML =
-              `<div class="u-top">` +
-                `<div class="u-who">${safeStr(r.who) || "-"}</div>` +
-                `<div class="u-time">${ts}</div>` +
+              `<div class="u-top"><div class="u-who">${safeStr(r.who)}</div><div class="u-time">${ts}</div></div>` +
+              `<div style="margin-top:4px;display:flex;justify-content:space-between">` + 
+                `<span>수량: <strong style="color:var(--primary-1)">${Number(r.qty||0).toLocaleString()}</strong></span>` +
               `</div>` +
-              `<div style="margin-top:4px;"><span class="label">수량</span><span class="u-qty">${Number(r.qty||0)}</span></div>` +
               (safeStr(r.memo) ? `<div class="u-memo">${safeStr(r.memo)}</div>` : "");
             list.appendChild(row);
+          });
+        }
+
+        // 4. ★ 그래프 그리기 (Chart.js)
+        const ctx = document.getElementById('plateUsageChart');
+        if(ctx) {
+          // 기존 차트가 있으면 파괴 (안 그러면 겹쳐 보임)
+          if(myChart) myChart.destroy();
+          
+          // 데이터 가공 (날짜별 or 회차별 수량)
+          // 그래프는 시간 순서대로 보여야 하므로 배열을 뒤집음(reverse)
+          const chartData = rows.slice().reverse(); 
+          const labels = chartData.map(d => {
+             const date = new Date(d.timestamp);
+             return `${date.getMonth()+1}/${date.getDate()}`; // 월/일
+          });
+          const dataPoints = chartData.map(d => d.qty || 0);
+
+          myChart = new Chart(ctx, {
+            type: 'bar', // 막대 그래프
+            data: {
+              labels: labels,
+              datasets: [{
+                label: '작업 수량',
+                data: dataPoints,
+                backgroundColor: 'rgba(127, 157, 255, 0.6)',
+                borderColor: 'rgba(127, 157, 255, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } }, // 범례 숨김
+              scales: {
+                y: { beginAtZero: true, grid: { display:false } },
+                x: { grid: { display:false } }
+              }
+            }
           });
         }
 
         sheet.classList.add("show");
       } catch(e){
         console.error(e);
-        showToast("판 히스토리를 불러오지 못했어.");
+        showToast("히스토리 로드 실패");
       }
     }
 
