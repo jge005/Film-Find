@@ -3104,7 +3104,8 @@ document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
       if (addPrinterBtn) addPrinterBtn.addEventListener("click", onAddPrinter);
 
       // 내보내기/불러오기
-      document.getElementById("exportBtn").addEventListener("click", exportData);
+     document.getElementById("exportBtn").textContent = "엑셀 저장"; // 버튼 이름도 변경
+document.getElementById("exportBtn").onclick = downloadExcelReport;
       document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importFile").click());
       document.getElementById("importFile").addEventListener("change", (e) => {
         const file = e.target.files?.[0];
@@ -3344,6 +3345,70 @@ function bindViewerGestures() {
       dashSection.style.display = (currentMode === MODE_VIEWER) ? "none" : "grid";
     }
 // 👆👆👆 여기까지 붙여넣기 👆👆👆
+/* [추가] 엑셀 보고서 다운로드 기능 */
+    async function downloadExcelReport() {
+      if(!confirm("전체 데이터를 엑셀로 다운로드할까?")) return;
+
+      try {
+        const wb = XLSX.utils.book_new();
+
+        // 1. 필름 목록 시트
+        const filmData = films.map(f => ({
+          "제품명": f.productName,
+          "필름번호": f.filmNumber,
+          "타입": f.method,
+          "MESH": f.mesh,
+          "위치": f.location,
+          "요청자": f.requestPrinter,
+          "마지막사용": f.lastUsed,
+          "메모": f.memo
+        }));
+        const ws1 = XLSX.utils.json_to_sheet(filmData);
+        XLSX.utils.book_append_sheet(wb, ws1, "필름 목록");
+
+        // 2. 판 목록 시트
+        const plateData = plates.map(p => ({
+          "판번호": p.plateNumber,
+          "상태": p.status === 'empty' ? '빈 판' : '사용 중',
+          "현재제품": p.productName || "-",
+          "현재필름": p.filmNumber || "-",
+          "MESH": p.mesh,
+          "텐션": p.tension,
+          "위치": p.location,
+          "현재작업량": p.usedQty || 0,
+          "총누적수량": p.totalUsedQty || 0
+        }));
+        const ws2 = XLSX.utils.json_to_sheet(plateData);
+        XLSX.utils.book_append_sheet(wb, ws2, "판(Frame) 현황");
+
+        // 3. 작업 히스토리 시트 (최근 500개만)
+        // (주의: 데이터가 많으면 로딩이 걸릴 수 있어 500개로 제한)
+        const histSnap = await db.collection(HISTORY_COLLECTION).orderBy("timestamp","desc").limit(500).get();
+        const histData = histSnap.docs.map(doc => {
+            const d = doc.data();
+            const date = new Date(d.timestamp);
+            return {
+                "시간": `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`,
+                "구분": d.action,
+                "기기": d.deviceName,
+                "내용": d.filmNumber + " " + (d.productName||""),
+                "변경사항": (d.changes || []).join(", "),
+                "메모": d.note || ""
+            };
+        });
+        const ws3 = XLSX.utils.json_to_sheet(histData);
+        XLSX.utils.book_append_sheet(wb, ws3, "작업 기록");
+
+        // 파일 저장
+        const dateStr = new Date().toISOString().slice(0,10);
+        XLSX.writeFile(wb, `FILM_FIND_보고서_${dateStr}.xlsx`);
+        
+        showToast("엑셀 다운로드 완료!");
+      } catch(e) {
+        console.error(e);
+        showToast("엑셀 변환 중 오류 발생");
+      }
+    }
 
 
     /* ---------- 초기화 ---------- */
