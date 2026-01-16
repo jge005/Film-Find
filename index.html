@@ -534,6 +534,18 @@
       background: rgba(255,255,255,0.2); color:#fff; 
       z-index:1520; display:flex; align-items:center; justify-content:center;
     }
+	/* [추가] 대시보드 스타일 */
+    .dashboard-wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; animation: cardFadeIn 0.3s ease; }
+    .dash-card { background: rgba(255,255,255,0.8); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .dash-card.warning { background: #fff0f0; border-color: #ffcccc; }
+    .dash-card.warning .dash-value { color: #d32f2f; }
+    .dash-title { font-size: 11px; color: var(--text-sub); margin-bottom: 4px; }
+    .dash-value { font-size: 20px; font-weight: 800; color: var(--text-main); }
+    .dash-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+    
+    [data-theme="night"] .dash-card { background: rgba(30,41,59,0.8); }
+    [data-theme="night"] .dash-card.warning { background: rgba(69, 10, 10, 0.5); border-color: #7f1d1d; }
+    [data-theme="night"] .dash-card.warning .dash-value { color: #fca5a5; }
 
 
   </style>
@@ -732,6 +744,25 @@
     </div>
 
     <div class="app-shell">
+	<div id="dashboardSection" class="dashboard-wrap" style="display:none;">
+      <div class="dash-card">
+        <div class="dash-title">활성 판</div>
+        <div class="dash-value" id="dashActive">-</div>
+        <div class="dash-desc">현재 작업 중</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-title">빈 판 (대기)</div>
+        <div class="dash-value" id="dashEmpty">-</div>
+        <div class="dash-desc">즉시 사용 가능</div>
+      </div>
+      <div class="dash-card warning">
+        <div class="dash-title">수명 주의</div>
+        <div class="dash-value" id="dashWarn">-</div>
+        <div class="dash-desc">90% 이상 사용</div>
+      </div>
+    </div>
+    ```
+
       <div class="top-bar">
         <input type="text" id="searchInput" placeholder="검색" />
         <button class="btn btn-primary" id="newFilmBtn">+ 새 필름</button>
@@ -2676,6 +2707,32 @@
 
       applyViewMode();
     }
+	/* [추가] 대시보드 업데이트 함수 */
+    function updateDashboard(){
+      // 관리자나 인쇄기사만 봄
+      if(currentMode === MODE_VIEWER) {
+        document.getElementById("dashboardSection").style.display = "none";
+        return;
+      }
+      document.getElementById("dashboardSection").style.display = "grid";
+
+      // 1. 활성 판 (제품이 걸려있는 판)
+      const activeCount = plates.filter(p => p.status !== 'empty').length;
+      
+      // 2. 빈 판
+      const emptyCount = plates.filter(p => p.status === 'empty').length;
+      
+      // 3. 수명 주의 (90% 이상 쓴 판)
+      const warnCount = plates.filter(p => {
+        if(p.status === 'empty') return false;
+        const r = getPlateUsedRatio(p);
+        return r.pct >= 90;
+      }).length;
+
+      document.getElementById("dashActive").textContent = activeCount + "개";
+      document.getElementById("dashEmpty").textContent = emptyCount + "개";
+      document.getElementById("dashWarn").textContent = warnCount + "개";
+    }
     function renderCurrentTab(){
       if (currentTab === "films") renderList(currentSearchText);
       else renderPlatesList(currentSearchText);
@@ -2812,6 +2869,7 @@
       // 리스너 시작
       startFilmsListener();
       startPlatesListener();
+	  updateDashboard();
 
       // 기본 탭
       if (currentMode === MODE_PRINTER) currentTab = "plates";
