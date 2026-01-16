@@ -2402,25 +2402,6 @@
       }
     }
         
-        await db.collection(PLATE_COLLECTION).doc(plate.id).set(payload, { merge: true });
-        
-        // ★ 히스토리에 '제품명 + 당시 텐션'을 같이 기록
-        const prodName = plate.productName || "제품명 없음";
-        const tensionVal = plate.tension || "기록없음";
-        const tensionLog = `[${prodName}] 작업 시 텐션: ${tensionVal}`;
-        
-        await addHistory("탈막", { 
-          id: plate.id, 
-          plateNumber: plate.plateNumber, 
-          productName: plate.productName 
-        }, ["초기화(현재수량 리셋)", tensionLog]); 
-        
-        showToast("탈막 완료! 빈 판이 되었어.");
-      } catch(e) {
-        console.error(e);
-        showToast("탈막 처리 중 오류가 났어.");
-      }
-    }
 
     async function openPlateHistorySheet(plateId){
       const plate = plates.find(p => p.id === plateId);
