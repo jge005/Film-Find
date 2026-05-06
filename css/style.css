@@ -251,6 +251,13 @@
     .label{ color: var(--label-color); font-size:11px; margin-right:4px; }
     .card-footer{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; gap:6px; flex-wrap:wrap; }
     .last-used{ font-size:11px; color: var(--text-muted); }
+    .film-print-latest{
+      border:none; background: transparent; padding:0; cursor:pointer;
+      font-size:11px; color: var(--primary-1); font-weight:600;
+      text-align:left;
+    }
+    .film-print-latest.empty{ color: var(--text-muted); font-weight:400; cursor:default; }
+    .film-print-record-date{ font-weight:700; color: var(--text-main); }
     .card-buttons{ display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
 
     .empty-text{ text-align:center; color:#777; font-size:13px; margin-top:20px; }

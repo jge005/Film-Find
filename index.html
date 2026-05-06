@@ -140,6 +140,57 @@
     </div>
   </div>
 
+  <!-- ====== 필름 인쇄 날짜 등록 시트 ====== -->
+  <div id="filmPrintSheet" class="sheet">
+    <div id="filmPrintBackdrop" class="sheet-backdrop"></div>
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="sheet-title" id="filmPrintTitle">필름 인쇄 등록</div>
+          <div class="sheet-sub" id="filmPrintSub">오늘 날짜가 기본으로 입력됨</div>
+        </div>
+        <button class="btn btn-secondary btn-small" id="filmPrintCloseBtn">닫기</button>
+      </div>
+
+      <div class="usage-meta" id="filmPrintMeta"></div>
+
+      <div class="form-row">
+        <label for="filmPrintDate">인쇄 날짜</label>
+        <input type="date" id="filmPrintDate" />
+      </div>
+      <div class="form-row">
+        <label for="filmPrintMemo">메모</label>
+        <textarea id="filmPrintMemo" rows="3" placeholder="예: 재출력 / 색상 확인용 / 요청분"></textarea>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="btn btn-secondary btn-small" id="filmPrintCancelBtn">취소</button>
+        <button class="btn btn-primary btn-small" id="filmPrintSaveBtn">등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 필름 인쇄 기록 시트 ====== -->
+  <div id="filmPrintHistorySheet" class="sheet">
+    <div id="filmPrintHistoryBackdrop" class="sheet-backdrop"></div>
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <div>
+          <div class="sheet-title" id="filmPrintHistoryTitle">필름 인쇄 기록</div>
+          <div class="sheet-sub" id="filmPrintHistorySub">인쇄 날짜 / 기기 / 메모</div>
+        </div>
+        <button class="btn btn-secondary btn-small" id="filmPrintHistoryCloseBtn">닫기</button>
+      </div>
+
+      <div class="usage-meta" id="filmPrintHistoryMeta"></div>
+
+      <div id="filmPrintHistoryList" class="usage-list"></div>
+      <div class="sheet-actions">
+        <button class="btn btn-secondary btn-small" id="filmPrintHistoryCloseBtn2">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ====== 판 메모 슬라이드 ====== -->
   <div id="plateMemoSheet" class="memo-sheet">
     <div id="plateMemoBackdrop" class="memo-sheet-backdrop"></div>
