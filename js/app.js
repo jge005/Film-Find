@@ -401,7 +401,7 @@
       if (action === "수정") return "필름 수정";
       if (action === "삭제") return "필름 삭제";
       if (action === "오늘 사용") return "오늘 사용 체크";
-      if (action === "필름 인쇄") return "필름 인쇄 등록";
+      if (action === "필름 인쇄") return "필름 출력 등록";
       if (action === "판 등록") return "판 등록";
       if (action === "판 수정") return "판 수정";
       if (action === "판 삭제") return "판 삭제";
@@ -537,7 +537,7 @@
       }
     }
 
-    /* ---------- 필름 인쇄 날짜/기록 ---------- */
+    /* ---------- 필름 출력 날짜/기록 ---------- */
     function openFilmPrintSheet(filmId){
       if (currentMode !== MODE_ADMIN) return;
       const film = films.find(f => f.id === filmId);
@@ -551,7 +551,7 @@
       const dateInput = document.getElementById("filmPrintDate");
       const memoInput = document.getElementById("filmPrintMemo");
 
-      if (title) title.textContent = `필름 인쇄 등록 · ${film.filmNumber || ""}`;
+      if (title) title.textContent = `필름 출력 등록 · ${film.filmNumber || ""}`;
       if (sub) sub.textContent = film.productName || "오늘 날짜가 기본으로 입력됨";
       if (dateInput) dateInput.value = new Date().toISOString().slice(0,10);
       if (memoInput) memoInput.value = "";
@@ -587,7 +587,7 @@
       const date = safeStr(document.getElementById("filmPrintDate")?.value);
       const memo = safeStr(document.getElementById("filmPrintMemo")?.value);
       if (!date){
-        showToast("인쇄 날짜를 선택해줘.");
+        showToast("출력 날짜를 선택해줘.");
         return;
       }
 
@@ -611,13 +611,13 @@
           id: film.id,
           productName: film.productName,
           filmNumber: film.filmNumber
-        }, [`인쇄 날짜: ${date}`]);
+        }, [`출력 날짜: ${date}`]);
 
-        showToast("필름 인쇄 기록 저장됨.");
+        showToast("필름 출력 기록 저장됨.");
         closeFilmPrintSheet();
       } catch(e){
         console.error(e);
-        showToast("필름 인쇄 기록 저장 중 오류.");
+        showToast("필름 출력 기록 저장 중 오류.");
       }
     }
 
@@ -632,8 +632,8 @@
       const meta = document.getElementById("filmPrintHistoryMeta");
       const list = document.getElementById("filmPrintHistoryList");
 
-      if (title) title.textContent = `필름 인쇄 기록 · ${film.filmNumber || ""}`;
-      if (sub) sub.textContent = film.productName || "인쇄 날짜 / 기기 / 메모";
+      if (title) title.textContent = `필름 출력 기록 · ${film.filmNumber || ""}`;
+      if (sub) sub.textContent = film.productName || "출력 날짜 / 기기 / 메모";
 
       if (meta){
         meta.innerHTML = "";
@@ -658,7 +658,7 @@
         if (!list) return;
         list.innerHTML = "";
         if (!rows.length){
-          list.innerHTML = "<div class='history-empty'>인쇄 기록이 없어.</div>";
+          list.innerHTML = "<div class='history-empty'>출력 기록이 없어.</div>";
           return;
         }
 
@@ -677,7 +677,7 @@
       } catch(e){
         console.error(e);
         if (list) list.innerHTML = "<div class='history-empty'>기록을 불러오지 못했어.</div>";
-        showToast("필름 인쇄 기록 로드 실패.");
+        showToast("필름 출력 기록 로드 실패.");
       }
     }
 
@@ -1129,7 +1129,7 @@
         const printLatest = document.createElement("button");
         printLatest.type = "button";
         printLatest.className = "film-print-latest" + (film.lastPrintedDate ? "" : " empty");
-        printLatest.textContent = "최근 인쇄일: " + formatShortDate(film.lastPrintedDate || "");
+        printLatest.textContent = "최근 출력일: " + formatShortDate(film.lastPrintedDate || "");
         if (film.lastPrintedDate){
           printLatest.addEventListener("click", () => openFilmPrintHistorySheet(film.id));
         }
@@ -1161,7 +1161,7 @@
 
           const printBtn = document.createElement("button");
           printBtn.className = "btn btn-primary btn-small";
-          printBtn.textContent = "필름 인쇄";
+          printBtn.textContent = "필름 출력";
           printBtn.addEventListener("click", () => openFilmPrintSheet(film.id));
           btnWrap.appendChild(printBtn);
 
@@ -1212,7 +1212,7 @@
 
           const printHistoryBtn = document.createElement("button");
           printHistoryBtn.className = "btn btn-secondary btn-small";
-          printHistoryBtn.textContent = "인쇄 기록";
+          printHistoryBtn.textContent = "출력 기록";
           printHistoryBtn.addEventListener("click", () => openFilmPrintHistorySheet(film.id));
           btnWrap.appendChild(printHistoryBtn);
 
@@ -2336,7 +2336,7 @@ document.getElementById("exportBtn").onclick = downloadExcelReport;
       document.getElementById("memoSheetCancelBtn").addEventListener("click", closeMemoSheet);
       document.getElementById("memoSheetSaveBtn").addEventListener("click", saveMemoSheet);
 
-      // 필름 인쇄 등록/기록
+      // 필름 출력 등록/기록
       document.getElementById("filmPrintBackdrop").addEventListener("click", closeFilmPrintSheet);
       document.getElementById("filmPrintCloseBtn").addEventListener("click", closeFilmPrintSheet);
       document.getElementById("filmPrintCancelBtn").addEventListener("click", closeFilmPrintSheet);
@@ -2569,7 +2569,7 @@ function bindViewerGestures() {
         const ws2 = XLSX.utils.json_to_sheet(plateData);
         XLSX.utils.book_append_sheet(wb, ws2, "판(Frame) 현황");
 
-        // 3. 필름 인쇄 기록 시트
+        // 3. 필름 출력 기록 시트
         const filmPrintRows = [];
         for (const f of films) {
           const snap = await db.collection(FILM_COLLECTION).doc(f.id)
@@ -2579,7 +2579,7 @@ function bindViewerGestures() {
             filmPrintRows.push({
               "제품명": f.productName || "",
               "필름번호": f.filmNumber || "",
-              "인쇄날짜": d.date || "",
+              "출력날짜": d.date || "",
               "등록시간": formatTs(d.timestamp || 0),
               "기기": d.deviceName || "",
               "메모": d.memo || ""
@@ -2587,7 +2587,7 @@ function bindViewerGestures() {
           });
         }
         const wsPrint = XLSX.utils.json_to_sheet(filmPrintRows);
-        XLSX.utils.book_append_sheet(wb, wsPrint, "필름 인쇄 기록");
+        XLSX.utils.book_append_sheet(wb, wsPrint, "필름 출력 기록");
 
         // 4. 작업 히스토리 시트 (최근 500개만)
         // (주의: 데이터가 많으면 로딩이 걸릴 수 있어 500개로 제한)
